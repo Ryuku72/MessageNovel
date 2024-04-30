@@ -1,0 +1,14 @@
+{
+  "onboarding": {
+    "title": " Lets Get Started",
+    "avatar": "Upload file",
+    "username": "Username",
+    "username_placeholder": "JoeJoe",
+    "email": "Email",
+    "email_placeholder": "joejoe@email.com",
+    "password": "Password",
+    "password_placeholder": "Jo3jo3B32T!",
+    "color": "Favourite Color",
+    "primary_button": "Submit"
+  }
+}
