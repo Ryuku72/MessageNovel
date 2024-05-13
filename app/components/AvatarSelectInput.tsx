@@ -12,7 +12,7 @@ export default function AvatarInput({
   onChange,
 }: AvatarInputProps) {
   return (
-    <div className="w-full flex flex-col justify-center items-center">
+    <div className="flex flex-shrink-0 flex-col justify-center items-center">
       <label
         htmlFor={id}
         className="flex flex-col items-center gap-2 font-mono text-sm text-gray-600 cursor-pointer hover:text-green-500"

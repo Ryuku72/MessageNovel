@@ -1,7 +1,8 @@
 import type { MetaFunction } from "@remix-run/node";
+import * as THREE from "three";
 import { Link, useNavigate, useOutletContext } from "@remix-run/react";
 import { SupabaseClient } from "@supabase/supabase-js";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import TitleInput from "~/components/TitleInput";
 import { ToastAlert } from "~/components/ToastAlert";
 import { useLoading } from "~/helpers/useLoading";
@@ -22,6 +23,76 @@ export default function Index() {
 
   const supabase = useOutletContext() as SupabaseClient;
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const scene = new THREE.Scene();
+
+    const camera = new THREE.PerspectiveCamera(
+      75,
+      window.innerWidth / window.innerHeight,
+      0.1,
+      2000
+    );
+
+    camera.position.setZ(0);
+    camera.position.setX(0);
+
+    const renderer = new THREE.WebGLRenderer({
+      canvas: document.querySelector("#canvas-bg") as HTMLCanvasElement,
+    });
+
+    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    camera.position.setZ(30);
+
+    const length = 20,
+      width = 30;
+
+    const shape = new THREE.Shape();
+    shape.moveTo(0, 0);
+    shape.lineTo(0, width);
+    shape.lineTo(length, width);
+    shape.lineTo(length, 0);
+    shape.lineTo(0, 0);
+
+    const extrudeSettings = {
+      steps: 2,
+      depth: 20,
+      bevelEnabled: true,
+      bevelThickness: 1,
+      bevelSize: 1,
+      bevelOffset: 12,
+      bevelSegments: 1,
+    };
+
+    const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
+    const material = new THREE.MeshBasicMaterial({
+      color: 0xccccff,
+      wireframe: true,
+    });
+    const hedron = new THREE.Mesh(geometry, material);
+
+    scene.add(hedron);
+
+    const pointLight = new THREE.PointLight(0xffffff);
+    pointLight.position.set(5, 5, 5);
+
+    const ambientLight = new THREE.AmbientLight(0xffffff);
+    scene.add(pointLight, ambientLight);
+
+    function animate() {
+      requestAnimationFrame(animate);
+
+      hedron.rotation.x += 0.0005;
+      hedron.rotation.y += 0.0006;
+      hedron.rotation.z += 0.001;
+
+      renderer.render(scene, camera);
+    }
+
+    animate();
+  }, []);
 
   const handleSubmit = (e?: React.FormEvent) =>
     withLoading(() => {
@@ -50,7 +121,7 @@ export default function Index() {
     })();
 
   return (
-    <div className="w-full h-full flex justify-center items-center flex-col flex-auto">
+    <div className="w-full h-full flex justify-center items-center flex-col flex-auto absolute">
       <div className="p-12 flex justify-center items-center gap-3 flex-col w-full max-w-c-600 flex-auto">
         <h1 className="text-gray-600 text-3xl m-0 font-medium font-mono">
           {LOCALES.index.title}
@@ -77,7 +148,11 @@ export default function Index() {
               disabled={isLoading}
             >
               {isLoading ? (
-                <LoadingSpinner className="w-full h-10" svgColor="#fff" uniqueId="index-spinner" />
+                <LoadingSpinner
+                  className="w-full h-10"
+                  svgColor="#fff"
+                  uniqueId="index-spinner"
+                />
               ) : (
                 LOCALES.index.primary_button
               )}
