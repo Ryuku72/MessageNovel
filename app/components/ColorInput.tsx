@@ -1,3 +1,5 @@
+import ReactColor from "@uiw/react-color-circle";
+
 export type ColorInputProps = {
   title: string;
   id: string;
@@ -11,21 +13,48 @@ export default function ColorInput({
   value,
   onChange,
 }: ColorInputProps) {
+
+  const colors = [
+    "#FAEDCB",
+    "#C9E4DE",
+    "#C6DEF1",
+    "#DBCDF0",
+    "#FFADAD",
+    "#DFFDFF",
+    "#FFD6A5",
+    "#BdB2FF",
+    "#FAD1FA",
+    "#FEC868",
+    "#F1F7B5",
+    "#E8A2A2",
+    "#A0C3D2",
+    "#C0D8C0"
+  ];
+
+  const colorStyle = {
+    display: "flex",
+    width: "100%",
+    background: "inherit",
+    gap: "8px",
+    padding: 0,
+    height: 'auto'
+  }
+  
   return (
     <div className="w-full flex flex-col gap-3 font-mono">
       <label htmlFor={id} className="text-gray-600 flex gap-3">
         {title}
       </label>
-      <div className="flex gap-4 items-center">
-        <input
-          id={id}
-          type="color"
-          className="border-none bg-transparent w-10 h-10 cursor-pointer"
-          value={value}
-          onChange={e => onChange(e.target.value)}
+      <div className="w-full" id={id}>
+        <ReactColor
+          color={value}
+          colors={colors}
+          onChange={(color) => onChange(color.hex)}
+          style={colorStyle}
+          pointProps={{ style: { width: '35px', height: '35px' } }}
         />
-        <p className="text-gray-500 uppercase">{value}</p>
       </div>
     </div>
   );
 }
+

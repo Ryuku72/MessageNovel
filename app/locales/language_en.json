@@ -10,5 +10,14 @@
     "password_placeholder": "Jo3jo3B32T!",
     "color": "Favourite Color",
     "primary_button": "Submit"
+  },
+  "index": {
+    "title": "Message Novel",
+    "primary_button": "Submit",
+    "secondary_button": "Sign Up"
+  },
+  "meta": {
+    "title": "Message Novel",
+    "description": "Collaborate and build your own novel"
   }
 }
