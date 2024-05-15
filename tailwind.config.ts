@@ -11,9 +11,13 @@ export default {
       maxWidth: {
         "card-l": "480px",
         "c-600": "600px",
-        "button": "200px"
+        "c-800": "800px",
+        "button": "125px"
       },
     },
+    fontFamily: {
+      'miltonian': '"Miltonian", serif'
+    }
   },
   plugins: [],
 } satisfies Config;

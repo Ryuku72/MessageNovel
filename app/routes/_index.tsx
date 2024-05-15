@@ -1,5 +1,4 @@
 import type { MetaFunction } from "@remix-run/node";
-import * as THREE from "three";
 import { Link, useNavigate, useOutletContext } from "@remix-run/react";
 import { SupabaseClient } from "@supabase/supabase-js";
 import { useEffect, useState } from "react";
@@ -19,80 +18,23 @@ export const meta: MetaFunction = () => {
 export default function Index() {
   const [signInValue, setSignInValue] = useState("");
   const [passwordValue, setPasswordValue] = useState("");
+
   const { isLoading, withLoading } = useLoading();
 
-  const supabase = useOutletContext() as SupabaseClient;
+  const { supabase, sceneReady } = useOutletContext() as {
+    supabase: SupabaseClient;
+    sceneReady: boolean;
+  };
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    const scene = new THREE.Scene();
+    if (!sceneReady) return;
 
-    const camera = new THREE.PerspectiveCamera(
-      75,
-      window.innerWidth / window.innerHeight,
-      0.1,
-      2000
-    );
-
-    camera.position.setZ(0);
-    camera.position.setX(0);
-
-    const renderer = new THREE.WebGLRenderer({
-      canvas: document.querySelector("#canvas-bg") as HTMLCanvasElement,
+    const sceneEvent = new CustomEvent("sceneUpdate", {
+      detail: 1,
     });
-
-    renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    camera.position.setZ(30);
-
-    const length = 20,
-      width = 30;
-
-    const shape = new THREE.Shape();
-    shape.moveTo(0, 0);
-    shape.lineTo(0, width);
-    shape.lineTo(length, width);
-    shape.lineTo(length, 0);
-    shape.lineTo(0, 0);
-
-    const extrudeSettings = {
-      steps: 2,
-      depth: 20,
-      bevelEnabled: true,
-      bevelThickness: 1,
-      bevelSize: 1,
-      bevelOffset: 12,
-      bevelSegments: 1,
-    };
-
-    const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
-    const material = new THREE.MeshBasicMaterial({
-      color: 0xccccff,
-      wireframe: true,
-    });
-    const hedron = new THREE.Mesh(geometry, material);
-
-    scene.add(hedron);
-
-    const pointLight = new THREE.PointLight(0xffffff);
-    pointLight.position.set(5, 5, 5);
-
-    const ambientLight = new THREE.AmbientLight(0xffffff);
-    scene.add(pointLight, ambientLight);
-
-    function animate() {
-      requestAnimationFrame(animate);
-
-      hedron.rotation.x += 0.0005;
-      hedron.rotation.y += 0.0006;
-      hedron.rotation.z += 0.001;
-
-      renderer.render(scene, camera);
-    }
-
-    animate();
-  }, []);
+    window.dispatchEvent(sceneEvent);
+  }, [sceneReady]);
 
   const handleSubmit = (e?: React.FormEvent) =>
     withLoading(() => {
@@ -103,8 +45,7 @@ export default function Index() {
           password: passwordValue,
         })
         .then((res) => {
-          if (!res?.error) navigate("/dashboard");
-
+          if (!res?.error) return navigate("/dashboard");
           const errorEvent = new CustomEvent("alert from error", {
             detail: res?.error?.message,
           });
@@ -123,10 +64,10 @@ export default function Index() {
   return (
     <div className="w-full h-full flex justify-center items-center flex-col flex-auto absolute">
       <div className="p-12 flex justify-center items-center gap-3 flex-col w-full max-w-c-600 flex-auto">
-        <h1 className="text-gray-600 text-3xl m-0 font-medium font-mono">
+        <h1 className="text-red-800 text-6xl m-0 [text-shadow:_5px_3px_2px_rgb(107_114_128_/_50%)] font-medium font-miltonian">
           {LOCALES.index.title}
         </h1>
-        <form onSubmit={handleSubmit} className="flex  w-full flex-col gap-3">
+        <form onSubmit={handleSubmit} className="flex w-full flex-col gap-3">
           <TitleInput
             title="Sign In"
             id="index-signin"
@@ -141,7 +82,13 @@ export default function Index() {
             onChange={setPasswordValue}
             placeholder="****"
           />
-          <div className="w-full flex items-center flex-col gap-3 justify-center pt-3">
+          <div className="w-full flex items-center gap-3 justify-center pt-3">
+            <Link
+              to="/onboarding"
+              className="rounded-lg h-10 px-4 text-gray-100 bg-orange-400 hover:bg-orange-500 flex items-center justify-center w-full max-w-button"
+            >
+              {LOCALES.index.secondary_button}
+            </Link>
             <button
               className="rounded-lg h-10 px-4 text-gray-100 bg-blue-500 hover:bg-green-500 w-full max-w-button flex items-center justify-center"
               onClick={handleSubmit}
@@ -157,12 +104,6 @@ export default function Index() {
                 LOCALES.index.primary_button
               )}
             </button>
-            <Link
-              to="/onboarding"
-              className="rounded-lg h-10 px-4 text-gray-100 bg-orange-400 hover:bg-orange-500 flex items-center justify-center w-full max-w-button"
-            >
-              {LOCALES.index.secondary_button}
-            </Link>
           </div>
         </form>
       </div>

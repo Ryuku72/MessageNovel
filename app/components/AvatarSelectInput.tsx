@@ -15,7 +15,7 @@ export default function AvatarInput({
     <div className="flex flex-shrink-0 flex-col justify-center items-center">
       <label
         htmlFor={id}
-        className="flex flex-col items-center gap-2 font-mono text-sm text-gray-600 cursor-pointer hover:text-green-500"
+        className="flex flex-col items-center gap-2 font-mono text-sm text-gray-600 cursor-pointer hover:text-blue-500"
       >
         <img
           alt="onboarding-img"
@@ -23,7 +23,7 @@ export default function AvatarInput({
           src={value}
         />
         {title}
-        <input id={id} className="hidden" type="file" onChange={onChange} />
+        <input id={id} name={id} className="hidden" type="file" onChange={onChange} />
       </label>
     </div>
   );

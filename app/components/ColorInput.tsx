@@ -16,9 +16,7 @@ export default function ColorInput({
     "#FFCCCC", // Pastel Maroon
     "#FFFFCC", // Pastel Olive
     "#B2DFDB", // Darker Pastel Green
-    "#FFFF99", // Pastel Yellow
     "#99CCFF", // Pastel Blue
-    "#FF99CC", // Pastel Fuchsia
     "#CCCCFF", // Pastel Navy
     "#99FFFF", // Pastel Teal
     "#FF9999", // Pastel Red
@@ -37,10 +35,10 @@ export default function ColorInput({
 
   return (
     <div className="w-full max-w-52 flex flex-col gap-3 font-mono">
-      <label htmlFor={id} className="text-gray-600 flex gap-3">
+      <label htmlFor={id} className="text-gray-600 flex gap-3 justify-center w-full">
         {title}
       </label>
-      <div className="w-full flex gap-3 flex-wrap" id={id}>
+      <div className="w-full flex gap-3 flex-wrap">
         {colors.map((color) => (
           <div
             key={color}
@@ -61,6 +59,7 @@ export default function ColorInput({
           </div>
         ))}
       </div>
+      <input name={id} value={value} className="hidden" readOnly />
     </div>
   );
 }

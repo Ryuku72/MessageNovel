@@ -1,30 +1,21 @@
-import { LoaderFunctionArgs } from "@remix-run/node";
-import {
-  useLoaderData,
-  useNavigate,
-  useOutletContext
-} from "@remix-run/react";
-import {
-  createServerClient,
-  SupabaseClient,
-} from "@supabase/auth-helpers-remix";
-import { envConfig } from "~/helpers/supabase";
+import { LoaderFunctionArgs, redirect } from "@remix-run/node";
+import { useLoaderData, useNavigate, useOutletContext } from "@remix-run/react";
+import { initServer } from "~/helpers/supabase";
 import LOCALES from "~/locales/language_en.json";
 import Default_Avatar from "~/images/default_avatar.jpeg";
 import { ToastAlert } from "~/components/ToastAlert";
+import { SupabaseClient } from "@supabase/supabase-js";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const env = envConfig();
-  const response = new Response();
-  const supabase = await createServerClient(
-    env.SUPABASE_URL,
-    env.SUPABASE_ANON_KEY,
-    { request, response }
-  );
+  const supabase = await initServer(request);
   const data = await supabase.auth.getUser();
-  const userData = await supabase.from("profiles").select().eq("id", data.data.user?.id);
+  const userData = await supabase
+    .from("profiles")
+    .select()
+    .eq("id", data.data.user?.id);
   console.log(userData);
-  return { data: userData.data?.[0], headers: response.headers };
+  if (userData?.data?.[0]) return userData.data?.[0];
+  else return redirect('/');
 };
 
 export type userData = {
@@ -38,11 +29,11 @@ export type userData = {
 };
 
 export default function Dashboard() {
-  const { data } = useLoaderData() as { data: userData };
-
-  console.log(data);
+  const data = useLoaderData() as userData;
   const supabase = useOutletContext() as SupabaseClient;
   const navigate = useNavigate();
+
+  console.log(data);
 
   const user = {
     username: data?.username || "Not Found",
@@ -59,8 +50,8 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="w-full h-full flex flex-col justify-center items-center bg-gray-100">
-      <h1 className="text-gray-600 text-3xl m-0 font-medium font-mono text-center">
+    <div className="w-full h-full flex flex-col justify-center items-center absolute">
+      <h1 className="text-gray-200 text-3xl m-0 font-medium font-mono text-center">
         User Profile
       </h1>
       <div className="p-4 w-card-l max-w-full">

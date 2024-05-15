@@ -8,7 +8,6 @@ import {
   useLoaderData,
   useRouteError,
 } from "@remix-run/react";
-
 import type { LinksFunction } from "@remix-run/node";
 import stylesheet from "./styles/tailwind.css?url";
 import appStylesheer from "./styles/app.css?url";
@@ -19,8 +18,9 @@ import favicon from "./favicon/favicon.ico";
 import favManifest from "./favicon/site.webmanifest";
 import favMask from "./favicon/safari-pinned-tab.svg";
 import { envConfig, envConfigType } from "./helpers/supabase";
-import { useState } from "react";
-import { createBrowserClient } from "@supabase/auth-helpers-remix";
+import { useEffect, useState } from "react";
+import { createBrowserClient } from "@supabase/ssr";
+import threeBg from "./helpers/lighthouse/threeBg";
 
 export const loader = () => envConfig();
 export const links: LinksFunction = () => [
@@ -54,9 +54,21 @@ export const links: LinksFunction = () => [
     href: favMask,
     color: "#5bbad5",
   },
+  { rel: "preconnect", href: "https://fonts.googleapis.com" },
+  {
+    rel: "preconnect",
+    href: "https://fonts.gstatic.com",
+    crossOrigin: undefined,
+  },
+  {
+    rel: "stylesheet",
+    href: "https://fonts.googleapis.com/css2?family=Miltonian&display=swap",
+  },
 ];
 
 export function Layout({ children }: { children: React.ReactNode }) {
+  threeBg();
+
   return (
     <html lang="en" className="flex w-full h-full">
       <head>
@@ -66,7 +78,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body className="flex flex-col w-full h-full">
-        <canvas id="canvas-bg" className="fixed top-0 left-0" />
+        <canvas id="canvas-bg" className="fixed top-0 left-0 w-full h-full" />
         {children}
         <ScrollRestoration />
         <Scripts />
@@ -77,8 +89,22 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   const env = useLoaderData() as envConfigType;
-  const [supabase] = useState(() => createBrowserClient(env.SUPABASE_URL, env.SUPABASE_ANON_KEY));
-  return <Outlet context={supabase} />;
+  const [supabase] = useState(() =>
+    createBrowserClient(env.SUPABASE_URL, env.SUPABASE_ANON_KEY)
+  );
+  const [sceneReady, setSceneReady] = useState(false);
+
+  useEffect(() => {
+    const handleSceneReady = () => setSceneReady(true);
+    window.addEventListener('scene ready', handleSceneReady, false);
+
+    return () => {
+      window.removeEventListener('scene ready', handleSceneReady, false);
+    }
+  }, []);
+
+
+  return <Outlet context={{ supabase, sceneReady }} />;
 }
 
 export function ErrorBoundary() {

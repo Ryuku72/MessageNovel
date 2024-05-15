@@ -7,11 +7,11 @@ export function ToastAlert() {
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    document.addEventListener("alert from error", handleAlert);
+    window.addEventListener("alert from error", handleAlert);
     init.current = true;
 
     return () => {
-      document.addEventListener("alert from error", handleAlert);
+      window.addEventListener("alert from error", handleAlert);
       if (timerRef.current) {
         clearTimeout(timerRef.current);
       }

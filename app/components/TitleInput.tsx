@@ -2,6 +2,8 @@ export type TitleInputProps = {
   title: string;
   id: string;
   value: string;
+  type?: string;
+  labelColor?: string;
   placeholder: string;
   onChange: (value: string) => void;
 };
@@ -11,16 +13,20 @@ export default function TitleInput({
   id,
   value,
   placeholder,
+  labelColor = 'text-gray-600',
   onChange,
+  type = "text"
 }: TitleInputProps) {
   return (
     <div className="w-full flex flex-col gap-3 font-mono">
-      <label htmlFor={id} className="w-full text-gray-600">
+      <label htmlFor={id} className={`w-full ${labelColor}`}>
         {title}
       </label>
       <input
         id={id}
-        type="text"
+        type={type}
+        name={id}
+        required
         value={value}
         onChange={e => onChange(e.target.value)}
         placeholder={placeholder}
