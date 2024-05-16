@@ -1,23 +1,23 @@
-import type { Config } from "tailwindcss";
+import type { Config } from 'tailwindcss';
 
 export default {
-  content: ["./app/**/*.{js,jsx,ts,tsx}"],
+  content: ['./app/**/*.{js,jsx,ts,tsx}'],
   theme: {
     extend: {
       width: {
-        "card-l": "480px",
-        "c-600": "600px",
+        'card-l': '480px',
+        'c-600': '600px'
       },
       maxWidth: {
-        "card-l": "480px",
-        "c-600": "600px",
-        "c-800": "800px",
-        "button": "125px"
-      },
+        'card-l': '480px',
+        'c-600': '600px',
+        'c-800': '800px',
+        button: '125px'
+      }
     },
     fontFamily: {
-      'miltonian': '"Miltonian", serif'
+      miltonian: '"Miltonian", serif'
     }
   },
-  plugins: [],
+  plugins: []
 } satisfies Config;

@@ -1,69 +1,69 @@
+import { useEffect, useState } from 'react';
+
+import LoadingLayer from './components/LoadingLayer';
+import threeBg from './components/lighthouse/threeBg';
+import appleTouch from './favicon/apple-touch-icon.png';
+import favicon16 from './favicon/favicon-16x16.png';
+import favicon32 from './favicon/favicon-32x32.png';
+import favicon from './favicon/favicon.ico';
+import favMask from './favicon/safari-pinned-tab.svg';
+import favManifest from './favicon/site.webmanifest';
+import { envConfig, envConfigType } from './helpers/supabase';
+import stylesheet from './styles/tailwind.css?url';
+import type { LinksFunction } from '@remix-run/node';
 import {
-  isRouteErrorResponse,
   Links,
   Meta,
   Outlet,
   Scripts,
   ScrollRestoration,
+  isRouteErrorResponse,
   useLoaderData,
-  useRouteError,
-} from "@remix-run/react";
-import type { LinksFunction } from "@remix-run/node";
-import stylesheet from "./styles/tailwind.css?url";
-import appStylesheer from "./styles/app.css?url";
-import appleTouch from "./favicon/apple-touch-icon.png";
-import favicon32 from "./favicon/favicon-32x32.png";
-import favicon16 from "./favicon/favicon-16x16.png";
-import favicon from "./favicon/favicon.ico";
-import favManifest from "./favicon/site.webmanifest";
-import favMask from "./favicon/safari-pinned-tab.svg";
-import { envConfig, envConfigType } from "./helpers/supabase";
-import { useEffect, useState } from "react";
-import { createBrowserClient } from "@supabase/ssr";
-import threeBg from "./helpers/lighthouse/threeBg";
+  useRouteError
+} from '@remix-run/react';
+import { createBrowserClient } from '@supabase/ssr';
 
 export const loader = () => envConfig();
 export const links: LinksFunction = () => [
-  { rel: "stylesheet", href: stylesheet },
-  { rel: "stylesheet", href: appStylesheer },
+  { rel: 'stylesheet', href: stylesheet },
   {
-    rel: "apple-touch-icon",
-    sizes: "180x180",
-    href: appleTouch,
+    rel: 'apple-touch-icon',
+    sizes: '180x180',
+    href: appleTouch
   },
   {
-    rel: "icon",
-    type: "image/png",
-    sizes: "32x32",
-    href: favicon32,
+    rel: 'icon',
+    type: 'image/png',
+    sizes: '32x32',
+    href: favicon32
   },
   {
-    rel: "icon",
-    type: "image/png",
-    sizes: "16x16",
-    href: favicon16,
+    rel: 'icon',
+    type: 'image/png',
+    sizes: '16x16',
+    href: favicon16
   },
   {
-    rel: "icon",
-    type: "image/x-icon",
-    href: favicon,
+    rel: 'icon',
+    type: 'image/x-icon',
+    href: favicon
   },
-  { rel: "manifest", href: favManifest },
+  { rel: 'manifest', href: favManifest },
   {
-    rel: "mask-icon",
+    rel: 'mask-icon',
     href: favMask,
-    color: "#5bbad5",
+    color: '#5bbad5'
   },
-  { rel: "preconnect", href: "https://fonts.googleapis.com" },
+  { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
   {
-    rel: "preconnect",
-    href: "https://fonts.gstatic.com",
-    crossOrigin: undefined,
+    rel: 'preconnect',
+    href: 'https://fonts.gstatic.com',
+    crossOrigin: undefined
   },
   {
-    rel: "stylesheet",
-    href: "https://fonts.googleapis.com/css2?family=Miltonian&display=swap",
-  },
+    rel: 'stylesheet',
+    href: 'https://fonts.googleapis.com/css2?family=Miltonian&display=swap'
+  }
 ];
 
 export function Layout({ children }: { children: React.ReactNode }) {
@@ -77,7 +77,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <body className="flex flex-col w-full h-full">
+      <body className="flex flex-col w-full h-full [background:_#bfe3dd]">
+        <LoadingLayer />
         <canvas id="canvas-bg" className="fixed top-0 left-0 w-full h-full" />
         {children}
         <ScrollRestoration />
@@ -89,20 +90,19 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   const env = useLoaderData() as envConfigType;
-  const [supabase] = useState(() =>
-    createBrowserClient(env.SUPABASE_URL, env.SUPABASE_ANON_KEY)
-  );
+  const [supabase] = useState(() => createBrowserClient(env.SUPABASE_URL, env.SUPABASE_ANON_KEY));
   const [sceneReady, setSceneReady] = useState(false);
 
   useEffect(() => {
-    const handleSceneReady = () => setSceneReady(true);
+    const handleSceneReady = (event: Event) => {
+      if ('detail' in event && event.detail === 100) setSceneReady(true);
+    };
     window.addEventListener('scene ready', handleSceneReady, false);
 
     return () => {
       window.removeEventListener('scene ready', handleSceneReady, false);
-    }
+    };
   }, []);
-
 
   return <Outlet context={{ supabase, sceneReady }} />;
 }
@@ -124,7 +124,7 @@ export function ErrorBoundary() {
   return (
     <>
       <h1>Error!</h1>
-      <p>{error?.message ?? "Unknown error"}</p>
+      <p>{error?.message ?? 'Unknown error'}</p>
     </>
   );
 }

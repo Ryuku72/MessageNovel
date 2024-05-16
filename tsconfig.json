@@ -25,8 +25,10 @@
     "paths": {
       "~/*": ["./app/*"]
     },
-
+    "noUnusedLocals": true /* Enable error reporting when local variables aren't read. */,
+    "noUnusedParameters": true /* Raise an error when a function parameter isn't read. */,
     // Vite takes care of building everything, not tsc.
+    "noImplicitThis": true /* Enable error reporting when 'this' is given the type 'any'. */,
     "noEmit": true
   }
 }

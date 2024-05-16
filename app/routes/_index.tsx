@@ -1,23 +1,23 @@
-import type { MetaFunction } from "@remix-run/node";
-import { Link, useNavigate, useOutletContext } from "@remix-run/react";
-import { SupabaseClient } from "@supabase/supabase-js";
-import { useEffect, useState } from "react";
-import TitleInput from "~/components/TitleInput";
-import { ToastAlert } from "~/components/ToastAlert";
-import { useLoading } from "~/helpers/useLoading";
-import LOCALES from "~/locales/language_en.json";
-import LoadingSpinner from "~/svg/LoadingSpinner/LoadingSpinner";
+import { useEffect, useState } from 'react';
+
+import type { MetaFunction } from '@remix-run/node';
+import { Link, useNavigate, useOutletContext } from '@remix-run/react';
+import { SupabaseClient } from '@supabase/supabase-js';
+
+import { useLoading } from '~/helpers/useLoading';
+
+import TitleInput from '~/components/TitleInput';
+import { ToastAlert } from '~/components/ToastAlert';
+import LOCALES from '~/locales/language_en.json';
+import LoadingSpinner from '~/svg/LoadingSpinner/LoadingSpinner';
 
 export const meta: MetaFunction = () => {
-  return [
-    { title: LOCALES.meta.title },
-    { name: "description", content: LOCALES.meta.description },
-  ];
+  return [{ title: LOCALES.meta.title }, { name: 'description', content: LOCALES.meta.description }];
 };
 
 export default function Index() {
-  const [signInValue, setSignInValue] = useState("");
-  const [passwordValue, setPasswordValue] = useState("");
+  const [signInValue, setSignInValue] = useState('');
+  const [passwordValue, setPasswordValue] = useState('');
 
   const { isLoading, withLoading } = useLoading();
 
@@ -30,8 +30,8 @@ export default function Index() {
   useEffect(() => {
     if (!sceneReady) return;
 
-    const sceneEvent = new CustomEvent("sceneUpdate", {
-      detail: 1,
+    const sceneEvent = new CustomEvent('sceneUpdate', {
+      detail: 1
     });
     window.dispatchEvent(sceneEvent);
   }, [sceneReady]);
@@ -42,19 +42,19 @@ export default function Index() {
       return supabase.auth
         .signInWithPassword({
           email: signInValue,
-          password: passwordValue,
+          password: passwordValue
         })
-        .then((res) => {
-          if (!res?.error) return navigate("/dashboard");
-          const errorEvent = new CustomEvent("alert from error", {
-            detail: res?.error?.message,
+        .then(res => {
+          if (!res?.error) return navigate('/dashboard');
+          const errorEvent = new CustomEvent('alert from error', {
+            detail: res?.error?.message
           });
           document.dispatchEvent(errorEvent);
           return res;
         })
-        .catch((err) => {
-          const errorEvent = new CustomEvent("alert from error", {
-            detail: err.message,
+        .catch(err => {
+          const errorEvent = new CustomEvent('alert from error', {
+            detail: err.message
           });
           document.dispatchEvent(errorEvent);
           return err;
@@ -85,21 +85,15 @@ export default function Index() {
           <div className="w-full flex items-center gap-3 justify-center pt-3">
             <Link
               to="/onboarding"
-              className="rounded-lg h-10 px-4 text-gray-100 bg-orange-400 hover:bg-orange-500 flex items-center justify-center w-full max-w-button"
-            >
+              className="rounded-lg h-10 px-4 text-gray-100 bg-orange-400 hover:bg-orange-500 flex items-center justify-center w-full max-w-button">
               {LOCALES.index.secondary_button}
             </Link>
             <button
               className="rounded-lg h-10 px-4 text-gray-100 bg-blue-500 hover:bg-green-500 w-full max-w-button flex items-center justify-center"
               onClick={handleSubmit}
-              disabled={isLoading}
-            >
+              disabled={isLoading}>
               {isLoading ? (
-                <LoadingSpinner
-                  className="w-full h-10"
-                  svgColor="#fff"
-                  uniqueId="index-spinner"
-                />
+                <LoadingSpinner className="w-full h-10" svgColor="#fff" uniqueId="index-spinner" />
               ) : (
                 LOCALES.index.primary_button
               )}
