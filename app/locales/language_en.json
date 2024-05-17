@@ -14,8 +14,12 @@
   },
   "index": {
     "title": "Message Novel",
-    "primary_button": "Submit",
-    "secondary_button": "Sign Up"
+    "primary_button": "Login",
+    "secondary_button": "Create Account"
+  },
+  "login": {
+    "primary_button": "Back",
+    "secondary_button": "Login"
   },
   "meta": {
     "title": "Message Novel",

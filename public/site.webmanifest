@@ -1,9 +1,9 @@
 {
-  "name": "",
-  "short_name": "",
+  "name": "Message_Novel",
+  "short_name": "Message_Novel",
   "icons": [
     {
-      "src": "./android-chrome-192x192.png",
+      "src": "android-chrome-192x192.png",
       "sizes": "192x192",
       "type": "image/png"
     }

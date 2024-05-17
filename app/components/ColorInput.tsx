@@ -28,6 +28,7 @@ export default function ColorInput({ title, id, value, onChange }: ColorInputPro
         {colors.map(color => (
           <button
             key={color}
+            type="button"
             onClick={() => onChange(color)}
             className="flex flex-shrink-0 items-center justify-center w-8 h-8 p-1 scale-100 rounded transition cursor-pointer hover:scale-110 shadow-slate-300 shadow"
             style={{ backgroundColor: color }}>
@@ -35,7 +36,7 @@ export default function ColorInput({ title, id, value, onChange }: ColorInputPro
           </button>
         ))}
       </div>
-      <input name={id} value={value} className="hidden" required readOnly />
+      <input id={id} name={id} value={value} className="hidden" required readOnly />
     </div>
   );
 }

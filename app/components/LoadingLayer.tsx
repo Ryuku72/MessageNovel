@@ -6,6 +6,7 @@ export default function LoadingLayer() {
   const [percent, setPercent] = useState(1);
   const [ready, setReady] = useState(false);
   const barRef = useRef<HTMLDivElement | null>(null);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     const handleSceneReady = (event: Event) => {
@@ -13,13 +14,14 @@ export default function LoadingLayer() {
         const results = Math.round(event.detail);
         setPercent(results);
         Gsap.to(barRef.current, { duration: 1, width: results + '%' });
-        if (results === 100) setTimeout(() => setReady(true), 1000);
+        if (results === 100) timerRef.current = setTimeout(() => setReady(true), 1000);
       }
     };
     window.addEventListener('scene ready', handleSceneReady, false);
 
     return () => {
       window.removeEventListener('scene ready', handleSceneReady, false);
+      if (timerRef.current) clearTimeout(timerRef.current);
     };
   }, []);
 

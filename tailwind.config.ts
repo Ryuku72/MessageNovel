@@ -12,7 +12,7 @@ export default {
         'card-l': '480px',
         'c-600': '600px',
         'c-800': '800px',
-        button: '125px'
+        button: '145px'
       }
     },
     fontFamily: {

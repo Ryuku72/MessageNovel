@@ -1,6 +1,8 @@
-import { LoaderFunctionArgs, redirect } from '@remix-run/node';
-import { useLoaderData, useNavigate, useOutletContext } from '@remix-run/react';
-import { SupabaseClient } from '@supabase/supabase-js';
+import { useEffect } from 'react';
+
+import { ActionFunctionArgs, LoaderFunctionArgs, json, redirect } from '@remix-run/node';
+import { useLoaderData, useOutletContext, useSubmit } from '@remix-run/react';
+import { User } from '@supabase/supabase-js';
 
 import { initServer } from '~/helpers/supabase';
 
@@ -10,12 +12,20 @@ import LOCALES from '~/locales/language_en.json';
 import Default_Avatar from '~/assets/default_avatar.jpeg';
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const supabase = await initServer(request);
-  const data = await supabase.auth.getUser();
-  const userData = await supabase.from('profiles').select().eq('id', data.data.user?.id);
-  if (userData?.data?.[0]) return userData.data?.[0];
+  const { supabaseClient, headers } = await initServer(request);
+  const data = await supabaseClient.auth.getUser();
+  if (data.data.user?.id) return json(data.data.user, { headers });
   else return redirect('/');
 };
+export async function action({ request }: ActionFunctionArgs) {
+  const { supabaseClient, headers } = await initServer(request);
+  const body = await request.formData();
+  const type = body.get('type') as string;
+  if (type === 'sign_out') {
+    await supabaseClient.auth.signOut();
+    return redirect('/', { headers });
+  } else return json({}, { headers });
+}
 
 export type userData = {
   avatar: string;
@@ -28,22 +38,33 @@ export type userData = {
 };
 
 export default function Dashboard() {
-  const data = useLoaderData() as userData;
-  const supabase = useOutletContext() as SupabaseClient;
-  const navigate = useNavigate();
+  const loaderData = useLoaderData() as User;
+  const { sceneReady } = useOutletContext() as { sceneReady: boolean };
+  const submit = useSubmit();
+
+  useEffect(() => {
+    if (!sceneReady) return;
+    const sceneEvent = new CustomEvent('sceneUpdate', {
+      detail: 4
+    });
+    window.dispatchEvent(sceneEvent);
+  }, [sceneReady]);
 
   const user = {
-    username: data?.username || 'Not Found',
-    avatar: data?.avatar || Default_Avatar,
-    email: data?.email || 'Unknonwn',
-    color: data?.color || '#aeaeae'
+    username: loaderData?.user_metadata?.username || 'Not Found',
+    avatar:
+      'https://zdqdkjjiqewmefxbfubj.supabase.co/storage/v1/object/public/' + loaderData?.user_metadata?.avatar ||
+      Default_Avatar,
+    email: loaderData?.email || 'Unknonwn',
+    color: loaderData?.user_metadata?.color || '#aeaeae'
   };
   const LocalStrings = LOCALES.onboarding;
 
-  const handleSignOut = async (e: React.MouseEvent) => {
+  const handleSubmit = (e: React.MouseEvent) => {
     e.stopPropagation();
-    await supabase.auth.signOut();
-    navigate('/');
+    const formData = new FormData();
+    formData.append('type', 'sign_out');
+    submit(formData, { method: 'post' });
   };
 
   return (
@@ -73,7 +94,7 @@ export default function Dashboard() {
       </div>
       <button
         className="rounded-lg h-10 px-4 text-gray-100 bg-blue-500 hover:bg-green-500 flex items-center justify-center"
-        onClick={handleSignOut}>
+        onClick={handleSubmit}>
         Sign out
       </button>
       <ToastAlert />

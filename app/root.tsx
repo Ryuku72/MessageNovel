@@ -1,15 +1,5 @@
 import { useEffect, useState } from 'react';
 
-import LoadingLayer from './components/LoadingLayer';
-import threeBg from './components/lighthouse/threeBg';
-import appleTouch from './favicon/apple-touch-icon.png';
-import favicon16 from './favicon/favicon-16x16.png';
-import favicon32 from './favicon/favicon-32x32.png';
-import favicon from './favicon/favicon.ico';
-import favMask from './favicon/safari-pinned-tab.svg';
-import favManifest from './favicon/site.webmanifest';
-import { envConfig, envConfigType } from './helpers/supabase';
-import stylesheet from './styles/tailwind.css?url';
 import type { LinksFunction } from '@remix-run/node';
 import {
   Links,
@@ -18,40 +8,42 @@ import {
   Scripts,
   ScrollRestoration,
   isRouteErrorResponse,
-  useLoaderData,
   useRouteError
 } from '@remix-run/react';
-import { createBrowserClient } from '@supabase/ssr';
 
-export const loader = () => envConfig();
+import LoadingLayer from '~/components/LoadingLayer';
+import ThreeBg from '~/components/lighthouse/threeBg';
+
+import stylesheet from '~/styles/tailwind.css?url';
+
 export const links: LinksFunction = () => [
   { rel: 'stylesheet', href: stylesheet },
   {
     rel: 'apple-touch-icon',
     sizes: '180x180',
-    href: appleTouch
+    href: '/apple-touch-icon.png'
   },
   {
     rel: 'icon',
     type: 'image/png',
     sizes: '32x32',
-    href: favicon32
+    href: '/favicon-32x32.png'
   },
   {
     rel: 'icon',
     type: 'image/png',
     sizes: '16x16',
-    href: favicon16
+    href: '/favicon-16x16.png'
   },
   {
     rel: 'icon',
     type: 'image/x-icon',
-    href: favicon
+    href: '/favicon.ico'
   },
-  { rel: 'manifest', href: favManifest },
+  { rel: 'manifest', href: '/site.webmanifest' },
   {
     rel: 'mask-icon',
-    href: favMask,
+    href: '/safari-pinned-tab.svg',
     color: '#5bbad5'
   },
   { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
@@ -67,8 +59,6 @@ export const links: LinksFunction = () => [
 ];
 
 export function Layout({ children }: { children: React.ReactNode }) {
-  threeBg();
-
   return (
     <html lang="en" className="flex w-full h-full">
       <head>
@@ -79,6 +69,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body className="flex flex-col w-full h-full [background:_#bfe3dd]">
         <LoadingLayer />
+        <ThreeBg />
         <canvas id="canvas-bg" className="fixed top-0 left-0 w-full h-full" />
         {children}
         <ScrollRestoration />
@@ -89,8 +80,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  const env = useLoaderData() as envConfigType;
-  const [supabase] = useState(() => createBrowserClient(env.SUPABASE_URL, env.SUPABASE_ANON_KEY));
   const [sceneReady, setSceneReady] = useState(false);
 
   useEffect(() => {
@@ -104,7 +93,7 @@ export default function App() {
     };
   }, []);
 
-  return <Outlet context={{ supabase, sceneReady }} />;
+  return <Outlet context={{ sceneReady }} />;
 }
 
 export function ErrorBoundary() {

@@ -15,10 +15,14 @@ export const envConfig = () => {
 };
 
 export const initServer = async (request: LoaderFunctionArgs['request']) => {
-  const env = envConfig();
+  const env = {
+    SUPABASE_URL: process.env.SUPABASE_URL!,
+    SUPABASE_ANON_KEY: process.env.SUPABASE_KEY!
+  };
   const cookies = parse(request.headers.get('Cookie') ?? '');
   const headers = new Headers();
-  const supabase = await createServerClient(env.SUPABASE_URL, env.SUPABASE_ANON_KEY, {
+
+  const supabaseClient = await createServerClient(env.SUPABASE_URL, env.SUPABASE_ANON_KEY, {
     cookies: {
       get(key) {
         return cookies[key];
@@ -32,5 +36,6 @@ export const initServer = async (request: LoaderFunctionArgs['request']) => {
     }
   });
 
-  return supabase;
+  return { supabaseClient, headers };
 };
+
