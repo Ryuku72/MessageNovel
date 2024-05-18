@@ -1,6 +1,6 @@
 {
-  "onboarding": {
-    "title": " Lets Get Started",
+  "create": {
+    "title": "Lets Get Started",
     "avatar": "Upload file",
     "username": "Username",
     "username_placeholder": "JoeJoe",
@@ -15,7 +15,8 @@
   "index": {
     "title": "Message Novel",
     "primary_button": "Login",
-    "secondary_button": "Create Account"
+    "secondary_button": "Create Account",
+    "tertiary_button": "Technologies"
   },
   "login": {
     "primary_button": "Back",
@@ -24,5 +25,18 @@
   "meta": {
     "title": "Message Novel",
     "description": "Collaborate and build your own novel"
+  },
+  "dash": {
+    "title": "User Profile",
+    "username": "Username",
+    "email": "Email",
+    "password": "Password",
+    "color": "Favourite Color",
+    "primary_button": "Sign out"
+  },
+  "credits": {
+    "title": "Technologies",
+    "technology": ["Remix Run", "Supabase", "React", "TailwindCSS", "ThreeJs", "Vite", "Gsap"],
+    "primary_button": "back"
   }
 }

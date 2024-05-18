@@ -18,7 +18,7 @@ export default function ColorInput({ title, id, value, onChange }: ColorInputPro
     '#CCFFCC', // Pastel Green
     '#FFDAB9' // Brighter Pastel Orange
   ];
-  
+
   return (
     <div className="w-full max-w-52 flex flex-col gap-3 font-mono">
       <label htmlFor={id} className="text-gray-600 flex gap-3 font-medium justify-center w-full">

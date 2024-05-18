@@ -4,13 +4,12 @@ import { type ActionFunctionArgs, type MetaFunction } from '@remix-run/node';
 import { Form, Link, json, useActionData, useNavigation, useOutletContext, useSubmit } from '@remix-run/react';
 import { AuthResponse } from '@supabase/supabase-js';
 
-import { initServer } from '~/helpers/supabase';
+import { envConfig, initServer } from '~/helpers/supabase';
 
 import AvatarInput from '~/components/AvatarSelectInput';
 import ColorInput from '~/components/ColorInput';
 import PasswordInput from '~/components/PasswordInput';
 import TitleInput from '~/components/TitleInput';
-import { ToastAlert } from '~/components/ToastAlert';
 import LOCALES from '~/locales/language_en.json';
 import LoadingSpinner from '~/svg/LoadingSpinner/LoadingSpinner';
 
@@ -21,13 +20,14 @@ export const meta: MetaFunction = () => {
 };
 
 export async function action({ request }: ActionFunctionArgs) {
+  const env = envConfig();
   const { supabaseClient, headers } = await initServer(request);
   const body = await request.formData();
-  const avatar = body.get('onboarding-avatar') as File;
-  const email = body.get('onboarding-email') as string;
-  const password = body.get('onboarding-password') as string;
-  const username = body.get('onboarding-username') as string;
-  const color = body.get('onboarding-color-select') as string;
+  const avatar = body.get('create-avatar') as File;
+  const email = body.get('create-email') as string;
+  const password = body.get('create-password') as string;
+  const username = body.get('create-username') as string;
+  const color = body.get('create-color-select') as string;
   const filename = avatar?.name;
 
   const userData = await supabaseClient?.auth?.getUser();
@@ -65,7 +65,7 @@ export async function action({ request }: ActionFunctionArgs) {
           email,
           created_at: userData.data.user?.created_at,
           updated_at: userData.data.user?.updated_at,
-          avatar: filename ? `assets/${userData.data.user?.id}/avatar.${extension}` : '',
+          avatar: filename ? `${env.SUPABASE_IMG_STORAGE}/assets/${userData.data.user?.id}/avatar.${extension}` : '',
           username,
           color
         })
@@ -76,8 +76,8 @@ export async function action({ request }: ActionFunctionArgs) {
   }
 }
 
-export default function Onboarding() {
-  const LocalStrings = LOCALES.onboarding;
+export default function Create() {
+  const LocalStrings = LOCALES.create;
   const { sceneReady } = useOutletContext() as { sceneReady: boolean };
   const navigationState = useNavigation();
   const submit = useSubmit();
@@ -134,32 +134,32 @@ export default function Onboarding() {
           <Form
             ref={formRef}
             method="post"
-            className="w-full max-w-lg flex flex-col justify-center items-center gap-3 rounded-lg shadow-xl px-12 py-8 bg-white bg-opacity-35 backdrop-blur-sm">
-            <fieldset disabled={isLoading}>
+            className="w-full max-w-lg flex rounded-lg shadow-xl px-12 py-8 bg-white bg-opacity-35 backdrop-blur-sm">
+            <fieldset className="w-full flex flex-col justify-center items-center gap-3" disabled={isLoading}>
               <div className="flex gap-6 flex-wrap justify-center items-center">
                 <AvatarInput
                   title={LocalStrings.avatar}
-                  id="onboarding-avatar"
+                  id="create-avatar"
                   value={viewImage}
                   onChange={handleOnImageChange}
                 />
                 <ColorInput
                   title={LocalStrings.color}
-                  id="onboarding-color-select"
+                  id="create-color-select"
                   value={colorSelect}
                   onChange={setColorSelect}
                 />
               </div>
               <TitleInput
                 title={LocalStrings.username}
-                id="onboarding-username"
+                id="create-username"
                 value={username}
                 placeholder={LocalStrings.username_placeholder}
                 onChange={setUsername}
               />
               <TitleInput
                 title={LocalStrings.email}
-                id="onboarding-email"
+                id="create-email"
                 placeholder={LocalStrings.email_placeholder}
                 value={email}
                 onChange={setEmail}
@@ -167,7 +167,7 @@ export default function Onboarding() {
               />
               <PasswordInput
                 title={LocalStrings.password}
-                id="onboarding-password"
+                id="create-password"
                 placeholder={LocalStrings.password_placeholder}
                 value={password}
                 onChange={setPassword}
@@ -184,7 +184,7 @@ export default function Onboarding() {
                   className="rounded-lg h-10 px-4 w-full max-w-button text-gray-100 bg-blue-500 hover:bg-green-500 flex items-center justify-center font-mono"
                   disabled={isLoading}>
                   {isLoading ? (
-                    <LoadingSpinner className="w-full h-10" svgColor="#fff" uniqueId="onboarding-loading" />
+                    <LoadingSpinner className="w-full h-10" svgColor="#fff" uniqueId="create-loading" />
                   ) : (
                     LocalStrings.primary_button
                   )}
@@ -194,7 +194,6 @@ export default function Onboarding() {
           </Form>
         </div>
       </div>
-      <ToastAlert />
     </div>
   );
 }

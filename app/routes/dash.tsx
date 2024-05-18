@@ -6,7 +6,6 @@ import { User } from '@supabase/supabase-js';
 
 import { initServer } from '~/helpers/supabase';
 
-import { ToastAlert } from '~/components/ToastAlert';
 import LOCALES from '~/locales/language_en.json';
 
 import Default_Avatar from '~/assets/default_avatar.jpeg';
@@ -37,7 +36,7 @@ export type userData = {
   username: string;
 };
 
-export default function Dashboard() {
+export default function Dash() {
   const loaderData = useLoaderData() as User;
   const { sceneReady } = useOutletContext() as { sceneReady: boolean };
   const submit = useSubmit();
@@ -52,13 +51,11 @@ export default function Dashboard() {
 
   const user = {
     username: loaderData?.user_metadata?.username || 'Not Found',
-    avatar:
-      'https://zdqdkjjiqewmefxbfubj.supabase.co/storage/v1/object/public/' + loaderData?.user_metadata?.avatar ||
-      Default_Avatar,
+    avatar: loaderData?.user_metadata?.avatar || Default_Avatar,
     email: loaderData?.email || 'Unknonwn',
     color: loaderData?.user_metadata?.color || '#aeaeae'
   };
-  const LocalStrings = LOCALES.onboarding;
+  const LocalStrings = LOCALES.dash;
 
   const handleSubmit = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -69,11 +66,11 @@ export default function Dashboard() {
 
   return (
     <div className="w-full h-full flex flex-col justify-center items-center absolute">
-      <h1 className="text-gray-200 text-3xl m-0 font-medium font-mono text-center">User Profile</h1>
+      <h1 className="text-gray-200 text-3xl m-0 font-medium font-mono text-center">{LocalStrings.title}</h1>
       <div className="p-4 w-card-l max-w-full">
         <div className="w-full flex justify-center items-center gap-3 flex-col rounded-lg shadow-xl px-12 py-8 bg-white">
           <div className="w-full flex flex-col justify-center items-center">
-            <img alt="onboarding-img" className="w-32 h-32 rounded-full object-cover" src={user.avatar} />
+            <img alt="create-img" className="w-32 h-32 rounded-full object-cover" src={user.avatar} />
           </div>
           <div className="w-full flex flex-col gap-3 font-mono">
             <p className="w-full text-gray-600">
@@ -95,9 +92,8 @@ export default function Dashboard() {
       <button
         className="rounded-lg h-10 px-4 text-gray-100 bg-blue-500 hover:bg-green-500 flex items-center justify-center"
         onClick={handleSubmit}>
-        Sign out
+        {LocalStrings.primary_button}
       </button>
-      <ToastAlert />
     </div>
   );
 }

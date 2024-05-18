@@ -1,3 +1,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.tooltip {
+  visibility: hidden;
+}
+
+.has-tooltip:hover .w-full .tooltip {
+  visibility: visible;
+  z-index: 50;
+}
+

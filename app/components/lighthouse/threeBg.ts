@@ -86,22 +86,23 @@ export default function ThreeBg() {
     };
 
     const sceneTwo = () => {
-      // Gsap.to(camera.position, { duration: 3, x: 12, y: 3, z: -24 });
-      // Gsap.to(camera.rotation, { duration: 3, x: 0, y: 2, z: 0 });
       Gsap.to(camera.position, { duration: 3, x: -18, y: 0, z: 24 });
       Gsap.to(camera.rotation, { duration: 3, x: 0.25, y: 0.3, z: -0.015 });
     };
 
     const sceneThree = () => {
-      // Gsap.to(camera.position, { duration: 3, x: -7, y: -0.1, z: 28.5 });
-      // Gsap.to(camera.rotation, { duration: 3, x: -0.15, y: -0.7, z: -0.015 });
-      Gsap.to(camera.position, { duration: 3, x: 22, y: 1, z: 25 });
-      Gsap.to(camera.rotation, { duration: 3, x: -0.15, y: -0.3, z: -0.25 });
+      Gsap.to(camera.position, { duration: 3, x: 18, y: 0, z: 22 });
+      Gsap.to(camera.rotation, { duration: 3, x: -0.05, y: -0.3, z: -0.25 });
     };
 
     const sceneFour = () => {
       Gsap.to(camera.position, { duration: 3, x: 12, y: 3, z: -24 });
       Gsap.to(camera.rotation, { duration: 3, x: 0, y: 2, z: 0 });
+    };
+
+    const sceneFive = () => {
+      Gsap.to(camera.position, { duration: 3, x: -7, y: -0.1, z: 28.5 });
+      Gsap.to(camera.rotation, { duration: 3, x: -0.15, y: -0.7, z: -0.015 });
     };
 
     const sceneAnimate = (event: Event) => {
@@ -115,6 +116,8 @@ export default function ThreeBg() {
             return sceneThree();
           case 4:
             return sceneFour();
+          case 5:
+            return sceneFive();
         }
       }
     };

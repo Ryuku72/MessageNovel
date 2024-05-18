@@ -9,7 +9,8 @@ export type envConfigType = {
 export const envConfig = () => {
   const env = {
     SUPABASE_URL: process.env.SUPABASE_URL!,
-    SUPABASE_ANON_KEY: process.env.SUPABASE_KEY!
+    SUPABASE_ANON_KEY: process.env.SUPABASE_KEY!,
+    SUPABASE_IMG_STORAGE: process.env.SUPABASE_IMG_STORAGE!
   };
   return env;
 };
@@ -38,4 +39,3 @@ export const initServer = async (request: LoaderFunctionArgs['request']) => {
 
   return { supabaseClient, headers };
 };
-

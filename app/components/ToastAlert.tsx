@@ -20,8 +20,8 @@ export function ToastAlert() {
 
   const handleAlert = (event: Event) => {
     if (timerRef.current) clearTimeout(timerRef.current);
-      setShowAlert(false);
-      setAlertString('');
+    setShowAlert(false);
+    setAlertString('');
     if ('detail' in event && typeof event.detail === 'string') {
       setAlertString(event.detail);
       setShowAlert(true);
@@ -35,7 +35,7 @@ export function ToastAlert() {
   };
 
   return (
-    <div className="w-full relative flex justify-center">
+    <div className="w-full fixed bottom-0 flex justify-center">
       <button
         className={`absolute ease-in bg-black bg-opacity-35 rounded-lg backdrop-blur-m min-w-28 text-center transition-all bottom-10 cursor-pointer ${
           showAlert ? 'px-6 py-2 opacity-100 bottom-10' : 'opacity-0 bottom-8'

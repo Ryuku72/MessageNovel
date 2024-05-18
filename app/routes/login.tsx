@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
 
 import type { ActionFunctionArgs, MetaFunction } from '@remix-run/node';
-import { Form, Link, json, redirect, useNavigation, useOutletContext } from '@remix-run/react';
+import { Form, Link, json, redirect, useActionData, useNavigation, useOutletContext } from '@remix-run/react';
+import { AuthTokenResponsePassword } from '@supabase/supabase-js';
 
 import { initServer } from '~/helpers/supabase';
 
+import PasswordInput from '~/components/PasswordInput';
 import TitleInput from '~/components/TitleInput';
-import { ToastAlert } from '~/components/ToastAlert';
 import LOCALES from '~/locales/language_en.json';
 import LoadingSpinner from '~/svg/LoadingSpinner/LoadingSpinner';
 
@@ -16,21 +17,22 @@ export const meta: MetaFunction = () => {
 
 export async function action({ request }: ActionFunctionArgs) {
   const body = await request.formData();
-  const signInValue = body.get('index-signin') as string;
-  const passwordValue = body.get('index-password') as string;
+  const email = body.get('index-signin') as string;
+  const password = body.get('index-password') as string;
+
   const { supabaseClient, headers } = await initServer(request);
   const init = await supabaseClient.auth.signInWithPassword({
-    email: signInValue,
-    password: passwordValue
+    email,
+    password
   });
-
   if (init.error) return json(init, { headers });
-  else return redirect('/dashboard', { headers });
+  else return redirect('/dash', { headers });
 }
 
 export default function Login() {
   const { sceneReady } = useOutletContext() as { sceneReady: boolean };
   const navigationState = useNavigation();
+  const actionData = useActionData() as AuthTokenResponsePassword;
 
   const [signInValue, setSignInValue] = useState('');
   const [passwordValue, setPasswordValue] = useState('');
@@ -46,19 +48,30 @@ export default function Login() {
     window.dispatchEvent(sceneEvent);
   }, [sceneReady]);
 
+  useEffect(() => {
+    if (!actionData) return;
+    if (actionData?.error) {
+      const sceneEvent = new CustomEvent('alertFromError', {
+        detail: actionData.error?.message || actionData.error?.code || 'Incorrect Email or Password'
+      });
+      window.dispatchEvent(sceneEvent);
+    }
+  }, [actionData]);
+
   return (
     <div className="w-full h-full flex justify-center items-center flex-col flex-auto absolute">
       <div className="p-12 flex justify-center items-center gap-3 flex-col w-full max-w-c-600 flex-auto">
         <Form method="post" className="flex w-full flex-col gap-3">
           <TitleInput
-            title="Sign In"
+            title="Email"
+            type="email"
             id="index-signin"
             value={signInValue}
             onChange={setSignInValue}
             placeholder="jojo@email.com"
             labelColor="text-white"
           />
-          <TitleInput
+          <PasswordInput
             title="Password"
             id="index-password"
             value={passwordValue}
@@ -85,7 +98,6 @@ export default function Login() {
           </div>
         </Form>
       </div>
-      <ToastAlert />
     </div>
   );
 }

@@ -1,15 +1,8 @@
 import { useEffect, useState } from 'react';
 
+import { ToastAlert } from './components/ToastAlert';
 import type { LinksFunction } from '@remix-run/node';
-import {
-  Links,
-  Meta,
-  Outlet,
-  Scripts,
-  ScrollRestoration,
-  isRouteErrorResponse,
-  useRouteError
-} from '@remix-run/react';
+import { Links, Meta, Outlet, Scripts, ScrollRestoration, isRouteErrorResponse, useRouteError } from '@remix-run/react';
 
 import LoadingLayer from '~/components/LoadingLayer';
 import ThreeBg from '~/components/lighthouse/threeBg';
@@ -67,11 +60,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <body className="flex flex-col w-full h-full [background:_#bfe3dd]">
+      <body className="flex flex-col w-full h-full [background:_#bfe3dd] relative">
         <LoadingLayer />
         <ThreeBg />
         <canvas id="canvas-bg" className="fixed top-0 left-0 w-full h-full" />
         {children}
+        <ToastAlert />
         <ScrollRestoration />
         <Scripts />
       </body>
