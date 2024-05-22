@@ -19,19 +19,19 @@ export default function TitleInput({
 }: TitleInputProps) {
   return (
     <div className="w-full flex flex-col gap-2 font-mono">
-      <label htmlFor={id} className={`w-full font-medium ${labelColor}`}>
+      <label htmlFor={id} className={`w-full text-sm font-medium ${labelColor}`}>
         {title}
       </label>
       <input
         id={id}
         type={type}
         name={id}
-        required
+        required={true}
         value={value}
         onChange={e => onChange(e.target.value)}
         placeholder={placeholder}
         autoComplete={id}
-        className="w-full h-11 font-normal border border-gray-300 rounded-lg py-2 px-4 text-gray-500"
+        className="w-full h-11 text-sm font-normal border border-gray-300 rounded-lg py-2 px-3 text-gray-500"
       />
     </div>
   );

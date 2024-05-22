@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-
+import LOCALES from '~/locales/language_en.json';
 import Gsap from 'gsap';
 
 export default function LoadingLayer() {
@@ -7,6 +7,7 @@ export default function LoadingLayer() {
   const [ready, setReady] = useState(false);
   const barRef = useRef<HTMLDivElement | null>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const textRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const handleSceneReady = (event: Event) => {
@@ -14,7 +15,9 @@ export default function LoadingLayer() {
         const results = Math.round(event.detail);
         setPercent(results);
         Gsap.to(barRef.current, { duration: 1, width: results + '%' });
-        if (results === 100) timerRef.current = setTimeout(() => setReady(true), 1000);
+        if (results === 100) {
+          timerRef.current = setTimeout(() => setReady(true), 1000);
+        }
       }
     };
     window.addEventListener('scene ready', handleSceneReady, false);
@@ -32,8 +35,8 @@ export default function LoadingLayer() {
           ? 'hidden'
           : 'flex items-center justify-center w-full h-full fixed top-0 left-0 z-10 pointer-events-none [background:_#bfe3dd] bg-opacity-75'
       }>
-      <div className="flex items-center justify-center flex-col gap-2 w-card-l py-4 [max-width:_90%] font-mon text-center px-4 rounded text-white text-2xl text-mono">
-        Loading
+      <div className="flex items-center justify-center flex-col gap-2 w-card-l py-4 [max-width:_90%] text-center px-4 rounded">
+        <p ref={textRef} className="text-white text-2xl text-mono">{LOCALES.loading_layer.title}</p>
         <div className="bg-gray-400 backdrop-blur-sm bg-opacity-50 w-full rounded-xl shadow-sm overflow-hidden p-1">
           <div className="relative h-6 flex items-center justify-center">
             <div

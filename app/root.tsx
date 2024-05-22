@@ -2,7 +2,15 @@ import { useEffect, useState } from 'react';
 
 import { ToastAlert } from './components/ToastAlert';
 import type { LinksFunction } from '@remix-run/node';
-import { Links, Meta, Outlet, Scripts, ScrollRestoration, isRouteErrorResponse, useRouteError } from '@remix-run/react';
+import {
+  Links,
+  Meta,
+  Outlet,
+  Scripts,
+  ScrollRestoration,
+  isRouteErrorResponse,
+  useRouteError
+} from '@remix-run/react';
 
 import LoadingLayer from '~/components/LoadingLayer';
 import ThreeBg from '~/components/lighthouse/threeBg';
@@ -68,6 +76,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <ToastAlert />
         <ScrollRestoration />
         <Scripts />
+        <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/TextPlugin.min.js" />
       </body>
     </html>
   );

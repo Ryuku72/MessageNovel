@@ -14,6 +14,18 @@ export default {
         'c-600': '600px',
         'c-800': '800px',
         button: '145px'
+      },
+      colors: {
+        'pastel-black': '#D3D3D3', 
+        'pastel-red': '#FF9999', 
+        'pastel-brown': '#FFCCCC', 
+        'pastel-orange': '#FFDAB9', 
+        'pastel-yellow': '#FFFFCC', 
+        'pastel-indigo': '#99CCFF', 
+        'pastel-blue': '#DAF0F7', 
+        'pastel-green': '#B2DFDB', 
+        'pastel-emarld': '#CCFFCC',
+        'pastel-purple': '#CCCCFF', 
       }
     },
     fontFamily: {

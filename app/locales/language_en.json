@@ -9,16 +9,17 @@
     "password": "Password",
     "password_placeholder": "Jo3jo3B32T!",
     "color": "Favourite Color",
-    "primary_button": "Submit",
-    "secondary_button": "Back"
+    "primary_button": "Back",
+    "secondary_button": "Submit"
   },
   "index": {
     "title": "Message Novel",
     "primary_button": "Login",
     "secondary_button": "Create Account",
-    "tertiary_button": "Technologies"
+    "tertiary_button": "About"
   },
   "login": {
+    "title": "Login",
     "primary_button": "Back",
     "secondary_button": "Login"
   },
@@ -27,16 +28,27 @@
     "description": "Collaborate and build your own novel"
   },
   "dash": {
-    "title": "User Profile",
+    "title": "Dashboard",
     "username": "Username",
     "email": "Email",
     "password": "Password",
     "color": "Favourite Color",
     "primary_button": "Sign out"
   },
-  "credits": {
-    "title": "Technologies",
+  "settings": {
+    "title": "User Settings",
+    "username": "Username",
+    "email": "Email",
+    "password": "Password",
+    "color": "Favourite Color",
+    "primary_button": "back"
+  },
+  "about": {
+    "title": "About",
     "technology": ["Remix Run", "Supabase", "React", "TailwindCSS", "ThreeJs", "Vite", "Gsap"],
     "primary_button": "back"
+  },
+  "loading_layer": {
+    "title": "Loading"
   }
 }

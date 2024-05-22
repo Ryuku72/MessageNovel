@@ -10,10 +10,16 @@ import SupabaseLogo from '~/svg/SupabaseLogo/SupabaseLogo';
 import TailwindLogo from '~/svg/TailwindLogo/TailwindLogo';
 import ThreeLogo from '~/svg/ThreeLogo/ThreeLogo';
 import ViteLogo from '~/svg/ViteLogo/ViteLogo';
+import { MetaFunction } from '@remix-run/node';
+import PublicNavBar from '~/components/PublicNavBar';
 
-export default function Credits() {
+export const meta: MetaFunction = () => {
+  return [{ title: LOCALES.meta.title }, { name: 'description', content: LOCALES.meta.description }];
+};
+
+export default function About() {
   const { sceneReady } = useOutletContext() as { sceneReady: boolean };
-  const LocalStrings = LOCALES.credits;
+  const LocalStrings = LOCALES.about;
 
   useEffect(() => {
     if (!sceneReady) return;
@@ -45,8 +51,9 @@ export default function Credits() {
 
   return (
     <div className="w-full flex relative p-10 flex-col flex-auto items-center">
+      <PublicNavBar />
       <div className="max-w-[1200px] w-full flex items-center justify-center flex-col flex-auto gap-10">
-        <h1 className="text-gray-200 text-3xl m-0 font-medium font-mono text-center">{LocalStrings.title}</h1>
+        <h1 className="text-red-700 text-6xl m-0 font-mono text-center font-miltonian [text-shadow:_5px_3px_2px_rgb(225_225_225_/_50%)]">{LocalStrings.title}</h1>
         <div className="p-4 w-full flex flex-wrap justify-center gap-16">
           {LocalStrings.technology.map(tech => (
             <div
@@ -56,7 +63,7 @@ export default function Credits() {
               <div className="w-full py-2 flex justify-center">
                 <div
                   role="tooltip"
-                  className="tooltip z-10 inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-700 backdrop-blur-sm rounded-lg shadow-sm">
+                  className="tooltip z-10 inline-block px-4 py-2 text-sm text-white transition-opacity duration-300 bg-gray-600 backdrop-blur-sm rounded-lg shadow-sm bg-opacity-35">
                   {tech}
                 </div>
               </div>
@@ -65,7 +72,7 @@ export default function Credits() {
         </div>
         <Link
           to="/"
-          className="rounded-lg h-10 px-4 text-gray-100 bg-orange-400 hover:bg-orange-500 flex items-center justify-center w-full max-w-button">
+          className="rounded-lg px-5 py-2.5 text-gray-100 bg-orange-400 hover:bg-orange-500 flex items-center justify-center w-full max-w-button">
           {LocalStrings.primary_button}
         </Link>
       </div>

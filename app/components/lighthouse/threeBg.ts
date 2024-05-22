@@ -82,7 +82,7 @@ export default function ThreeBg() {
 
     const sceneOne = () => {
       Gsap.to(camera.position, { duration: 3, x: 16, y: 6, z: 50 });
-      Gsap.to(camera.rotation, { duration: 3, x: 0.05, y: 0.8, z: -0.015 });
+      Gsap.to(camera.rotation, { duration: 3, x: 0.05, y: 0.7, z: -0.015 });
     };
 
     const sceneTwo = () => {
@@ -91,8 +91,8 @@ export default function ThreeBg() {
     };
 
     const sceneThree = () => {
-      Gsap.to(camera.position, { duration: 3, x: 18, y: 0, z: 22 });
-      Gsap.to(camera.rotation, { duration: 3, x: -0.05, y: -0.3, z: -0.25 });
+      Gsap.to(camera.position, { duration: 3, x: 26, y: 1, z: 24.5 });
+      Gsap.to(camera.rotation, { duration: 3, x: -0.05, y: 0.65, z: -0.2 });
     };
 
     const sceneFour = () => {
@@ -107,6 +107,8 @@ export default function ThreeBg() {
 
     const sceneAnimate = (event: Event) => {
       if ('detail' in event) {
+        // eslint-disable-next-line no-console
+        console.log(event.detail);
         switch (event.detail) {
           case 1:
             return sceneOne();

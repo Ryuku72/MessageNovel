@@ -1,79 +1,41 @@
 import { useEffect, useRef, useState } from 'react';
 
-import { type ActionFunctionArgs, type MetaFunction } from '@remix-run/node';
-import { Form, Link, json, useActionData, useNavigation, useOutletContext, useSubmit } from '@remix-run/react';
+import type { ActionFunctionArgs, MetaFunction } from '@remix-run/node';
+import { Form, Link, Outlet, useActionData, useNavigate, useNavigation, useOutletContext, useSubmit } from '@remix-run/react';
 import { AuthResponse } from '@supabase/supabase-js';
-
-import { envConfig, initServer } from '~/helpers/supabase';
 
 import AvatarInput from '~/components/AvatarSelectInput';
 import ColorInput from '~/components/ColorInput';
 import PasswordInput from '~/components/PasswordInput';
+import PublicNavBar from '~/components/PublicNavBar';
 import TitleInput from '~/components/TitleInput';
 import LOCALES from '~/locales/language_en.json';
 import LoadingSpinner from '~/svg/LoadingSpinner/LoadingSpinner';
 
-import Default_Avatar from '~/assets/default_avatar.jpeg';
+import { ActionAuthUser, UserParamsEntry } from '~/services/Auth';
+import { ToastAlert } from '~/components/ToastAlert';
 
 export const meta: MetaFunction = () => {
   return [{ title: LOCALES.meta.title }, { name: 'description', content: LOCALES.meta.description }];
 };
 
 export async function action({ request }: ActionFunctionArgs) {
-  const env = envConfig();
-  const { supabaseClient, headers } = await initServer(request);
-  const body = await request.formData();
-  const avatar = body.get('create-avatar') as File;
-  const email = body.get('create-email') as string;
-  const password = body.get('create-password') as string;
-  const username = body.get('create-username') as string;
-  const color = body.get('create-color-select') as string;
-  const filename = avatar?.name;
+  const data = await request.formData();
+  const avatar = data.get('create-avatar') as File;
+  const email = data.get('create-email') as string;
+  const password = data.get('create-password') as string;
+  const username = data.get('create-username') as string;
+  const color = data.get('create-color-select') as string;
 
-  const userData = await supabaseClient?.auth?.getUser();
+  const body: UserParamsEntry = {
+    avatar,
+    email,
+    password,
+    username,
+    color
+  };
 
-  if (!userData?.data.user) {
-    const auth = await supabaseClient.auth.signUp({
-      email,
-      password
-    });
-    if (auth.error) json(auth, { headers });
-    return json({ success: false }, { headers });
-  } else {
-    if (userData.data?.user) {
-      const extension = avatar.name.split('.').at(-1);
-      if (filename) {
-        const image = await supabaseClient.storage
-          .from('assets')
-          .upload(`/${userData.data.user?.id}/avatar.${extension}`, avatar);
-        if (image.error) json(image, { headers });
-      }
-
-      const update = await supabaseClient.auth.updateUser({
-        data: {
-          avatar: filename ? `assets/${userData.data.user?.id}/avatar.${extension}` : '',
-          username,
-          color
-        }
-      });
-      if (update.error) json(update, { headers });
-
-      const profile = await supabaseClient
-        .from('profiles')
-        .insert({
-          id: userData.data.user?.id,
-          email,
-          created_at: userData.data.user?.created_at,
-          updated_at: userData.data.user?.updated_at,
-          avatar: filename ? `${env.SUPABASE_IMG_STORAGE}/assets/${userData.data.user?.id}/avatar.${extension}` : '',
-          username,
-          color
-        })
-        .select();
-      if (profile.error) return json(profile, { headers });
-      return json({ success: true }, { headers });
-    }
-  }
+  return ActionAuthUser({ request, body });
 }
 
 export default function Create() {
@@ -82,9 +44,9 @@ export default function Create() {
   const navigationState = useNavigation();
   const submit = useSubmit();
   const actionData = useActionData() as AuthResponse & { success: boolean };
+  const navigate = useNavigate();
 
-  const [viewImage, setViewImage] = useState(Default_Avatar);
-  const [colorSelect, setColorSelect] = useState('#aeaeae');
+  const [colorSelect, setColorSelect] = useState('bg-pastel-black');
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -114,20 +76,15 @@ export default function Create() {
         detail: 'Profile Created'
       });
       window.dispatchEvent(sceneEvent);
+      navigate('/dash');
     }
-  }, [actionData, submit]);
-
-  const handleOnImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files) return;
-    const [target] = e.target.files;
-    const imageURL = URL.createObjectURL(target);
-    setViewImage(imageURL);
-  };
+  }, [actionData, navigate, submit]);
 
   return (
     <div className="flex flex-col flex-auto relative w-full h-full">
+      <PublicNavBar />
       <div className="flex flex-col m-auto py-20 px-3">
-        <h1 className="text-red-800 text-4xl text-center m-0 [text-shadow:_5px_3px_2px_rgb(107_114_128_/_50%)] font-medium font-miltonian">
+        <h1 className="text-red-700 text-5xl text-center m-0 [text-shadow:_5px_3px_2px_rgb(225_225_225_/_50%)] font-miltonian">
           {LocalStrings.title}
         </h1>
         <div className="p-4 max-w-full">
@@ -140,8 +97,6 @@ export default function Create() {
                 <AvatarInput
                   title={LocalStrings.avatar}
                   id="create-avatar"
-                  value={viewImage}
-                  onChange={handleOnImageChange}
                 />
                 <ColorInput
                   title={LocalStrings.color}
@@ -172,27 +127,27 @@ export default function Create() {
                 value={password}
                 onChange={setPassword}
               />
-
               <div className="w-full flex items-center gap-3 justify-center pt-3">
                 <Link
                   to="/"
-                  className="rounded-lg h-10 px-4 text-gray-100 w-full max-w-button bg-orange-400 hover:bg-orange-500 flex items-center justify-center">
-                  {LocalStrings.secondary_button}
+                  className="rounded-lg px-5 py-2.5 text-gray-100 w-full max-w-button bg-orange-400 hover:bg-orange-500 flex items-center justify-center">
+                  {LocalStrings.primary_button}
                 </Link>
                 <button
-                  type="submit"
-                  className="rounded-lg h-10 px-4 w-full max-w-button text-gray-100 bg-blue-500 hover:bg-green-500 flex items-center justify-center font-mono"
-                  disabled={isLoading}>
-                  {isLoading ? (
-                    <LoadingSpinner className="w-full h-10" svgColor="#fff" uniqueId="create-loading" />
-                  ) : (
-                    LocalStrings.primary_button
-                  )}
-                </button>
+                className={`${isLoading ? 'py-0.5' : 'py-2.5'} rounded-lg px-5 text-gray-100 bg-blue-500 hover:bg-green-500 w-full max-w-button flex items-center justify-center`}
+                type="submit"
+                disabled={false}>
+                {isLoading ? (
+                  <LoadingSpinner className="w-full h-10" svgColor="#fff" uniqueId="index-spinner" />
+                ) : (
+                  LocalStrings.secondary_button
+                )}
+              </button>
               </div>
             </fieldset>
           </Form>
         </div>
+        <ToastAlert />
       </div>
     </div>
   );
