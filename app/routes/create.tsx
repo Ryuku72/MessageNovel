@@ -9,7 +9,6 @@ import ColorInput from '~/components/ColorInput';
 import PasswordInput from '~/components/PasswordInput';
 import PublicNavBar from '~/components/PublicNavBar';
 import TitleInput from '~/components/TitleInput';
-import { ToastAlert } from '~/components/ToastAlert';
 import LOCALES from '~/locales/language_en.json';
 import LoadingSpinner from '~/svg/LoadingSpinner/LoadingSpinner';
 
@@ -76,7 +75,7 @@ export default function Create() {
       formData.append('color', colorSelect);
       formData.append('create-email', email);
       formData.append('create-password', password);
-      
+
       submit(formData, { method: 'post', encType: 'multipart/form-data' });
     } else if (actionData?.success) {
       const sceneEvent = new CustomEvent('alertFromError', {
@@ -150,7 +149,6 @@ export default function Create() {
             </fieldset>
           </Form>
         </div>
-        <ToastAlert />
       </div>
     </div>
   );

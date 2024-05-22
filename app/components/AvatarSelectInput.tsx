@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { Component, PercentCrop, PixelCrop, centerCrop, makeAspectCrop } from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
 
@@ -33,10 +33,6 @@ export default function AvatarInput({ title, id, setImage }: AvatarInputProps) {
   const cropImageRef = useRef<HTMLImageElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
-  useEffect(() => {
-
-  }, []);
-
   const handleOnImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
     const [target] = e.target.files;
@@ -49,6 +45,12 @@ export default function AvatarInput({ title, id, setImage }: AvatarInputProps) {
           if (cropImageRef.current) cropImageRef.current.src = img.src;
           setCropImage(img.src);
         };
+        img.onerror = () => {
+          const sceneEvent = new CustomEvent('alertFromError', {
+            detail: 'Failed to upload file. Please Check File Format'
+          });
+          window.dispatchEvent(sceneEvent);
+        };
         if (event.target) img.src = event.target.result as string;
       };
 
@@ -58,10 +60,12 @@ export default function AvatarInput({ title, id, setImage }: AvatarInputProps) {
 
   const onImageLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
     const { naturalHeight: height, naturalWidth: width, offsetHeight, offsetWidth } = e.currentTarget;
-    const percent = makeAspectCrop({ unit: '%', height: 100 }, 1 / 1, width, height);
+    const percent = makeAspectCrop({ unit: '%', height: 50 }, 1 / 1, width, height);
     const cropPercent = centerCrop(percent, width, height);
     setCrop(cropPercent);
-    setCompletedCrop({ unit: 'px', width: offsetWidth, height: offsetHeight, x: 0, y: 0 });
+    const pixel = makeAspectCrop({ unit: 'px', height: offsetHeight / 2 }, 1 / 1, offsetWidth, offsetHeight);
+    const cropPixel = centerCrop(pixel, offsetWidth, offsetHeight);
+    setCompletedCrop(cropPixel);
   };
 
   const onCropChange = (_: PixelCrop, crop: PercentCrop) => {
