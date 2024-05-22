@@ -1,8 +1,9 @@
-import { useRef, useState } from 'react';
-import { Component, Crop, PercentCrop, PixelCrop, centerCrop, makeAspectCrop } from 'react-image-crop';
+import { useEffect, useRef, useState } from 'react';
+import { Component, PercentCrop, PixelCrop, centerCrop, makeAspectCrop } from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
 
 import DialogWrapper from './DialogWrapper';
+import { useOutletContext } from '@remix-run/react';
 
 import CloseIcon from '~/svg/CloseIcon/CloseIcon';
 import PlusIcon from '~/svg/PlusIcon/PlusIcon';
@@ -12,11 +13,14 @@ import Default_Avatar from '~/assets/default_avatar.jpeg';
 export type AvatarInputProps = {
   title: string;
   id: string;
+  setImage: (image: File) => void;
 };
 
-export default function AvatarInput({ title, id }: AvatarInputProps) {
-  const [viewImage, setViewImage] = useState(Default_Avatar);
+export default function AvatarInput({ title, id, setImage }: AvatarInputProps) {
+  const { sceneReady } = useOutletContext<{ sceneReady: boolean }>();
+
   const [cropImage, setCropImage] = useState('');
+  const [viewImage, setViewImage] = useState(Default_Avatar);
   const [open, setOpen] = useState(false);
   const [completedCrop, setCompletedCrop] = useState<PixelCrop | null>(null);
   const [crop, setCrop] = useState<PercentCrop>({
@@ -29,20 +33,35 @@ export default function AvatarInput({ title, id }: AvatarInputProps) {
   const cropImageRef = useRef<HTMLImageElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
+  useEffect(() => {
+
+  }, []);
+
   const handleOnImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
     const [target] = e.target.files;
-    const imageURL = URL.createObjectURL(target);
-    setCropImage(imageURL);
-    setOpen(true);
+    if (target) {
+      const reader = new FileReader();
+      reader.onload = (event: ProgressEvent<FileReader>) => {
+        const img = new Image();
+        img.onload = () => {
+          setOpen(true);
+          if (cropImageRef.current) cropImageRef.current.src = img.src;
+          setCropImage(img.src);
+        };
+        if (event.target) img.src = event.target.result as string;
+      };
+
+      reader.readAsDataURL(target);
+    }
   };
 
   const onImageLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
-    const { naturalWidth: width, naturalHeight: height, clientHeight, clientWidth } = e.currentTarget;
-    const percent = makeAspectCrop({ unit: '%', width: 100 }, 1 / 1, width, height);
+    const { naturalHeight: height, naturalWidth: width, offsetHeight, offsetWidth } = e.currentTarget;
+    const percent = makeAspectCrop({ unit: '%', height: 100 }, 1 / 1, width, height);
     const cropPercent = centerCrop(percent, width, height);
     setCrop(cropPercent);
-    setCompletedCrop({ unit: 'px', width: clientWidth, height: clientHeight, x: 0, y: 0 });
+    setCompletedCrop({ unit: 'px', width: offsetWidth, height: offsetHeight, x: 0, y: 0 });
   };
 
   const onCropChange = (_: PixelCrop, crop: PercentCrop) => {
@@ -75,16 +94,13 @@ export default function AvatarInput({ title, id }: AvatarInputProps) {
 
     canvas.toBlob(blob => {
       if (!blob) return;
-      const reader = new FileReader();
-      reader.readAsDataURL(blob);
-      reader.onloadend = async () => {
-        const fileUrl = await window?.URL.createObjectURL(blob);
-        if (inputRef.current) inputRef.current.value = fileUrl;
-        setViewImage(fileUrl);
-        setOpen(false);
-        setCropImage('');
-        setCompletedCrop(null);
-      };
+      const file = new File([blob], 'avatar.png');
+      setImage(file);
+      const fileUrl = window?.URL.createObjectURL(blob);
+      setViewImage(fileUrl);
+      setOpen(false);
+      setCropImage('');
+      setCompletedCrop(null);
     }, 'png');
   };
 
@@ -95,11 +111,33 @@ export default function AvatarInput({ title, id }: AvatarInputProps) {
   };
 
   const imageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    if (e.type !== 'error') return;
+    e.type = '';
     (e.target as HTMLImageElement).onerror = null;
+    if (!cropImage) return;
     const sceneEvent = new CustomEvent('alertFromError', {
       detail: 'Failed to upload file'
     });
     window.dispatchEvent(sceneEvent);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    setCropImage('');
+    setCompletedCrop(null);
+    setOpen(false);
+    setCrop({
+      unit: '%',
+      width: 100,
+      height: 100,
+      x: 0,
+      y: 0
+    });
+  };
+
+  const clearInput = () => {
+    if (inputRef.current) inputRef.current.value = '';
+    if (viewImage) window?.URL.revokeObjectURL(viewImage);
   };
 
   return (
@@ -109,55 +147,62 @@ export default function AvatarInput({ title, id }: AvatarInputProps) {
         className="flex flex-col items-center gap-2 font-mono font-medium text-sm text-gray-600 cursor-pointer hover:text-blue-500">
         <img alt="create-img" className="w-32 h-32 rounded-full object-cover" src={viewImage} />
         {title}
-        <input id={id} name={id} className="hidden" type="file" onChange={handleOnImageChange} />
-        <input id={id + '_crop'} name={id + '_crop'} ref={inputRef} className="hidden" />
+        <input
+          id={id}
+          name={id}
+          className="hidden"
+          type="file"
+          ref={inputRef}
+          onClick={() => clearInput()}
+          onChange={handleOnImageChange}
+        />
       </label>
-      <DialogWrapper open={open} className="max-w-full max-h-full w-full h-full justify-center p-[36px] bg-transparent">
-        {open && (
-          <div className="w-full max-w-card-l bg-white rounded-b-md rounded-t-lg flex flex-col gap-3 self-center text-mono">
-            <div className="w-full pt-4 px-6 flex flex-wrap justify-between items-center">
+      {sceneReady && (
+        <DialogWrapper
+          open={open}
+          className="max-w-full max-h-full w-full h-full justify-center p-[36px] bg-transparent">
+          <div className="w-full max-w-card-l bg-slate-300 bg-opacity-75 backdrop-blur-sm rounded-b-md rounded-t-lg flex flex-col gap-1 self-center text-mono">
+            <div className="w-full pt-4 px-6 pb-2 flex flex-wrap rounded-t-[inherit] justify-between items-center bg-white bg-opacity-75 backdrop-blur-sm">
               <h3 className="font-medium text-xl text-gray-600 underline underline-offset-4">
                 &#8197;New Novel Details&nbsp;&nbsp;&nbsp;
               </h3>
               <button
                 className="w-10 h-10 flex items-center justify-center text-slate-500 hover:text-red-500 hover:border hover:border-red-500 rounded"
-                onClick={() => setOpen(false)}>
+                type="button"
+                onClick={() => handleClose()}>
                 <CloseIcon className="w-3 h-3" uniqueId="dash-close" svgColor="currentColor" />
               </button>
             </div>
             <Component
-              minWidth={50}
-              minHeight={50}
+              minWidth={100}
+              minHeight={100}
               keepSelection={true}
               crop={crop}
               circularCrop={true}
               aspect={1 / 1}
-              style={{ minHeight: cropImageRef?.current?.height, minWidth: cropImageRef?.current?.width }}
               onChange={onCropChange}
-              onComplete={(c) => setCompletedCrop(c)}>
+              onComplete={c => setCompletedCrop(c)}>
               <img
                 loading="lazy"
-                className="w-full"
-                ref={cropImageRef}
                 alt="Crop me"
-                src={open ? cropImage : Default_Avatar}
+                className="max-w-full bg-slate-30 max-h-full m-auto"
+                ref={cropImageRef}
                 onLoad={onImageLoad}
-                crossOrigin="anonymous"
                 onError={imageError}
               />
             </Component>
-            <div className="w-full flex gap-3 flex-wrap mt-2">
+            <div className="w-full flex gap-3 flex-wrap px-6 py-2 rounded-b-md bg-white bg-opacity-75">
               <button
                 type="button"
                 className="text-gray-100 bg-blue-500 hover:bg-green-500 rounded-lg text-sm px-5 py-2.5 text-center flex items-center gap-2"
                 onClick={() => onSave()}>
                 <PlusIcon uniqueId="dash_plus" svgColor="#fff" className="w-3 h-3" />
-                Ok
+                Submit
               </button>
             </div>
           </div>
-        )}
-      </DialogWrapper>
+        </DialogWrapper>
+      )}
     </div>
   );
 }

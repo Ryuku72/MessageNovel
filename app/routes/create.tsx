@@ -1,7 +1,7 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import type { ActionFunctionArgs, MetaFunction } from '@remix-run/node';
-import { Form, Link, Outlet, useActionData, useNavigate, useNavigation, useOutletContext, useSubmit } from '@remix-run/react';
+import { Form, Link, useActionData, useNavigate, useNavigation, useOutletContext, useSubmit } from '@remix-run/react';
 import { AuthResponse } from '@supabase/supabase-js';
 
 import AvatarInput from '~/components/AvatarSelectInput';
@@ -9,11 +9,11 @@ import ColorInput from '~/components/ColorInput';
 import PasswordInput from '~/components/PasswordInput';
 import PublicNavBar from '~/components/PublicNavBar';
 import TitleInput from '~/components/TitleInput';
+import { ToastAlert } from '~/components/ToastAlert';
 import LOCALES from '~/locales/language_en.json';
 import LoadingSpinner from '~/svg/LoadingSpinner/LoadingSpinner';
 
 import { ActionAuthUser, UserParamsEntry } from '~/services/Auth';
-import { ToastAlert } from '~/components/ToastAlert';
 
 export const meta: MetaFunction = () => {
   return [{ title: LOCALES.meta.title }, { name: 'description', content: LOCALES.meta.description }];
@@ -21,11 +21,11 @@ export const meta: MetaFunction = () => {
 
 export async function action({ request }: ActionFunctionArgs) {
   const data = await request.formData();
-  const avatar = data.get('create-avatar') as File;
   const email = data.get('create-email') as string;
   const password = data.get('create-password') as string;
-  const username = data.get('create-username') as string;
-  const color = data.get('create-color-select') as string;
+  const avatar = data.get('avatar') as File;
+  const username = data.get('username') as string;
+  const color = data.get('color') as string;
 
   const body: UserParamsEntry = {
     avatar,
@@ -50,7 +50,7 @@ export default function Create() {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const formRef = useRef<HTMLFormElement | null>(null);
+  const [imageFile, setImage] = useState<File | null>(null);
 
   const isLoading = navigationState.state === 'submitting';
 
@@ -70,7 +70,14 @@ export default function Create() {
       });
       window.dispatchEvent(sceneEvent);
     } else if (!actionData?.success) {
-      submit(formRef.current, { method: 'post', encType: 'multipart/form-data' });
+      const formData = new FormData();
+      if (imageFile) formData.append('avatar', imageFile);
+      formData.append('username', username);
+      formData.append('color', colorSelect);
+      formData.append('create-email', email);
+      formData.append('create-password', password);
+      
+      submit(formData, { method: 'post', encType: 'multipart/form-data' });
     } else if (actionData?.success) {
       const sceneEvent = new CustomEvent('alertFromError', {
         detail: 'Profile Created'
@@ -78,7 +85,7 @@ export default function Create() {
       window.dispatchEvent(sceneEvent);
       navigate('/dash');
     }
-  }, [actionData, navigate, submit]);
+  }, [actionData, colorSelect, email, imageFile, navigate, password, submit, username]);
 
   return (
     <div className="flex flex-col flex-auto relative w-full h-full">
@@ -89,15 +96,11 @@ export default function Create() {
         </h1>
         <div className="p-4 max-w-full">
           <Form
-            ref={formRef}
             method="post"
             className="w-full max-w-lg flex rounded-lg shadow-xl px-12 py-8 bg-white bg-opacity-35 backdrop-blur-sm">
             <fieldset className="w-full flex flex-col justify-center items-center gap-3" disabled={isLoading}>
               <div className="flex gap-6 flex-wrap justify-center items-center">
-                <AvatarInput
-                  title={LocalStrings.avatar}
-                  id="create-avatar"
-                />
+                <AvatarInput title={LocalStrings.avatar} id="create-avatar" setImage={setImage} />
                 <ColorInput
                   title={LocalStrings.color}
                   id="create-color-select"
@@ -134,15 +137,15 @@ export default function Create() {
                   {LocalStrings.primary_button}
                 </Link>
                 <button
-                className={`${isLoading ? 'py-0.5' : 'py-2.5'} rounded-lg px-5 text-gray-100 bg-blue-500 hover:bg-green-500 w-full max-w-button flex items-center justify-center`}
-                type="submit"
-                disabled={false}>
-                {isLoading ? (
-                  <LoadingSpinner className="w-full h-10" svgColor="#fff" uniqueId="index-spinner" />
-                ) : (
-                  LocalStrings.secondary_button
-                )}
-              </button>
+                  className={`${isLoading ? 'py-0.5' : 'py-2.5'} rounded-lg px-5 text-gray-100 bg-blue-500 hover:bg-green-500 w-full max-w-button flex items-center justify-center`}
+                  type="submit"
+                  disabled={false}>
+                  {isLoading ? (
+                    <LoadingSpinner className="w-full h-10" svgColor="#fff" uniqueId="index-spinner" />
+                  ) : (
+                    LocalStrings.secondary_button
+                  )}
+                </button>
               </div>
             </fieldset>
           </Form>

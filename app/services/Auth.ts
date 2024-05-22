@@ -83,7 +83,7 @@ export async function ActionCreateProfile({ supabase, userData, body }: ActionCr
   const env = envConfig();
   const { supabaseClient, headers } = supabase;
   const { avatar, email, username, color } = body;
-  const filename = avatar?.name;
+  const filename = avatar.name;
 
   const extension = body.avatar.name.split('.').at(-1);
   if (filename) {
