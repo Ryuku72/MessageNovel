@@ -13,7 +13,7 @@ import {
 } from 'three';
 import { GLTFLoader, RoomEnvironment } from 'three/examples/jsm/Addons.js';
 
-export default function ThreeBg() {
+export default function ThreeJsBackground() {
   const animateRef = useRef(0);
 
   useEffect(() => {
@@ -41,7 +41,7 @@ export default function ThreeBg() {
     camera.rotation.set(0.05, 1.2, -0.015);
 
     const loader = new GLTFLoader();
-    loader.setPath('/app/components/lighthouse/models/');
+    loader.setPath('/app/assets/lighthouse/');
     loader.load(
       'medieval_fantasy_book.glb',
       gltf => {

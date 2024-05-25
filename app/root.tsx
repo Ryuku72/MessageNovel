@@ -4,11 +4,11 @@ import { Links, Meta, Outlet, Scripts, ScrollRestoration, isRouteErrorResponse, 
 import { useEffect, useState } from 'react';
 
 import LoadingLayer from '~/components/LoadingLayer';
-import ThreeBg from '~/components/lighthouse/threeBg';
 
 import stylesheet from '~/styles/tailwind.css?url';
 
 import { ToastAlert } from './components/ToastAlert';
+import ThreeJsBackground from './components/ThreeJsBackground';
 
 export const links: LinksFunction = () => [
   { rel: 'stylesheet', href: stylesheet },
@@ -63,7 +63,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body className="flex flex-col w-full h-full [background:_#bfe3dd] relative">
         <LoadingLayer />
-        <ThreeBg />
+        <ThreeJsBackground />
         <canvas id="canvas-bg" className="fixed top-0 left-0 w-full h-full" />
         {children}
         <ToastAlert />
