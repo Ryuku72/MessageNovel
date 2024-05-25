@@ -5,4 +5,3 @@ export type SVG_Component_props = {
 };
 
 export type SVG_Stoke_Component_props = SVG_Component_props & { svgStroke?: string };
-

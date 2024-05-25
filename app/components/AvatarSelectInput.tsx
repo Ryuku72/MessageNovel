@@ -1,15 +1,16 @@
+import { useOutletContext } from '@remix-run/react';
+
 import { useRef, useState } from 'react';
 import { Component, PercentCrop, PixelCrop, centerCrop, makeAspectCrop } from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
 
-import DialogWrapper from './DialogWrapper';
-import { useOutletContext } from '@remix-run/react';
-
 import CloseIcon from '~/svg/CloseIcon/CloseIcon';
+import LoadingClock from '~/svg/LoadingClock/LoadingClock';
 import PlusIcon from '~/svg/PlusIcon/PlusIcon';
 
 import Default_Avatar from '~/assets/default_avatar.jpeg';
-import LoadingClock from '~/svg/LoadingClock/LoadingClock';
+
+import DialogWrapper from './DialogWrapper';
 
 export type AvatarInputProps = {
   title: string;
@@ -204,7 +205,7 @@ export default function AvatarInput({ title, id, setImage }: AvatarInputProps) {
                   onError={imageError}
                 />
               </Component>
-              )}
+            )}
             <div className="w-full flex gap-3 flex-wrap px-6 py-2 rounded-b-md bg-white bg-opacity-75">
               <button
                 type="button"

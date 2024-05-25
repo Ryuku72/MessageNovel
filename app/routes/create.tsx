@@ -1,5 +1,3 @@
-import { useEffect, useState } from 'react';
-
 import type { ActionFunctionArgs, MetaFunction } from '@remix-run/node';
 import {
   Form,
@@ -11,19 +9,23 @@ import {
   useOutletContext,
   useSubmit
 } from '@remix-run/react';
+
+import { useEffect, useState } from 'react';
+
 import { AuthResponse } from '@supabase/supabase-js';
+
+import { initServer } from '~/services/API';
+import { ActionCreateProfile, ActionSignUpUser, LoadAuthUser, ProfileBodyEntry } from '~/services/Auth';
+
+import { primaryButtonClassName, secondaryButtonClassName } from '~/common/buttonFactory';
+import LOCALES from '~/locales/language_en.json';
 
 import AvatarInput from '~/components/AvatarSelectInput';
 import ColorInput from '~/components/ColorInput';
 import PasswordInput from '~/components/PasswordInput';
 import { PublicLayout } from '~/components/PublicLayout';
 import TitleInput from '~/components/TitleInput';
-import { primaryButtonClassName, secondaryButtonClassName } from '~/components/common/buttonFactory';
-import LOCALES from '~/locales/language_en.json';
 import LoadingSpinner from '~/svg/LoadingSpinner/LoadingSpinner';
-
-import { initServer } from '~/services/API';
-import { ActionCreateProfile, ActionSignUpUser, LoadAuthUser, ProfileBodyEntry } from '~/services/Auth';
 
 export const meta: MetaFunction = () => {
   return [{ title: LOCALES.meta.title }, { name: 'description', content: LOCALES.meta.description }];

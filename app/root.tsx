@@ -1,21 +1,14 @@
-import { useEffect, useState } from 'react';
-
-import { ToastAlert } from './components/ToastAlert';
 import type { LinksFunction } from '@remix-run/node';
-import {
-  Links,
-  Meta,
-  Outlet,
-  Scripts,
-  ScrollRestoration,
-  isRouteErrorResponse,
-  useRouteError
-} from '@remix-run/react';
+import { Links, Meta, Outlet, Scripts, ScrollRestoration, isRouteErrorResponse, useRouteError } from '@remix-run/react';
+
+import { useEffect, useState } from 'react';
 
 import LoadingLayer from '~/components/LoadingLayer';
 import ThreeBg from '~/components/lighthouse/threeBg';
 
 import stylesheet from '~/styles/tailwind.css?url';
+
+import { ToastAlert } from './components/ToastAlert';
 
 export const links: LinksFunction = () => [
   { rel: 'stylesheet', href: stylesheet },

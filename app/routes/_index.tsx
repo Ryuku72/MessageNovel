@@ -1,10 +1,11 @@
-import { useEffect } from 'react';
-
 import type { MetaFunction } from '@remix-run/node';
 import { useOutletContext } from '@remix-run/react';
 
-import { PublicLayout } from '~/components/PublicLayout';
+import { useEffect } from 'react';
+
 import LOCALES from '~/locales/language_en.json';
+
+import { PublicLayout } from '~/components/PublicLayout';
 
 export const meta: MetaFunction = () => {
   return [{ title: LOCALES.meta.title }, { name: 'description', content: LOCALES.meta.description }];

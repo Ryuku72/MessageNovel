@@ -1,18 +1,20 @@
-import { useEffect, useState } from 'react';
-
 import type { ActionFunctionArgs, MetaFunction } from '@remix-run/node';
 import { Form, Link, redirect, useActionData, useNavigation, useOutletContext } from '@remix-run/react';
+
+import { useEffect, useState } from 'react';
+
 import { AuthTokenResponsePassword } from '@supabase/supabase-js';
+
+import { initServer } from '~/services/API';
+import { LoginAuthUser } from '~/services/Auth';
+
+import { primaryButtonClassName, secondaryButtonClassName } from '~/common/buttonFactory';
+import LOCALES from '~/locales/language_en.json';
 
 import PasswordInput from '~/components/PasswordInput';
 import { PublicLayout } from '~/components/PublicLayout';
 import TitleInput from '~/components/TitleInput';
-import LOCALES from '~/locales/language_en.json';
 import LoadingSpinner from '~/svg/LoadingSpinner/LoadingSpinner';
-
-import { LoginAuthUser } from '~/services/Auth';
-import { primaryButtonClassName, secondaryButtonClassName } from '~/components/common/buttonFactory';
-import { initServer } from '~/services/API';
 
 export const meta: MetaFunction = () => {
   return [{ title: LOCALES.meta.title }, { name: 'description', content: LOCALES.meta.description }];
@@ -65,7 +67,7 @@ export default function Login() {
           {LOCALES.login.title}
         </h1>
         <Form
-          aria-label="login"        
+          aria-label="login"
           method="post"
           className="flex w-full flex-col gap-3 bg-white bg-opacity-25 backdrop-blur-sm rounded-lg shadow-xl px-8 py-6">
           <fieldset className="w-full flex flex-col justify-center items-center gap-3" disabled={isLoading}>
@@ -85,9 +87,7 @@ export default function Login() {
               placeholder="****"
             />
             <div className="w-full flex items-center gap-3 justify-center pt-3">
-              <Link
-                to="/"
-                className={primaryButtonClassName}>
+              <Link to="/" className={primaryButtonClassName}>
                 {LocalStrings.primary_button}
               </Link>
               <button

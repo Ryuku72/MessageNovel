@@ -12,7 +12,7 @@ export default function DialogWrapper({
   open,
   className = '',
   children,
-  handleClickOutside = () => {},
+  handleClickOutside = () => {}
 }: DialogWrapperProps) {
   const modalRef = useRef<HTMLDialogElement | null>(null);
 
@@ -31,9 +31,12 @@ export default function DialogWrapper({
   }, [open]);
 
   return (
-    <dialog ref={modalRef} className={className} onKeyUp={e => {
-     if (e.key === 'Escape') handleClickOutside(e);
-    }}>
+    <dialog
+      ref={modalRef}
+      className={className}
+      onKeyUp={e => {
+        if (e.key === 'Escape') handleClickOutside(e);
+      }}>
       {children}
     </dialog>
   );

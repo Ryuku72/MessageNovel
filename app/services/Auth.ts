@@ -1,8 +1,9 @@
-import { ActionProfileInsert } from './Profiles';
-import { ActionCreateAvatar } from './Storage';
 import { AuthResponse, AuthTokenResponsePassword, User, UserResponse } from '@supabase/supabase-js';
 
 import { SupabaseClientAndHeaderEntry, envConfig } from '~/services/API';
+
+import { ActionProfileInsert } from './Profiles';
+import { ActionCreateAvatar } from './Storage';
 
 export type LoginAuthUserEntry = {
   email: string;
@@ -131,7 +132,10 @@ export async function ActionCreateProfile({
   });
 }
 
-export async function ActionSignOut({ supabaseClient, headers }: SupabaseClientAndHeaderEntry): Promise<{ success: true }> {
+export async function ActionSignOut({
+  supabaseClient,
+  headers
+}: SupabaseClientAndHeaderEntry): Promise<{ success: true }> {
   const signOut = await supabaseClient.auth.signOut();
   if (signOut.error) {
     throw new Response(signOut.error.message, {

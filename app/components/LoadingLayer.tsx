@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
-import LOCALES from '~/locales/language_en.json';
+
 import Gsap from 'gsap';
+
+import LOCALES from '~/locales/language_en.json';
 
 export default function LoadingLayer() {
   const [percent, setPercent] = useState(1);
@@ -36,7 +38,9 @@ export default function LoadingLayer() {
           : 'flex items-center justify-center w-full h-full fixed top-0 left-0 z-10 pointer-events-none [background:_#bfe3dd] bg-opacity-75'
       }>
       <div className="flex items-center justify-center flex-col gap-2 w-card-l py-4 [max-width:_90%] text-center px-4 rounded">
-        <p ref={textRef} className="text-white text-2xl text-mono">{LOCALES.loading_layer.title}</p>
+        <p ref={textRef} className="text-white text-2xl text-mono">
+          {LOCALES.loading_layer.title}
+        </p>
         <div className="bg-gray-400 backdrop-blur-sm bg-opacity-50 w-full rounded-xl shadow-sm overflow-hidden p-1">
           <div className="relative h-6 flex items-center justify-center">
             <div

@@ -1,7 +1,8 @@
-import { thirdButtonClassName } from './common/buttonFactory';
 import { NavLink } from '@remix-run/react';
 
+import { thirdButtonClassName } from '~/common/buttonFactory';
 import LOCALES from '~/locales/language_en.json';
+
 import { UserDataEntry } from '~/routes/dash';
 
 import Default_Avatar from '~/assets/default_avatar.jpeg';

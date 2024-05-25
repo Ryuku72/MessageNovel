@@ -1,4 +1,5 @@
 import { NavLink } from '@remix-run/react';
+
 import LOCALES from '~/locales/language_en.json';
 
 export function PublicLayout({ children }: { children: React.ReactNode }) {

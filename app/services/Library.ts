@@ -16,7 +16,11 @@ export type NovelinLibraryEntry = {
 export type LoadLibraryEntry = {
   ownerId: string;
 } & SupabaseClientAndHeaderEntry;
-export async function LoadLibrary({ ownerId, supabaseClient, headers }: LoadLibraryEntry): Promise<NovelinLibraryEntry[]>  {
+export async function LoadLibrary({
+  ownerId,
+  supabaseClient,
+  headers
+}: LoadLibraryEntry): Promise<NovelinLibraryEntry[]> {
   const library = await supabaseClient.from('library').select('*').match({ owner: ownerId });
   if (library.error) {
     throw new Response(library.error.message, {
@@ -27,13 +31,12 @@ export async function LoadLibrary({ ownerId, supabaseClient, headers }: LoadLibr
   return library.data;
 }
 
-
 export type ActionLibraryInsertEntry = {
   title: string;
   description: string;
   username: string;
   userId: string;
-} &  SupabaseClientAndHeaderEntry;
+} & SupabaseClientAndHeaderEntry;
 export async function ActionLibraryInsert({
   userId,
   username,
@@ -45,10 +48,10 @@ export async function ActionLibraryInsert({
   const draftNovel = await supabaseClient
     .from('novel_draft')
     .insert({
-     updated_by: userId,
-     body: {},
-     title,
-     members: [userId]
+      updated_by: userId,
+      body: {},
+      title,
+      members: [userId]
     })
     .select();
 
@@ -71,12 +74,12 @@ export async function ActionLibraryInsert({
     })
     .select();
 
-    if (update.error) {
-      throw new Response(update.error.message, {
-        status: 500,
-        headers
-      });
-    }
+  if (update.error) {
+    throw new Response(update.error.message, {
+      status: 500,
+      headers
+    });
+  }
 
   return update.data?.[0];
 }
@@ -84,7 +87,11 @@ export async function ActionLibraryInsert({
 export type LoadNovelEntry = {
   novelId: string;
 } & SupabaseClientAndHeaderEntry;
-export async function LoadNovelinLibrary({ novelId, supabaseClient, headers }: LoadNovelEntry): Promise<NovelinLibraryEntry> {
+export async function LoadNovelinLibrary({
+  novelId,
+  supabaseClient,
+  headers
+}: LoadNovelEntry): Promise<NovelinLibraryEntry> {
   const novel = await supabaseClient.from('library').select('*').match({ id: novelId });
   if (novel.error) {
     throw new Response(novel.error.message, {

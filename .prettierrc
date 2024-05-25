@@ -10,12 +10,14 @@
   "arrowParens": "avoid",
   "plugins": ["@trivago/prettier-plugin-sort-imports"],
   "importOrder": [
+    "^@remix-run",
     "^react",
     "<THIRD_PARTY_MODULES>",
-    "^([~/|@|@/]+)?helpers/",
-    "^([~/|@|@/]+)?routes/|^([~/|@|@/]+)?components/|^([~/|@|@/]+)?locales/|^([~/|@|@/]+)?svg/",
+    "^([~/|@|@/]+)?services/",
+    "^([~/|@|@/]+)?helpers/|^([~/|@|@/]+)?common/|^([~/|@|@/]+)?locales/",
+    "^([~/|@|@/]+)?routes/|^([~/|@|@/]+)?components/|^([~/|@|@/]+)?svg/",
     "^([~/|@|@/]+)?assets/|^([~/|@|@/]+)?favicon/|^([~/|@|@/]+)?styles/",
-    "^[~/]"
+    "^[./]"
   ],
   "importOrderSeparation": true,
   "importOrderSortSpecifiers": true,
