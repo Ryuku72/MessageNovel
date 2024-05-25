@@ -1,14 +1,11 @@
+import { SVG_Stoke_Component_props } from '../types';
+
 export default function ThreeLogo({
   className = '',
   svgColor = '#ffffffbf ',
   svgStroke = '#000000',
   uniqueId
-}: {
-  className: string;
-  svgColor?: string;
-  svgStroke?: string;
-  uniqueId: string;
-}) {
+}: SVG_Stoke_Component_props) {
   return (
     <svg
       className={className}

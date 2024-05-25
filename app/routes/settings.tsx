@@ -2,14 +2,14 @@ import { useEffect } from 'react';
 
 import { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction, json, redirect } from '@remix-run/node';
 import { useLoaderData, useNavigate, useOutletContext } from '@remix-run/react';
-import { User } from '@supabase/supabase-js';
-
-import { initServer } from '~/helpers/supabase';
 
 import LOCALES from '~/locales/language_en.json';
 
 import Default_Avatar from '~/assets/default_avatar.jpeg';
-import { UserDataEntry } from '~/services/Auth';
+
+import { initServer } from '~/services/API';
+import { LoadAuthUser } from '~/services/Auth';
+import { UserDataEntry } from './dash';
 
 export const meta: MetaFunction = () => {
   return [{ title: LOCALES.meta.title }, { name: 'description', content: LOCALES.meta.description }];
@@ -17,18 +17,17 @@ export const meta: MetaFunction = () => {
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { supabaseClient, headers } = await initServer(request);
-  const data = await supabaseClient.auth.getUser();
-  if (data.data.user?.id) {
-    const loaderData = data.data.user as User;
-    const user = {
-      username: loaderData?.user_metadata?.username || 'Not Found',
-      avatar: loaderData?.user_metadata?.avatar || Default_Avatar,
-      email: loaderData?.email || 'Unknonwn',
-      color: loaderData?.user_metadata?.color || '#aeaeae'
+  const data = await LoadAuthUser({ supabaseClient, headers });
+  if (data?.id) {
+    const user: UserDataEntry = {
+      id: data.id,
+      username: data?.user_metadata?.username || 'Not Found',
+      avatar: data?.user_metadata?.avatar,
+      email: data?.email || 'Unknonwn',
+      color: data?.user_metadata?.color || '#aeaeae'
     };
     return json(user, { headers });
-  }
-  else return redirect('/', { headers });
+  } else return redirect('/', { headers });
 };
 export async function action({ request }: ActionFunctionArgs) {
   const { supabaseClient, headers } = await initServer(request);
@@ -68,7 +67,7 @@ export default function Settings() {
       <div className="p-4 w-card-l max-w-full">
         <div className="w-full flex justify-center items-center gap-3 flex-col rounded-lg shadow-xl px-12 py-8 bg-white bg-opacity-35 backdrop-blur-sm">
           <div className="w-full flex flex-col justify-center items-center">
-            <img alt="create-img" className="w-32 h-32 rounded-full object-cover" src={loaderData.avatar} />
+            <img alt="create-img" className="w-32 h-32 rounded-full object-cover" src={loaderData?.avatar || Default_Avatar} />
           </div>
           <div className="w-full flex flex-col gap-3 font-mono">
             <p className="w-full text-gray-600">

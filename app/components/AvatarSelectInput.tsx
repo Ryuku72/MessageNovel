@@ -9,6 +9,7 @@ import CloseIcon from '~/svg/CloseIcon/CloseIcon';
 import PlusIcon from '~/svg/PlusIcon/PlusIcon';
 
 import Default_Avatar from '~/assets/default_avatar.jpeg';
+import LoadingClock from '~/svg/LoadingClock/LoadingClock';
 
 export type AvatarInputProps = {
   title: string;
@@ -37,12 +38,11 @@ export default function AvatarInput({ title, id, setImage }: AvatarInputProps) {
     if (!e.target.files) return;
     const [target] = e.target.files;
     if (target) {
+      setOpen(true);
       const reader = new FileReader();
       reader.onload = (event: ProgressEvent<FileReader>) => {
         const img = new Image();
         img.onload = () => {
-          setOpen(true);
-          if (cropImageRef.current) cropImageRef.current.src = img.src;
           setCropImage(img.src);
         };
         img.onerror = () => {
@@ -50,6 +50,7 @@ export default function AvatarInput({ title, id, setImage }: AvatarInputProps) {
             detail: 'Failed to upload file. Please Check File Format'
           });
           window.dispatchEvent(sceneEvent);
+          handleClose();
         };
         if (event.target) img.src = event.target.result as string;
       };
@@ -60,10 +61,10 @@ export default function AvatarInput({ title, id, setImage }: AvatarInputProps) {
 
   const onImageLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
     const { naturalHeight: height, naturalWidth: width, offsetHeight, offsetWidth } = e.currentTarget;
-    const percent = makeAspectCrop({ unit: '%', height: 50 }, 1 / 1, width, height);
+    const percent = makeAspectCrop({ unit: '%', height: height }, 1 / 1, width, height);
     const cropPercent = centerCrop(percent, width, height);
     setCrop(cropPercent);
-    const pixel = makeAspectCrop({ unit: 'px', height: offsetHeight / 2 }, 1 / 1, offsetWidth, offsetHeight);
+    const pixel = makeAspectCrop({ unit: 'px', height: offsetHeight }, 1 / 1, offsetWidth, offsetHeight);
     const cropPixel = centerCrop(pixel, offsetWidth, offsetHeight);
     setCompletedCrop(cropPixel);
   };
@@ -123,6 +124,7 @@ export default function AvatarInput({ title, id, setImage }: AvatarInputProps) {
       detail: 'Failed to upload file'
     });
     window.dispatchEvent(sceneEvent);
+    handleClose();
   };
 
   const handleClose = () => {
@@ -164,7 +166,7 @@ export default function AvatarInput({ title, id, setImage }: AvatarInputProps) {
       {sceneReady && (
         <DialogWrapper
           open={open}
-          className="max-w-full max-h-full w-full h-full justify-center p-[36px] bg-transparent">
+          className="max-w-full max-h-full w-full h-full justify-center p-[36px] bg-transparent z-10">
           <div className="w-full max-w-card-l bg-slate-300 bg-opacity-75 backdrop-blur-sm rounded-b-md rounded-t-lg flex flex-col gap-1 self-center text-mono">
             <div className="w-full pt-4 px-6 pb-2 flex flex-wrap rounded-t-[inherit] justify-between items-center bg-white bg-opacity-75 backdrop-blur-sm">
               <h3 className="font-medium text-xl text-gray-600 underline underline-offset-4">
@@ -177,24 +179,32 @@ export default function AvatarInput({ title, id, setImage }: AvatarInputProps) {
                 <CloseIcon className="w-3 h-3" uniqueId="dash-close" svgColor="currentColor" />
               </button>
             </div>
-            <Component
-              minWidth={100}
-              minHeight={100}
-              keepSelection={true}
-              crop={crop}
-              circularCrop={true}
-              aspect={1 / 1}
-              onChange={onCropChange}
-              onComplete={c => setCompletedCrop(c)}>
-              <img
-                loading="lazy"
-                alt="Crop me"
-                className="max-w-full bg-slate-30 max-h-full m-auto"
-                ref={cropImageRef}
-                onLoad={onImageLoad}
-                onError={imageError}
-              />
-            </Component>
+            <div className={cropImage ? 'hidden' : 'w-full aspect-square flex items-center  justify-center'}>
+              <LoadingClock className="w-24 h-24" svgColor="#fff" uniqueId="image-cropper-svg" />
+            </div>
+            {/** Due to crop cricle shadow this needs to be a ternary **/}
+            {cropImage && (
+              <Component
+                minWidth={100}
+                minHeight={100}
+                keepSelection={true}
+                crop={crop}
+                circularCrop={true}
+                aspect={1 / 1}
+                className="flex w-full max-w-full max-h-full"
+                onChange={onCropChange}
+                onComplete={c => setCompletedCrop(c)}>
+                <img
+                  loading="lazy"
+                  alt="Crop me"
+                  className="max-w-full max-h-full m-auto"
+                  ref={cropImageRef}
+                  src={cropImage}
+                  onLoad={onImageLoad}
+                  onError={imageError}
+                />
+              </Component>
+              )}
             <div className="w-full flex gap-3 flex-wrap px-6 py-2 rounded-b-md bg-white bg-opacity-75">
               <button
                 type="button"

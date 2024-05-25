@@ -1,18 +1,29 @@
 import { useEffect, useState } from 'react';
 
 import type { ActionFunctionArgs, MetaFunction } from '@remix-run/node';
-import { Form, Link, useActionData, useNavigate, useNavigation, useOutletContext, useSubmit } from '@remix-run/react';
+import {
+  Form,
+  Link,
+  json,
+  useActionData,
+  useNavigate,
+  useNavigation,
+  useOutletContext,
+  useSubmit
+} from '@remix-run/react';
 import { AuthResponse } from '@supabase/supabase-js';
 
 import AvatarInput from '~/components/AvatarSelectInput';
 import ColorInput from '~/components/ColorInput';
 import PasswordInput from '~/components/PasswordInput';
-import PublicNavBar from '~/components/PublicNavBar';
+import { PublicLayout } from '~/components/PublicLayout';
 import TitleInput from '~/components/TitleInput';
+import { primaryButtonClassName, secondaryButtonClassName } from '~/components/common/buttonFactory';
 import LOCALES from '~/locales/language_en.json';
 import LoadingSpinner from '~/svg/LoadingSpinner/LoadingSpinner';
 
-import { ActionAuthUser, UserParamsEntry } from '~/services/Auth';
+import { initServer } from '~/services/API';
+import { ActionCreateProfile, ActionSignUpUser, LoadAuthUser, ProfileBodyEntry } from '~/services/Auth';
 
 export const meta: MetaFunction = () => {
   return [{ title: LOCALES.meta.title }, { name: 'description', content: LOCALES.meta.description }];
@@ -26,20 +37,32 @@ export async function action({ request }: ActionFunctionArgs) {
   const username = data.get('username') as string;
   const color = data.get('color') as string;
 
-  const body: UserParamsEntry = {
-    avatar,
-    email,
-    password,
-    username,
-    color
-  };
-
-  return ActionAuthUser({ request, body });
+  const supabase = await initServer(request);
+  const authUser = await LoadAuthUser(supabase);
+  if (!authUser.email || authUser.email !== email) {
+    const user = ActionSignUpUser({ ...supabase, email, password });
+    return json(user, { headers: supabase.headers });
+  } else {
+    const body: ProfileBodyEntry = {
+      avatar,
+      email,
+      username,
+      color
+    };
+    const user = ActionCreateProfile({
+      ...supabase,
+      userId: authUser.id,
+      created_at: authUser.created_at,
+      updated_at: authUser.updated_at || '',
+      body
+    });
+    return json(user, { headers: supabase.headers });
+  }
 }
 
 export default function Create() {
   const LocalStrings = LOCALES.create;
-  const { sceneReady } = useOutletContext() as { sceneReady: boolean };
+  const { sceneReady } = useOutletContext<{ sceneReady: boolean }>();
   const navigationState = useNavigation();
   const submit = useSubmit();
   const actionData = useActionData() as AuthResponse & { success: boolean };
@@ -87,16 +110,16 @@ export default function Create() {
   }, [actionData, colorSelect, email, imageFile, navigate, password, submit, username]);
 
   return (
-    <div className="flex flex-col flex-auto relative w-full h-full">
-      <PublicNavBar />
-      <div className="flex flex-col m-auto py-20 px-3">
+    <PublicLayout>
+      <div className="flex flex-col m-auto gap-4 w-full">
         <h1 className="text-red-700 text-5xl text-center m-0 [text-shadow:_5px_3px_2px_rgb(225_225_225_/_50%)] font-miltonian">
           {LocalStrings.title}
         </h1>
-        <div className="p-4 max-w-full">
+        <div className="max-w-full self-center">
           <Form
+            aria-label="create-account"
             method="post"
-            className="w-full max-w-lg flex rounded-lg shadow-xl px-12 py-8 bg-white bg-opacity-35 backdrop-blur-sm">
+            className="w-full max-w-lg flex rounded-lg shadow-xl px-12 max-[768px]:p-4 py-8 bg-white bg-opacity-35 backdrop-blur-sm">
             <fieldset className="w-full flex flex-col justify-center items-center gap-3" disabled={isLoading}>
               <div className="flex gap-6 flex-wrap justify-center items-center">
                 <AvatarInput title={LocalStrings.avatar} id="create-avatar" setImage={setImage} />
@@ -130,13 +153,11 @@ export default function Create() {
                 onChange={setPassword}
               />
               <div className="w-full flex items-center gap-3 justify-center pt-3">
-                <Link
-                  to="/"
-                  className="rounded-lg px-5 py-2.5 text-gray-100 w-full max-w-button bg-orange-400 hover:bg-orange-500 flex items-center justify-center">
+                <Link to="/" className={primaryButtonClassName}>
                   {LocalStrings.primary_button}
                 </Link>
                 <button
-                  className={`${isLoading ? 'py-0.5' : 'py-2.5'} rounded-lg px-5 text-gray-100 bg-blue-500 hover:bg-green-500 w-full max-w-button flex items-center justify-center`}
+                  className={`${secondaryButtonClassName} ${isLoading ? 'py-0.5' : 'py-2.5'}`}
                   type="submit"
                   disabled={false}>
                   {isLoading ? (
@@ -150,6 +171,6 @@ export default function Create() {
           </Form>
         </div>
       </div>
-    </div>
+    </PublicLayout>
   );
 }

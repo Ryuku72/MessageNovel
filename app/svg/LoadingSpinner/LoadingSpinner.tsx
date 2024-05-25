@@ -1,12 +1,6 @@
-export default function LoadingSpinner({
-  className = '',
-  svgColor = '#FFF',
-  uniqueId
-}: {
-  className: string;
-  svgColor: string;
-  uniqueId: string;
-}) {
+import { SVG_Component_props } from '../types';
+
+export default function LoadingSpinner({ className = '', svgColor = '#FFF', uniqueId }: SVG_Component_props) {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" className={className}>
       <radialGradient id={uniqueId} cx=".66" fx=".66" cy=".3125" fy=".3125" gradientTransform="scale(1.5)">

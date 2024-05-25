@@ -1,119 +1,143 @@
-import { ActionFunctionArgs, json, redirect, TypedResponse } from '@remix-run/node';
-import { SupabaseClient, User, UserResponse } from '@supabase/supabase-js';
+import { ActionProfileInsert } from './Profiles';
+import { ActionCreateAvatar } from './Storage';
+import { AuthResponse, AuthTokenResponsePassword, User, UserResponse } from '@supabase/supabase-js';
 
-import { envConfig, initServer } from '~/helpers/supabase';
-
-import Default_Avatar from '~/assets/default_avatar.jpeg';
-
-export type UserParamsBaseEntry = {
-  username: string;
-  email: string;
-  color: string;
-};
-
-export type UserParamsEntry = UserParamsBaseEntry & {
-  avatar: File;
-  password: string;
-};
-
-export type UserDataEntry = UserParamsBaseEntry & {
-  avatar: string;
-  id: string;
-};
-
-export type SupabaseClientAndHeaderEntry = {
-  supabaseClient: SupabaseClient;
-  headers: Headers;
-};
+import { SupabaseClientAndHeaderEntry, envConfig } from '~/services/API';
 
 export type LoginAuthUserEntry = {
-    request: ActionFunctionArgs['request'];
-    body: { email: string; password: string };
-}
-
-export type ActionAuthUserEntry = { request: ActionFunctionArgs['request']; body: UserParamsEntry };
-export type ActionSignUpUserEntry = { supabase: SupabaseClientAndHeaderEntry; body: UserParamsEntry };
-export type ActionCreateProfileEntry = ActionSignUpUserEntry & { userData: UserResponse };
-
-export async function LoginAuthUser({ request, body }: LoginAuthUserEntry){
-  const { supabaseClient, headers } = await initServer(request);
+  email: string;
+  password: string;
+} & SupabaseClientAndHeaderEntry;
+export async function LoginAuthUser({
+  supabaseClient,
+  headers,
+  email,
+  password
+}: LoginAuthUserEntry): Promise<AuthTokenResponsePassword['data']> {
   const init = await supabaseClient.auth.signInWithPassword({
-    email: body.email,
-    password: body.password
-  });
-  if (init.error) return json(init, { headers });
-  else return redirect('/dash', { headers });
-}
-
-export async function LoadAuthUser({ supabaseClient, headers }: SupabaseClientAndHeaderEntry): Promise<TypedResponse<UserDataEntry>> {
-  const data = await supabaseClient.auth.getUser();
-  if (data.data.user?.id) {
-    const loaderData = data.data.user as User;
-    const user: UserDataEntry = {
-      id: loaderData?.id,
-      username: loaderData?.user_metadata?.username || 'Not Found',
-      avatar: loaderData?.user_metadata?.avatar || Default_Avatar,
-      email: loaderData?.email || 'Unknonwn',
-      color: loaderData?.user_metadata?.color || '#aeaeae'
-    };
-    return json(user, { headers });
-  } else return redirect('/', { headers });
-}
-
-export async function ActionAuthUser({ request, body }: ActionAuthUserEntry) {
-  const supabase = await initServer(request);
-  const userData = await supabase.supabaseClient?.auth?.getUser();
-
-  if (!userData?.data.user || userData?.data.user.email !== body.email) return ActionSignUpUser({ supabase, body });
-  else return ActionCreateProfile({ supabase, userData, body });
-}
-
-export async function ActionSignUpUser({ supabase, body }: ActionSignUpUserEntry) {
-  const { supabaseClient, headers } = supabase;
-  const auth = await supabaseClient.auth.signUp({
-    email: body.email,
-    password: body.password
+    email: email,
+    password: password
   });
 
-  if (auth.error) return json(auth, { headers });
-  return json({ success: false }, { headers });
-}
-
-export async function ActionCreateProfile({ supabase, userData, body }: ActionCreateProfileEntry) {
-  const env = envConfig();
-  const { supabaseClient, headers } = supabase;
-  const { avatar, email, username, color } = body;
-  const filename = avatar.name;
-
-  const extension = body.avatar.name.split('.').at(-1);
-  if (filename) {
-    const image = await supabaseClient.storage
-      .from('assets')
-      .upload(`/${userData.data.user?.id}/avatar.${extension}`, avatar);
-    if (image.error) return json(image, { headers });
+  if (init.error) {
+    throw new Response(init.error.message, {
+      status: 500,
+      headers
+    });
   }
 
+  return init.data;
+}
+
+export async function LoadAuthUser({ supabaseClient, headers }: SupabaseClientAndHeaderEntry): Promise<User> {
+  const data = await supabaseClient.auth.getUser();
+
+  if (data.error) {
+    throw new Response(data.error.message, {
+      status: 500,
+      headers
+    });
+  }
+
+  return data.data.user;
+}
+
+export type ActionSignUpUserEntry = { email: string; password: string } & SupabaseClientAndHeaderEntry;
+export async function ActionSignUpUser({
+  supabaseClient,
+  headers,
+  email,
+  password
+}: ActionSignUpUserEntry): Promise<AuthResponse['data']> {
+  const data = await supabaseClient.auth.signUp({ email, password });
+
+  if (data.error) {
+    throw new Response(data.error.message, {
+      status: 500,
+      headers
+    });
+  }
+
+  return data.data;
+}
+
+export type ActionUpdateUserEntry = {
+  filename: string;
+  userId: string;
+  extension: string;
+  username: string;
+  color: string;
+} & SupabaseClientAndHeaderEntry;
+
+export async function ActionUpdateAuthUser({
+  supabaseClient,
+  headers,
+  filename,
+  userId,
+  extension,
+  username,
+  color
+}: ActionUpdateUserEntry): Promise<UserResponse> {
+  const env = envConfig();
   const update = await supabaseClient.auth.updateUser({
     data: {
-      avatar: filename ? `${env.SUPABASE_IMG_STORAGE}/assets/${userData.data.user?.id}/avatar.${extension}` : '',
+      avatar: filename ? `${env.SUPABASE_IMG_STORAGE}/assets/${userId}/avatar.${extension}` : '',
       username,
       color
     }
   });
-  if (update.error) return json(update, { headers });
+  if (update.error) {
+    throw new Response(update.error.message, {
+      status: 500,
+      headers
+    });
+  }
+  return update;
+}
 
-  const profile = await supabaseClient
-    .from('profiles')
-    .insert({
-      id: userData.data.user?.id,
-      email,
-      created_at: userData.data.user?.created_at,
-      updated_at: userData.data.user?.updated_at,
-      avatar: filename ? `${env.SUPABASE_IMG_STORAGE}/assets/${userData.data.user?.id}/avatar.${extension}` : '',
-      username,
-      color
-    })
-    .select();
-  if (profile.error) return json(profile, { headers });
-  return json({ success: true }, { headers });
+export type ProfileBodyEntry = { avatar: File; email: string; username: string; color: string };
+export type ActionCreateProfileEntry = {
+  userId: string;
+  created_at: string;
+  updated_at: string;
+  body: ProfileBodyEntry;
+} & SupabaseClientAndHeaderEntry;
+
+export async function ActionCreateProfile({
+  supabaseClient,
+  headers,
+  userId,
+  created_at,
+  updated_at,
+  body
+}: ActionCreateProfileEntry) {
+  const { avatar, email, username, color } = body;
+  const filename = avatar.name;
+  const extension = avatar.name.split('.').at(-1) || '';
+
+  if (filename) ActionCreateAvatar({ supabaseClient, headers, userId, avatar, extension });
+  ActionUpdateAuthUser({ supabaseClient, headers, filename, userId, extension, username, color });
+  return ActionProfileInsert({
+    supabaseClient,
+    headers,
+    userId,
+    extension,
+    email,
+    created_at,
+    updated_at,
+    filename,
+    username,
+    color
+  });
+}
+
+export async function ActionSignOut({ supabaseClient, headers }: SupabaseClientAndHeaderEntry): Promise<{ success: true }> {
+  const signOut = await supabaseClient.auth.signOut();
+  if (signOut.error) {
+    throw new Response(signOut.error.message, {
+      status: 500,
+      headers
+    });
+  }
+  return { success: true };
 }

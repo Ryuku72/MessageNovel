@@ -1,12 +1,6 @@
-export default function CloseIcon({
-  className = '',
-  svgColor = '#ffffffe0',
-  uniqueId
-}: {
-  className: string;
-  svgColor?: string;
-  uniqueId: string;
-}) {
+import { SVG_Component_props } from '../types';
+
+export default function CloseIcon({ className = '', svgColor = '#ffffffe0', uniqueId }: SVG_Component_props) {
   return (
     <svg
       className={className}

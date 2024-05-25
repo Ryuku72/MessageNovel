@@ -1,12 +1,13 @@
 import { LoaderFunctionArgs } from '@remix-run/node';
 import { createServerClient, parse, serialize } from '@supabase/ssr';
+import { SupabaseClient } from '@supabase/supabase-js';
 
-export type envConfigType = {
+export type envConfigEntry = {
   SUPABASE_URL: string;
   SUPABASE_ANON_KEY: string;
+  SUPABASE_IMG_STORAGE: string;
 };
-
-export const envConfig = () => {
+export const envConfig = (): envConfigEntry => {
   const env = {
     SUPABASE_URL: process.env.SUPABASE_URL!,
     SUPABASE_ANON_KEY: process.env.SUPABASE_KEY!,
@@ -15,7 +16,11 @@ export const envConfig = () => {
   return env;
 };
 
-export const initServer = async (request: LoaderFunctionArgs['request']) => {
+export type SupabaseClientAndHeaderEntry = {
+  supabaseClient: SupabaseClient;
+  headers: Headers;
+};
+export const initServer = async (request: LoaderFunctionArgs['request']): Promise<SupabaseClientAndHeaderEntry> => {
   const env = {
     SUPABASE_URL: process.env.SUPABASE_URL!,
     SUPABASE_ANON_KEY: process.env.SUPABASE_KEY!

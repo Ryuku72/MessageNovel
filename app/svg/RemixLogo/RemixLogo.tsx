@@ -1,12 +1,6 @@
-export default function RemixLogo({
-  className = '',
-  svgColor = '#212121',
-  uniqueId
-}: {
-  className: string;
-  svgColor: string;
-  uniqueId: string;
-}) {
+import { SVG_Component_props } from '../types';
+
+export default function RemixLogo({ className = '', svgColor = '#212121', uniqueId }: SVG_Component_props) {
   return (
     <svg className={className} viewBox="0 0 800 800" fill="none" xmlns="http://www.w3.org/2000/svg">
       <rect width="800" height="800" fill={svgColor} />

@@ -1,53 +1,30 @@
-import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-import { ActionFunctionArgs, redirect } from '@remix-run/node';
-import { Form, useNavigation } from '@remix-run/react';
+import { json, LoaderFunctionArgs } from '@remix-run/node';
+import { useLoaderData } from '@remix-run/react';
 
 import DialogWrapper from '~/components/DialogWrapper';
-import TitleInput from '~/components/TitleInput';
-import TitleTextArea from '~/components/TitleTextArea';
-import { secondaryButtonClassName } from '~/components/common/buttonFactory';
 import CloseIcon from '~/svg/CloseIcon/CloseIcon';
-import LoadingSpinner from '~/svg/LoadingSpinner/LoadingSpinner';
-import PlusIcon from '~/svg/PlusIcon/PlusIcon';
 
 import { initServer } from '~/services/API';
-import { LoadAuthUser } from '~/services/Auth';
-import { ActionLibraryInsert } from '~/services/Library';
+import { LoadNovelinLibrary, NovelinLibraryEntry } from '~/services/Library';
 
-export async function action({ request }: ActionFunctionArgs) {
-  const supabase = await initServer(request);
-  const body = await request.formData();
-  const title = body.get('novel-title') as string;
-  const description = body.get('novel-description') as string;
-
-  if (title && description) {
-    const user = await LoadAuthUser(supabase);
-    const update = await ActionLibraryInsert({
-      ...supabase,
-      userId: user.id,
-      username: user.user_metadata.username,
-      title,
-      description
-    });
-    return redirect(`/dash/${update.id}`, { headers: supabase.headers });
-  }
+export async function loader({ request, params }: LoaderFunctionArgs) {
+  if (!params.novelId) return;
+  const data = await initServer(request);
+  const novel = await LoadNovelinLibrary({ novelId: params.novelId as string, ...data });
+  return json(novel, { headers: data.headers });
 }
 
-export default function DashNew() {
-  const [draftNovelTitle, setDraftNovelTitle] = useState('');
-  const [draftNovelDescription, setDraftNovelDescription] = useState('');
-
-  const navigationState = useNavigation();
-  const isLoading = navigationState.state === 'submitting';
+export default function DashNovelId() {
+  const loaderData = useLoaderData< NovelinLibraryEntry>();
 
   return (
     <DialogWrapper open={true} className="max-w-full max-h-full w-full h-full justify-center p-[36px] bg-transparent">
       <div className="w-full max-w-card-l bg-white rounded-b-md rounded-t-lg flex flex-col gap-3 self-center text-mono">
         <div className="w-full pt-4 px-6 flex flex-wrap justify-between items-center">
           <h3 className="font-medium text-xl text-gray-600 underline underline-offset-4">
-            &#8197;New Novel Details&nbsp;&nbsp;&nbsp;
+            &#8197;{loaderData?.title}&#8197;
           </h3>
           <Link
             className="w-10 h-10 flex items-center justify-center text-slate-500 hover:text-red-500 hover:border hover:border-red-500 rounded"
@@ -55,7 +32,10 @@ export default function DashNew() {
             <CloseIcon className="w-3 h-3" uniqueId="dash-close" svgColor="currentColor" />
           </Link>
         </div>
-        <Form method="post" action="/dash/new" className="flex w-full pb-4 px-6">
+        <div>
+          <p>{JSON.stringify(loaderData)}</p>
+        </div>
+        {/* <Form method="post" action="/dash/new" className="flex w-full pb-4 px-6">
           <fieldset className="flex w-full flex-col gap-5">
             <TitleInput
               title={'Title'}
@@ -74,9 +54,7 @@ export default function DashNew() {
             <div className="w-full flex gap-3 flex-wrap mt-2">
               <button
                 className={
-                  secondaryButtonClassName +
-                  ` whitespace-pre !max-w-[160px] justify-center items-center ${isLoading ? 'py-0.5' : 'py-2.5'}`
-                }>
+                  secondaryButtonClassName + ` whitespace-pre !max-w-[160px] justify-center items-center ${isLoading ? 'py-0.5' : 'py-2.5'}`}>
                 {isLoading ? (
                   <LoadingSpinner className="w-full h-10" svgColor="#fff" uniqueId="index-spinner" />
                 ) : (
@@ -88,7 +66,7 @@ export default function DashNew() {
               </button>
             </div>
           </fieldset>
-        </Form>
+        </Form> */}
       </div>
     </DialogWrapper>
   );

@@ -1,49 +1,66 @@
 import { useEffect } from 'react';
 
-import { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction, redirect } from '@remix-run/node';
-import { Link, Outlet, useLoaderData, useOutletContext } from '@remix-run/react';
-
-import { initServer } from '~/helpers/supabase';
+import { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction, json, redirect } from '@remix-run/node';
+import { Link, Outlet, useLoaderData, useOutletContext, useSubmit } from '@remix-run/react';
 
 import PrivateNavBar from '~/components/PrivateNavBar';
+import { primaryButtonClassName } from '~/components/common/buttonFactory';
 import LOCALES from '~/locales/language_en.json';
 import PlusIcon from '~/svg/PlusIcon/PlusIcon';
 
-import { LoadAuthUser, UserDataEntry } from '~/services/Auth';
-import { LoadLibrary } from '~/services/Library';
+import { initServer } from '~/services/API';
+import { ActionSignOut, LoadAuthUser } from '~/services/Auth';
+import { LoadLibrary, NovelinLibraryEntry } from '~/services/Library';
 
 export const meta: MetaFunction = () => {
   return [{ title: LOCALES.meta.title }, { name: 'description', content: LOCALES.meta.description }];
 };
 
-export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const data = await initServer(request);
-  const response = await LoadAuthUser(data);
-  const user = await response.json();
-  const library = await LoadLibrary({ user, ...data });
-  return library;
+export type UserDataEntry = {
+  id: string;
+  avatar: string;
+  username: string;
+  email: string;
+  color: string;
 };
 
+export async function loader({ request }: LoaderFunctionArgs) {
+  const data = await initServer(request);
+  const user = await LoadAuthUser(data);
+  const library = await LoadLibrary({ ...data, ownerId: user.id });
+  const userData: UserDataEntry = {
+    avatar: user.user_metadata.avatar,
+    id: user.id,
+    username: user.user_metadata.username || 'Not Found',
+    email: user?.email || 'Unknonwn',
+    color: user.user_metadata.color || '#aeaeae'
+  };
+
+  return json({ library, user: userData }, { headers: data.headers });
+}
+
 export async function action({ request }: ActionFunctionArgs) {
-  const { supabaseClient, headers } = await initServer(request);
+  const data = await initServer(request);
   const body = await request.formData();
   const type = body.get('type') as string;
 
   if (type === 'sign_out') {
-    await supabaseClient.auth.signOut();
-    return redirect('/', { headers });
+    await ActionSignOut(data);
+    return redirect('/', { headers: data.headers });
   }
+
+  return null;
 }
 
 export default function Dash() {
   const loaderData =
     useLoaderData<{
       user: UserDataEntry;
-      library: { id: string; title: string; owner_username: string; created_at: string; updated_at: string }[];
+      library: NovelinLibraryEntry[];
     }>() || {};
-
   const library = loaderData?.library || [];
   const { sceneReady } = useOutletContext<{ sceneReady: boolean }>();
+  const submit = useSubmit();
 
   useEffect(() => {
     if (!sceneReady) return;
@@ -60,7 +77,7 @@ export default function Dash() {
       minimumIntegerDigits: 2,
       useGrouping: false
     });
-    const month =   new Date(date).getMonth().toLocaleString('en-US', {
+    const month = new Date(date).getMonth().toLocaleString('en-US', {
       minimumIntegerDigits: 2,
       useGrouping: false
     });
@@ -68,9 +85,16 @@ export default function Dash() {
     return `${day}/${month}/${year}`;
   };
 
+  const handleSubmit = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const formData = new FormData();
+    formData.append('type', 'sign_out');
+    submit(formData, { method: 'post' });
+  };
+
   return (
     <div className="w-full h-full flex flex-col items-center relative">
-      <PrivateNavBar user={loaderData.user} title={LocalStrings.title} />
+      <PrivateNavBar user={loaderData.user} title={LocalStrings.title} handleSubmit={handleSubmit} />
       <div className="flex flex-col max-w-[1250px] w-full px-6 overflow-hidden">
         <div className="flex flex-col flex-auto w-full rounded-lg shadow-xl bg-slate-50 backdrop-blur-sm bg-opacity-75 pb-4 overflow-auto">
           <table className="table-auto w-full text-left border-collapse">
@@ -86,18 +110,20 @@ export default function Dash() {
             <tbody className="bg-white bg-opacity-75">
               {library.map((insert, index) => (
                 <tr key={insert?.id}>
-                  <td className="border-b border-slate-100 p-4 pl-8 text-slate-600">{index + 1}</td>
-                  <td className="border-b border-slate-100 p-4 pl-8 text-slate-600 whitespace-nowrap text-ellipsis">
-                    {insert.title}
+                  <td className="border-b border-slate-100 p-4 pl-8 text-slate-600">
+                    <Link to={`/dash/${insert?.id}`}>{index + 1}</Link>
                   </td>
                   <td className="border-b border-slate-100 p-4 pl-8 text-slate-600 whitespace-nowrap text-ellipsis">
-                    {insert.owner_username}
+                    <Link to={`/dash/${insert?.id}`}>{insert.title}</Link>
                   </td>
                   <td className="border-b border-slate-100 p-4 pl-8 text-slate-600 whitespace-nowrap text-ellipsis">
-                    {createDate(insert.created_at)}
+                    <Link to={`/dash/${insert?.id}`}>{insert.owner_username}</Link>
                   </td>
                   <td className="border-b border-slate-100 p-4 pl-8 text-slate-600 whitespace-nowrap text-ellipsis">
-                    {createDate(insert.updated_at)}
+                    <Link to={`/dash/${insert?.id}`}>{createDate(insert.created_at)}</Link>
+                  </td>
+                  <td className="border-b border-slate-100 p-4 pl-8 text-slate-600 whitespace-nowrap text-ellipsis">
+                    <Link to={`/dash/${insert?.id}`}>{createDate(insert.updated_at)}</Link>
                   </td>
                 </tr>
               ))}
@@ -106,10 +132,7 @@ export default function Dash() {
         </div>
       </div>
       <div className="w-full flex gap-5 justify-end items-center p-8 sticky bottom-0 right-0">
-        <Link
-          className="rounded-lg px-5 py-2.5 text-gray-100 bg-slate-400 hover:bg-slate-600 hover:text-gray-100 w-full max-w-button flex items-center justify-center bg-opacity-95 backdrop-blur-sm shadow-xl gap-2"
-          type="button"
-          to="/dash/new">
+        <Link className={primaryButtonClassName} type="button" to="/dash/new">
           <PlusIcon uniqueId="dash_plus" svgColor="#fff" className="w-3 h-3" />
           New Novel
         </Link>

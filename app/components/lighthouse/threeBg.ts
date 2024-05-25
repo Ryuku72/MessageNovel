@@ -41,7 +41,7 @@ export default function ThreeBg() {
     camera.rotation.set(0.05, 1.2, -0.015);
 
     const loader = new GLTFLoader();
-    loader.setPath('app/components/lighthouse/models/');
+    loader.setPath('/app/components/lighthouse/models/');
     loader.load(
       'medieval_fantasy_book.glb',
       gltf => {

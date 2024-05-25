@@ -23,6 +23,7 @@ export default function TitleInput({
         {title}
       </label>
       <input
+        aria-label={title}
         id={id}
         type={type}
         name={id}

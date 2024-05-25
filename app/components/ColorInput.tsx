@@ -29,6 +29,7 @@ export default function ColorInput({ title, id, value, onChange }: ColorInputPro
         {colors.map(color => (
           <button
             key={color}
+            aria-label={color + '_button'}
             type="button"
             onClick={() => onChange(color)}
             className={`flex flex-shrink-0 items-center justify-center w-8 h-8 p-1 scale-100 rounded transition cursor-pointer hover:scale-110 shadow-slate-300 shadow ${color}`}>

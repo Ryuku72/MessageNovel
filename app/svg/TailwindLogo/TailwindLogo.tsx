@@ -1,12 +1,6 @@
-export default function TailwindLogo({
-  className = '',
-  svgColor = '#38bdf8',
-  uniqueId
-}: {
-  className: string;
-  svgColor?: string;
-  uniqueId: string;
-}) {
+import { SVG_Component_props } from '../types';
+
+export default function TailwindLogo({ className = '', svgColor = '#38bdf8', uniqueId }: SVG_Component_props) {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 54 33">
       <g clipPath={`url(#${uniqueId}_prefix__clip0`}>

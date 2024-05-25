@@ -1,12 +1,6 @@
-export default function SupabaseLogo({
-  className = '',
-  svgColor = '#3ecf8e',
-  uniqueId
-}: {
-  className: string;
-  svgColor?: string;
-  uniqueId: string;
-}) {
+import { SVG_Component_props } from '../types';
+
+export default function SupabaseLogo({ className = '', svgColor = '#3ecf8e', uniqueId }: SVG_Component_props) {
   return (
     <svg version="1.2" xmlns="http://www.w3.org/2000/svg" className={className} viewBox="0 0 1465 1502">
       <defs>

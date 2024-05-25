@@ -104,19 +104,23 @@ export function ErrorBoundary() {
 
   if (isRouteErrorResponse(error)) {
     return (
-      <div className="flex flex-col gap-3 w-full h-full">
-        <h1>
-          {error.status} {error.statusText}
-        </h1>
-        <p>{error.data}</p>
+      <div className="flex flex-col gap-3 w-full h-full relative items-center justify-center">
+        <div className="p-12 backdrop-blur-sm bg-white bg-opacity-50 rounded">
+          <h1 className="text-4xl text-red-700 font-miltonian">
+            {error.status} {error.statusText}
+          </h1>
+          <p className="text-xl text-gray-600">{error.data}</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <>
-      <h1>Error!</h1>
-      <p>{error?.message ?? 'Unknown error'}</p>
-    </>
+    <div className="flex flex-col gap-3 w-full h-full relative items-center justify-center">
+      <div className="p-12 backdrop-blur-sm bg-white bg-opacity-50 rounded">
+        <h1 className="text-4xl text-red-700 font-miltonian">Error!</h1>
+        <p className="text-xl text-gray-600">{error?.message ?? 'Unknown error'}</p>
+      </div>
+    </div>
   );
 }

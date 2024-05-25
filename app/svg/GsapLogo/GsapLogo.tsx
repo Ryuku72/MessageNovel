@@ -1,12 +1,6 @@
-export default function GsapLogo({
-  className = '',
-  svgColor = '#ffffffe0',
-  uniqueId
-}: {
-  className: string;
-  svgColor?: string;
-  uniqueId: string;
-}) {
+import { SVG_Component_props } from '../types';
+
+export default function GsapLogo({ className = '', svgColor = '#ffffffe0', uniqueId }: SVG_Component_props) {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" id={uniqueId} className={className} viewBox="0 0 623 231" fill="none">
       <path
