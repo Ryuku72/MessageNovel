@@ -11,6 +11,7 @@ import PlusIcon from '~/svg/PlusIcon/PlusIcon';
 import { initServer } from '~/services/API';
 import { ActionSignOut, LoadAuthUser } from '~/services/Auth';
 import { LoadLibrary, NovelinLibraryEntry } from '~/services/Library';
+import { CreateDate } from '~/helpers/DateHelper';
 
 export const meta: MetaFunction = () => {
   return [{ title: LOCALES.meta.title }, { name: 'description', content: LOCALES.meta.description }];
@@ -72,19 +73,6 @@ export default function Dash() {
 
   const LocalStrings = LOCALES.dash;
 
-  const createDate = (date: string) => {
-    const day = new Date(date).getDate().toLocaleString('en-US', {
-      minimumIntegerDigits: 2,
-      useGrouping: false
-    });
-    const month = new Date(date).getMonth().toLocaleString('en-US', {
-      minimumIntegerDigits: 2,
-      useGrouping: false
-    });
-    const year = new Date(date).getFullYear();
-    return `${day}/${month}/${year}`;
-  };
-
   const handleSubmit = (e: React.MouseEvent) => {
     e.stopPropagation();
     const formData = new FormData();
@@ -120,10 +108,10 @@ export default function Dash() {
                     <Link to={`/dash/${insert?.id}`}>{insert.owner_username}</Link>
                   </td>
                   <td className="border-b border-slate-100 p-4 pl-8 text-slate-600 whitespace-nowrap text-ellipsis">
-                    <Link to={`/dash/${insert?.id}`}>{createDate(insert.created_at)}</Link>
+                    <Link to={`/dash/${insert?.id}`}>{CreateDate(insert.created_at)}</Link>
                   </td>
                   <td className="border-b border-slate-100 p-4 pl-8 text-slate-600 whitespace-nowrap text-ellipsis">
-                    <Link to={`/dash/${insert?.id}`}>{createDate(insert.updated_at)}</Link>
+                    <Link to={`/dash/${insert?.id}`}>{CreateDate(insert.updated_at)}</Link>
                   </td>
                 </tr>
               ))}

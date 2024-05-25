@@ -8,6 +8,7 @@ import CloseIcon from '~/svg/CloseIcon/CloseIcon';
 
 import { initServer } from '~/services/API';
 import { LoadNovelinLibrary, NovelinLibraryEntry } from '~/services/Library';
+import { CreateDate } from '~/helpers/DateHelper';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   if (!params.novelId) return;
@@ -32,41 +33,11 @@ export default function DashNovelId() {
             <CloseIcon className="w-3 h-3" uniqueId="dash-close" svgColor="currentColor" />
           </Link>
         </div>
-        <div>
-          <p>{JSON.stringify(loaderData)}</p>
+        <div className="flex flex-col gap-3 w-full pb-4 px-6">
+          <p>Created: {CreateDate(loaderData.created_at)}</p>
+          <p>Last Update: {CreateDate(loaderData.updated_at)}</p>
+          <p>Description: {loaderData.description}</p>
         </div>
-        {/* <Form method="post" action="/dash/new" className="flex w-full pb-4 px-6">
-          <fieldset className="flex w-full flex-col gap-5">
-            <TitleInput
-              title={'Title'}
-              id="novel-title"
-              value={draftNovelTitle}
-              placeholder={'Novel Title'}
-              onChange={setDraftNovelTitle}
-            />
-            <TitleTextArea
-              title={'Description'}
-              id="novel-description"
-              value={draftNovelDescription}
-              placeholder={'Tell us what the story is about...'}
-              onChange={setDraftNovelDescription}
-            />
-            <div className="w-full flex gap-3 flex-wrap mt-2">
-              <button
-                className={
-                  secondaryButtonClassName + ` whitespace-pre !max-w-[160px] justify-center items-center ${isLoading ? 'py-0.5' : 'py-2.5'}`}>
-                {isLoading ? (
-                  <LoadingSpinner className="w-full h-10" svgColor="#fff" uniqueId="index-spinner" />
-                ) : (
-                  <>
-                    <PlusIcon uniqueId="dash_plus" svgColor="#fff" className="w-3 h-3" />
-                    Create Novel
-                  </>
-                )}
-              </button>
-            </div>
-          </fieldset>
-        </Form> */}
       </div>
     </DialogWrapper>
   );

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import type { ActionFunctionArgs, MetaFunction } from '@remix-run/node';
-import { Form, json, Link, useActionData, useNavigation, useOutletContext } from '@remix-run/react';
+import { Form, Link, redirect, useActionData, useNavigation, useOutletContext } from '@remix-run/react';
 import { AuthTokenResponsePassword } from '@supabase/supabase-js';
 
 import PasswordInput from '~/components/PasswordInput';
@@ -24,8 +24,8 @@ export async function action({ request }: ActionFunctionArgs) {
   const email = body.get('user-email') as string;
   const password = body.get('user-password') as string;
 
-  const response = await LoginAuthUser({ ...supabase, email, password });
-  return json(response.user, { headers: supabase.headers });
+  await LoginAuthUser({ ...supabase, email, password });
+  return redirect('/dash', { headers: supabase.headers });
 }
 
 export default function Login() {
