@@ -1,4 +1,5 @@
-import type { LinksFunction } from '@remix-run/node';
+
+import { LinksFunction } from '@remix-run/node';
 import { Links, Meta, Outlet, Scripts, ScrollRestoration, isRouteErrorResponse, useRouteError } from '@remix-run/react';
 
 import { useEffect, useState } from 'react';
