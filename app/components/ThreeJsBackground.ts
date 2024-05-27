@@ -12,7 +12,6 @@ import {
   WebGLRenderer
 } from 'three';
 import { GLTFLoader, RoomEnvironment } from 'three/examples/jsm/Addons.js';
-import MediEvil_Fantasy_Book from '~/assets/medieval_fantasy_book.glb?url';
 
 export default function ThreeJsBackground() {
   const animateRef = useRef(0);
@@ -43,7 +42,7 @@ export default function ThreeJsBackground() {
 
     const loader = new GLTFLoader();
     loader.load(
-      MediEvil_Fantasy_Book,
+      'medieval_fantasy_book.glb',
       gltf => {
         const model = gltf.scene;
         model.position.set(0, 0, 0);
@@ -64,7 +63,7 @@ export default function ThreeJsBackground() {
       },
       e => {
         // eslint-disable-next-line no-console
-        console.log(e);
+        console.error(e);
       }
     );
 
