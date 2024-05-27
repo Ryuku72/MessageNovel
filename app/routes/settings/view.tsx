@@ -1,8 +1,8 @@
+import { UserDataEntry } from '~/types';
+
 import LOCALES from '~/locales/language_en.json';
 
 import Default_Avatar from '~/assets/default_avatar.jpeg';
-
-import { UserDataEntry } from '../dash/type';
 
 export type SettingsViewProps = { loaderData: UserDataEntry; handleSubmit: (e: React.MouseEvent) => void };
 export function SettingsView({ loaderData, handleSubmit }: SettingsViewProps) {

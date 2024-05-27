@@ -1,15 +1,14 @@
 import { Link, Outlet } from '@remix-run/react';
 
-import { NovelinLibraryEntry } from '~/types';
+import { NovelinLibraryEntry, UserDataEntry } from '~/types';
 
 import { primaryButtonClassName } from '~/common/buttonFactory';
 import { CreateDate } from '~/helpers/DateHelper';
 import LOCALES from '~/locales/language_en.json';
 
-import PrivateNavBar from '~/components/PrivateNavBar';
 import PlusIcon from '~/svg/PlusIcon/PlusIcon';
 
-import { UserDataEntry } from './type';
+import PrivateNavBar from './components/PrivateNavBar';
 
 export type DashViewProps = {
   handleSubmit: (e: React.MouseEvent) => void;

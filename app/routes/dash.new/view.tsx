@@ -4,10 +4,11 @@ import { secondaryButtonClassName } from '~/common/buttonFactory';
 
 import DialogWrapper from '~/components/DialogWrapper';
 import TitleInput from '~/components/TitleInput';
-import TitleTextArea from '~/components/TitleTextArea';
 import CloseIcon from '~/svg/CloseIcon/CloseIcon';
 import LoadingSpinner from '~/svg/LoadingSpinner/LoadingSpinner';
 import PlusIcon from '~/svg/PlusIcon/PlusIcon';
+
+import TitleTextArea from './components/TitleTextArea';
 
 export type DashNewViewProps = {
   draftNovelTitle: string;

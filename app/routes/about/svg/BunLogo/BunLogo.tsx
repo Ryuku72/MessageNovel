@@ -1,4 +1,4 @@
-import { SVG_Component_props } from '../types';
+import { SVG_Component_props } from '~/types';
 
 export default function BunLogo({ className = '', svgColor = 'none', uniqueId }: SVG_Component_props) {
   return (

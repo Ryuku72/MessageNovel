@@ -4,11 +4,10 @@ import { Links, Meta, Outlet, Scripts, ScrollRestoration, isRouteErrorResponse, 
 import { useEffect, useState } from 'react';
 
 import LoadingLayer from '~/components/LoadingLayer';
+import ThreeJsBackground from '~/components/ThreeJsBackground';
+import { ToastAlert } from '~/components/ToastAlert';
 
 import stylesheet from '~/styles/tailwind.css?url';
-
-import ThreeJsBackground from './components/ThreeJsBackground';
-import { ToastAlert } from './components/ToastAlert';
 
 export const links: LinksFunction = () => [
   { rel: 'stylesheet', href: stylesheet },

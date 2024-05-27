@@ -4,14 +4,15 @@ import { primaryButtonClassName } from '~/common/buttonFactory';
 import LOCALES from '~/locales/language_en.json';
 
 import { PublicLayout } from '~/components/PublicLayout';
-import BunLogo from '~/svg/BunLogo/BunLogo';
-import GsapLogo from '~/svg/GsapLogo/GsapLogo';
-import ReactLogo from '~/svg/ReactLogo/ReactLogo';
-import RemixLogo from '~/svg/RemixLogo/RemixLogo';
-import SupabaseLogo from '~/svg/SupabaseLogo/SupabaseLogo';
-import TailwindLogo from '~/svg/TailwindLogo/TailwindLogo';
-import ThreeLogo from '~/svg/ThreeLogo/ThreeLogo';
-import ViteLogo from '~/svg/ViteLogo/ViteLogo';
+
+import BunLogo from './svg/BunLogo/BunLogo';
+import GsapLogo from './svg/GsapLogo/GsapLogo';
+import ReactLogo from './svg/ReactLogo/ReactLogo';
+import RemixLogo from './svg/RemixLogo/RemixLogo';
+import SupabaseLogo from './svg/SupabaseLogo/SupabaseLogo';
+import TailwindLogo from './svg/TailwindLogo/TailwindLogo';
+import ThreeLogo from './svg/ThreeLogo/ThreeLogo';
+import ViteLogo from './svg/ViteLogo/ViteLogo';
 
 export default function AboutView() {
   const LocalStrings = LOCALES.about;

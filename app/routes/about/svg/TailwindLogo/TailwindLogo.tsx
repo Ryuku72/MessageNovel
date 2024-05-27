@@ -1,4 +1,4 @@
-import { SVG_Component_props } from '../types';
+import { SVG_Component_props } from '~/types';
 
 export default function TailwindLogo({ className = '', svgColor = '#38bdf8', uniqueId }: SVG_Component_props) {
   return (

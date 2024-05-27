@@ -1,4 +1,4 @@
-import { SVG_Stoke_Component_props } from '../types';
+import { SVG_Stoke_Component_props } from '~/types';
 
 export default function ThreeLogo({
   className = '',

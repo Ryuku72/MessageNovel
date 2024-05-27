@@ -3,12 +3,13 @@ import { Form, Link } from '@remix-run/react';
 import { primaryButtonClassName, secondaryButtonClassName } from '~/common/buttonFactory';
 import LOCALES from '~/locales/language_en.json';
 
-import AvatarInput from '~/components/AvatarSelectInput';
-import ColorInput from '~/components/ColorInput';
 import PasswordInput from '~/components/PasswordInput';
 import { PublicLayout } from '~/components/PublicLayout';
 import TitleInput from '~/components/TitleInput';
 import LoadingSpinner from '~/svg/LoadingSpinner/LoadingSpinner';
+
+import AvatarInput from './components/AvatarSelectInput';
+import ColorInput from './components/ColorInput';
 
 export type CreateViewProps = {
   isLoading: boolean;
