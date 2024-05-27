@@ -42,7 +42,7 @@ export default function ThreeJsBackground() {
 
     const loader = new GLTFLoader();
     loader.load(
-      'app/assets/medieval_fantasy_book.glb',
+      '/assets/medieval_fantasy_book.glb',
       gltf => {
         const model = gltf.scene;
         model.position.set(0, 0, 0);
