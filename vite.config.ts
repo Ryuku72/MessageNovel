@@ -13,5 +13,8 @@ export default defineConfig({
       presets: [vercelPreset()]
     }),
     tsconfigPaths()
-  ]
+  ],
+  build: {
+    sourcemap: true
+  }
 });

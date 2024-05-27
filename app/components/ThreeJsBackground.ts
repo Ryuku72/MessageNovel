@@ -55,6 +55,7 @@ export default function ThreeJsBackground() {
         animateRef.current = requestAnimationFrame(animate);
       },
       xhr => {
+        console.log(xhr);
         const sceneEvent = new CustomEvent('scene ready', {
           detail: (xhr.loaded / xhr.total) * 100
         });
@@ -107,6 +108,8 @@ export default function ThreeJsBackground() {
 
     const sceneAnimate = (event: Event) => {
       if ('detail' in event) {
+        // eslint-disable-next-line no-console
+        console.log(event?.detail);
         switch (event.detail) {
           case 1:
             return sceneOne();
