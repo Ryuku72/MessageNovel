@@ -1,12 +1,4 @@
-import { ActionFunctionArgs, redirect } from '@remix-run/node';
-import { Form, useNavigation } from '@remix-run/react';
-
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
-
-import { initServer } from '~/services/API';
-import { LoadAuthUser } from '~/services/Auth';
-import { ActionLibraryInsert } from '~/services/Library';
+import { Form, Link } from '@remix-run/react';
 
 import { secondaryButtonClassName } from '~/common/buttonFactory';
 
@@ -17,32 +9,20 @@ import CloseIcon from '~/svg/CloseIcon/CloseIcon';
 import LoadingSpinner from '~/svg/LoadingSpinner/LoadingSpinner';
 import PlusIcon from '~/svg/PlusIcon/PlusIcon';
 
-export async function action({ request }: ActionFunctionArgs) {
-  const supabase = await initServer(request);
-  const body = await request.formData();
-  const title = body.get('novel-title') as string;
-  const description = body.get('novel-description') as string;
-
-  if (title && description) {
-    const user = await LoadAuthUser(supabase);
-    const update = await ActionLibraryInsert({
-      ...supabase,
-      userId: user.id,
-      username: user.user_metadata.username,
-      title,
-      description
-    });
-    return redirect(`/dash/${update.id}`, { headers: supabase.headers });
-  }
-}
-
-export default function DashNew() {
-  const [draftNovelTitle, setDraftNovelTitle] = useState('');
-  const [draftNovelDescription, setDraftNovelDescription] = useState('');
-
-  const navigationState = useNavigation();
-  const isLoading = navigationState.state === 'submitting';
-
+export type DashNewViewProps = {
+  draftNovelTitle: string;
+  setDraftNovelTitle: (title: string) => void;
+  draftNovelDescription: string;
+  setDraftNovelDescription: (descript: string) => void;
+  isLoading: boolean;
+};
+export default function DashNewView({
+  draftNovelTitle,
+  setDraftNovelTitle,
+  draftNovelDescription,
+  setDraftNovelDescription,
+  isLoading
+}: DashNewViewProps) {
   return (
     <DialogWrapper open={true} className="max-w-full max-h-full w-full h-full justify-center p-[36px] bg-transparent">
       <div className="w-full max-w-card-l bg-white rounded-b-md rounded-t-lg flex flex-col gap-3 self-center text-mono">

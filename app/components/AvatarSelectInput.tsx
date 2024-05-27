@@ -190,8 +190,7 @@ export default function AvatarInput({ title, id, setImage }: AvatarInputProps) {
                 minHeight={100}
                 keepSelection={true}
                 crop={crop}
-                circularCrop={true}
-                aspect={1 / 1}
+                circularCrop={false}
                 className="flex w-full max-w-full max-h-full"
                 onChange={onCropChange}
                 onComplete={c => setCompletedCrop(c)}>

@@ -1,23 +1,16 @@
-import { SupabaseClientAndHeaderEntry } from './API';
+import { SupabaseClient } from '@supabase/supabase-js';
 
 export type ActionCreateAvatarEntry = {
   userId: string;
   avatar: File;
   extension: string;
-} & SupabaseClientAndHeaderEntry;
-export async function ActionCreateAvatar({
+  supabaseClient: SupabaseClient;
+};
+export function ActionCreateAvatar({
   supabaseClient,
-  headers,
   userId,
   avatar,
   extension
-}: ActionCreateAvatarEntry): Promise<{ path: string }> {
-  const image = await supabaseClient.storage.from('assets').upload(`/${userId}/avatar.${extension}`, avatar);
-  if (image.error) {
-    throw new Response(image.error.message, {
-      status: 500,
-      headers
-    });
-  }
-  return image.data;
+}: ActionCreateAvatarEntry) {
+  return supabaseClient.storage.from('assets').upload(`/${userId}/avatar.${extension}`, avatar);
 }

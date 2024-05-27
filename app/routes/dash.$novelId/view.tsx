@@ -1,26 +1,15 @@
-import { LoaderFunctionArgs, json } from '@remix-run/node';
-import { useLoaderData } from '@remix-run/react';
-
 import { Link } from 'react-router-dom';
 
-import { initServer } from '~/services/API';
-import { LoadNovelinLibrary, NovelinLibraryEntry } from '~/services/Library';
+import { NovelinLibraryEntry } from '~/services/Library';
 
 import { CreateDate } from '~/helpers/DateHelper';
 
 import DialogWrapper from '~/components/DialogWrapper';
 import CloseIcon from '~/svg/CloseIcon/CloseIcon';
 
-export async function loader({ request, params }: LoaderFunctionArgs) {
-  if (!params.novelId) return;
-  const data = await initServer(request);
-  const novel = await LoadNovelinLibrary({ novelId: params.novelId as string, ...data });
-  return json(novel, { headers: data.headers });
-}
+export type DashNovelIdViewProps = { loaderData: NovelinLibraryEntry };
 
-export default function DashNovelId() {
-  const loaderData = useLoaderData<NovelinLibraryEntry>();
-
+export default function DashNovelIdView({ loaderData }: DashNovelIdViewProps) {
   return (
     <DialogWrapper open={true} className="max-w-full max-h-full w-full h-full justify-center p-[36px] bg-transparent">
       <div className="w-full max-w-card-l bg-white rounded-b-md rounded-t-lg flex flex-col gap-3 self-center text-mono">

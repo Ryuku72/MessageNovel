@@ -1,4 +1,62 @@
 {
+  "_index": {
+    "title": "Message Novel"
+  },
+  "about": {
+    "title": "About",
+    "technology": {
+      "title": "Technology",
+      "list": [
+        {
+          "name": "Remix",
+          "description": "Remix is a full stack web framework that lets you focus on the user interface and work back through web standards to deliver a fast, slick, and resilient user experience.",
+          "link": "https://remix.run/"
+        },
+        {
+          "name": "Supabase",
+          "description": "Supabase is an open-source database infrastructure built on PostgreSQL. Using Supabase's simple setup and user interface, users can quickly build a complete web and mobile backend to really focus on building their product within minutes, without getting caught up in overly complex data structures.",
+          "link": "https://supabase.com/"
+        },
+        {
+          "name": "React",
+          "description": "React is a free and open-source front-end JavaScript library for building user interfaces based on components. It is maintained by Meta and a community of individual developers and companies. React can be used to develop single-page, mobile, or server-rendered applications with frameworks",
+          "link": "https://react.dev/"
+        },
+        {
+          "name": "TailwindCSS",
+          "description": "Tailwind CSS is an open-source CSS framework. The main feature of this library is that, unlike other CSS frameworks like Bootstrap, it does not provide a series of predefined classes for elements such as buttons or tables.",
+          "link": "https://tailwindcss.com/"
+        },
+        {
+          "name": "Three Js",
+          "description": "Three.js is a cross-browser JavaScript library and application programming interface used to create and display animated 3D computer graphics in a web browser using WebGL. The source code is hosted in a repository on GitHub.",
+          "link": "https://threejs.org/"
+        },
+        {
+          "name": "Vite",
+          "description": "Vite is a local development server written by Evan You, the creator of Vue.js, and used by default by Vue and for React project templates. It has support for TypeScript and JSX. It uses Rollup and esbuild internally for bundling.",
+          "link": "https://vitejs.dev/"
+        },
+        {
+          "name": "Gsap",
+          "description": "GSAP is a framework-agnostic JavaScript animation library that turns developers into animation superheroes. Build high-performance animations that work in every major browser.",
+          "link": "https://gsap.com/"
+        }
+      ]
+    },
+    "background": {
+      "title": "Background Model Information",
+      "name": "Medieval Fantasy Book",
+      "source": "https://sketchfab.com/3d-models/medieval-fantasy-book-06d5a80a04fc4c5ab552759e9a97d91a",
+      "author": "Pixel (https://sketchfab.com/stefan.lengyel1)"
+    },
+    "primary_button": "back"
+  },
+  "public_nav": {
+    "primary_button": "Login",
+    "secondary_button": "Create",
+    "tertiary_button": "About"
+  },
   "create": {
     "title": "Lets Get Started",
     "avatar": "Upload file",
@@ -11,12 +69,6 @@
     "color": "Favourite Color",
     "primary_button": "Back",
     "secondary_button": "Submit"
-  },
-  "index": {
-    "title": "Message Novel",
-    "primary_button": "Login",
-    "secondary_button": "Create",
-    "tertiary_button": "About"
   },
   "login": {
     "title": "Login",
@@ -41,11 +93,6 @@
     "email": "Email",
     "password": "Password",
     "color": "Favourite Color",
-    "primary_button": "back"
-  },
-  "about": {
-    "title": "About",
-    "technology": ["Remix Run", "Supabase", "React", "TailwindCSS", "ThreeJs", "Vite", "Gsap"],
     "primary_button": "back"
   },
   "loading_layer": {

@@ -100,7 +100,7 @@ export function ErrorBoundary() {
       <div className="flex flex-col gap-3 w-full h-full relative items-center justify-center">
         <div className="p-12 backdrop-blur-sm bg-white bg-opacity-50 rounded">
           <h1 className="text-4xl text-red-700 font-miltonian">
-            {error.status} {error.statusText}
+            {error.status} - {error?.statusText || 'Error'}
           </h1>
           <p className="text-xl text-gray-600">{error.data}</p>
         </div>

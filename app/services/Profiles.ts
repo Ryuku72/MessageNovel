@@ -1,4 +1,6 @@
-import { SupabaseClientAndHeaderEntry, envConfig } from './API';
+import { PostgrestSingleResponse, SupabaseClient } from '@supabase/supabase-js';
+
+import { envConfig } from './API';
 
 export type ProfileEntry = {
   id: string;
@@ -19,10 +21,11 @@ export type ActionProfileInsertEntry = {
   filename: string;
   username: string;
   color: string;
-} & SupabaseClientAndHeaderEntry;
+  supabaseClient: SupabaseClient;
+};
+
 export async function ActionProfileInsert({
   supabaseClient,
-  headers,
   userId,
   extension,
   email,
@@ -31,9 +34,11 @@ export async function ActionProfileInsert({
   filename,
   username,
   color
-}: ActionProfileInsertEntry): Promise<ProfileEntry> {
+}: ActionProfileInsertEntry): Promise<
+  PostgrestSingleResponse<ProfileEntry[]| null>
+> {
   const env = envConfig();
-  const profile = await supabaseClient
+  return supabaseClient
     .from('profiles')
     .insert({
       id: userId,
@@ -44,13 +49,6 @@ export async function ActionProfileInsert({
       username,
       color
     })
-    .select();
-
-  if (profile.error) {
-    throw new Response(profile.error.message, {
-      status: 500,
-      headers
-    });
-  }
-  return profile.data?.[0];
+    .select()
+    .maybeSingle();
 }

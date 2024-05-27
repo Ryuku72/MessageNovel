@@ -1,11 +1,6 @@
-import { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction, json, redirect } from '@remix-run/node';
-import { Link, Outlet, useLoaderData, useOutletContext, useSubmit } from '@remix-run/react';
+import { Link, Outlet } from '@remix-run/react';
 
-import { useEffect } from 'react';
-
-import { initServer } from '~/services/API';
-import { ActionSignOut, LoadAuthUser } from '~/services/Auth';
-import { LoadLibrary, NovelinLibraryEntry } from '~/services/Library';
+import { NovelinLibraryEntry } from '~/services/Library';
 
 import { primaryButtonClassName } from '~/common/buttonFactory';
 import { CreateDate } from '~/helpers/DateHelper';
@@ -14,72 +9,19 @@ import LOCALES from '~/locales/language_en.json';
 import PrivateNavBar from '~/components/PrivateNavBar';
 import PlusIcon from '~/svg/PlusIcon/PlusIcon';
 
-export const meta: MetaFunction = () => {
-  return [{ title: LOCALES.meta.title }, { name: 'description', content: LOCALES.meta.description }];
-};
+import { UserDataEntry } from './type';
 
-export type UserDataEntry = {
-  id: string;
-  avatar: string;
-  username: string;
-  email: string;
-  color: string;
-};
-
-export async function loader({ request }: LoaderFunctionArgs) {
-  const data = await initServer(request);
-  const user = await LoadAuthUser(data);
-  const library = await LoadLibrary({ ...data, ownerId: user.id });
-  const userData: UserDataEntry = {
-    avatar: user.user_metadata.avatar,
-    id: user.id,
-    username: user.user_metadata.username || 'Not Found',
-    email: user?.email || 'Unknonwn',
-    color: user.user_metadata.color || '#aeaeae'
+export type DashViewProps = {
+  handleSubmit: (e: React.MouseEvent) => void;
+  loaderData: {
+    user: UserDataEntry;
+    library: NovelinLibraryEntry[];
   };
+};
 
-  return json({ library, user: userData }, { headers: data.headers });
-}
-
-export async function action({ request }: ActionFunctionArgs) {
-  const data = await initServer(request);
-  const body = await request.formData();
-  const type = body.get('type') as string;
-
-  if (type === 'sign_out') {
-    await ActionSignOut(data);
-    return redirect('/', { headers: data.headers });
-  }
-
-  return null;
-}
-
-export default function Dash() {
-  const loaderData =
-    useLoaderData<{
-      user: UserDataEntry;
-      library: NovelinLibraryEntry[];
-    }>() || {};
-  const library = loaderData?.library || [];
-  const { sceneReady } = useOutletContext<{ sceneReady: boolean }>();
-  const submit = useSubmit();
-
-  useEffect(() => {
-    if (!sceneReady) return;
-    const sceneEvent = new CustomEvent('sceneUpdate', {
-      detail: 4
-    });
-    window.dispatchEvent(sceneEvent);
-  }, [sceneReady]);
-
+export default function DashView({ handleSubmit, loaderData }: DashViewProps) {
   const LocalStrings = LOCALES.dash;
-
-  const handleSubmit = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    const formData = new FormData();
-    formData.append('type', 'sign_out');
-    submit(formData, { method: 'post' });
-  };
+  const library = loaderData?.library || [];
 
   return (
     <div className="w-full h-full flex flex-col items-center relative">

@@ -1,12 +1,4 @@
-import type { ActionFunctionArgs, MetaFunction } from '@remix-run/node';
-import { Form, Link, redirect, useActionData, useNavigation, useOutletContext } from '@remix-run/react';
-
-import { useEffect, useState } from 'react';
-
-import { AuthTokenResponsePassword } from '@supabase/supabase-js';
-
-import { initServer } from '~/services/API';
-import { LoginAuthUser } from '~/services/Auth';
+import { Form, Link } from '@remix-run/react';
 
 import { primaryButtonClassName, secondaryButtonClassName } from '~/common/buttonFactory';
 import LOCALES from '~/locales/language_en.json';
@@ -16,49 +8,15 @@ import { PublicLayout } from '~/components/PublicLayout';
 import TitleInput from '~/components/TitleInput';
 import LoadingSpinner from '~/svg/LoadingSpinner/LoadingSpinner';
 
-export const meta: MetaFunction = () => {
-  return [{ title: LOCALES.meta.title }, { name: 'description', content: LOCALES.meta.description }];
+export type LoginProps = {
+  isLoading: boolean;
+  signInValue: string;
+  setSignInValue: (state: string) => void;
+  passwordValue: string;
+  setPasswordValue: (state: string) => void;
 };
-
-export async function action({ request }: ActionFunctionArgs) {
-  const supabase = await initServer(request);
-  const body = await request.formData();
-  const email = body.get('user-email') as string;
-  const password = body.get('user-password') as string;
-
-  await LoginAuthUser({ ...supabase, email, password });
-  return redirect('/dash', { headers: supabase.headers });
-}
-
-export default function Login() {
+export default function LoginView({ isLoading, signInValue, setSignInValue, passwordValue, setPasswordValue }: LoginProps) {
   const LocalStrings = LOCALES.login;
-  const { sceneReady } = useOutletContext<{ sceneReady: boolean }>();
-  const navigationState = useNavigation();
-  const actionData = useActionData() as AuthTokenResponsePassword;
-
-  const [signInValue, setSignInValue] = useState('');
-  const [passwordValue, setPasswordValue] = useState('');
-
-  const isLoading = navigationState.state === 'submitting';
-
-  useEffect(() => {
-    if (!sceneReady) return;
-
-    const sceneEvent = new CustomEvent('sceneUpdate', {
-      detail: 3
-    });
-    window.dispatchEvent(sceneEvent);
-  }, [sceneReady]);
-
-  useEffect(() => {
-    if (!actionData) return;
-    if (actionData?.error) {
-      const sceneEvent = new CustomEvent('alertFromError', {
-        detail: actionData.error?.message || actionData.error?.code || 'Incorrect Email or Password'
-      });
-      window.dispatchEvent(sceneEvent);
-    }
-  }, [actionData]);
 
   return (
     <PublicLayout>

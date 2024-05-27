@@ -1,4 +1,4 @@
-import { SupabaseClientAndHeaderEntry } from './API';
+import { PostgrestSingleResponse, SupabaseClient } from '@supabase/supabase-js';
 
 export type NovelinLibraryEntry = {
   id: string;
@@ -13,22 +13,28 @@ export type NovelinLibraryEntry = {
   owner_username: string;
 };
 
-export type LoadLibraryEntry = {
-  ownerId: string;
-} & SupabaseClientAndHeaderEntry;
+export type LoadLibraryEntry = { ownerId: string; supabaseClient: SupabaseClient };
 export async function LoadLibrary({
   ownerId,
-  supabaseClient,
-  headers
-}: LoadLibraryEntry): Promise<NovelinLibraryEntry[]> {
-  const library = await supabaseClient.from('library').select('*').match({ owner: ownerId });
-  if (library.error) {
-    throw new Response(library.error.message, {
-      status: 500,
-      headers
-    });
-  }
-  return library.data;
+  supabaseClient
+}: LoadLibraryEntry): Promise<PostgrestSingleResponse<NovelinLibraryEntry[]>> {
+  return supabaseClient.from('library').select('*').match({ owner: ownerId });
+}
+
+export type  ActionInsertibraryEntry = { supabaseClient: SupabaseClient; userId: string; username: string; title: string; description: string; draft_id: string; };
+export function ActionInsertibrary({ supabaseClient, userId, username, title, draft_id, description }: ActionInsertibraryEntry) {
+  return supabaseClient
+    .from('library')
+    .insert({
+      owner: userId,
+      owner_username: username,
+      title,
+      draft_id,
+      description,
+      members: [userId]
+    })
+    .select()
+    .maybeSingle();
 }
 
 export type ActionLibraryInsertEntry = {
@@ -36,16 +42,16 @@ export type ActionLibraryInsertEntry = {
   description: string;
   username: string;
   userId: string;
-} & SupabaseClientAndHeaderEntry;
-export async function ActionLibraryInsert({
+  supabaseClient: SupabaseClient;
+};
+export async function ActionDraftLibraryInsert({
   userId,
-  username,
   title,
-  description,
-  supabaseClient,
-  headers
-}: ActionLibraryInsertEntry): Promise<NovelinLibraryEntry> {
-  const draftNovel = await supabaseClient
+  supabaseClient
+}: ActionLibraryInsertEntry): Promise<
+  PostgrestSingleResponse<NovelinLibraryEntry | null>
+> {
+  return supabaseClient
     .from('novel_draft')
     .insert({
       updated_by: userId,
@@ -53,51 +59,12 @@ export async function ActionLibraryInsert({
       title,
       members: [userId]
     })
-    .select();
-
-  if (draftNovel.error) {
-    throw new Response(draftNovel.error.message, {
-      status: 500,
-      headers
-    });
-  }
-
-  const update = await supabaseClient
-    .from('library')
-    .insert({
-      owner: userId,
-      owner_username: username,
-      title,
-      draft_id: draftNovel.data?.[0]?.id,
-      description,
-      members: [userId]
-    })
-    .select();
-
-  if (update.error) {
-    throw new Response(update.error.message, {
-      status: 500,
-      headers
-    });
-  }
-
-  return update.data?.[0];
+    .select()
+    .maybeSingle();
 }
 
-export type LoadNovelEntry = {
-  novelId: string;
-} & SupabaseClientAndHeaderEntry;
-export async function LoadNovelinLibrary({
-  novelId,
-  supabaseClient,
-  headers
-}: LoadNovelEntry): Promise<NovelinLibraryEntry> {
+export type LoadNovelEntry = { novelId: string; supabaseClient: SupabaseClient;};
+export async function LoadNovelinLibrary({ novelId, supabaseClient }: LoadNovelEntry): Promise<PostgrestSingleResponse<NovelinLibraryEntry[]>> {
   const novel = await supabaseClient.from('library').select('*').match({ id: novelId });
-  if (novel.error) {
-    throw new Response(novel.error.message, {
-      status: 500,
-      headers
-    });
-  }
-  return novel.data?.[0];
+  return novel;
 }
