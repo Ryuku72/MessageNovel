@@ -41,7 +41,6 @@ export default function ThreeJsBackground() {
     const camera = new PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 2000);
     camera.position.set(-1, 80, 30);
     camera.rotation.set(0.05, 1.2, -0.015);
-    console.log(gltfModal);
 
     const loader = new GLTFLoader();
     loader.load(
