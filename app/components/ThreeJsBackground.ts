@@ -11,9 +11,9 @@ import {
   Scene,
   WebGLRenderer
 } from 'three';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import { RoomEnvironment } from 'three/examples/jsm/Addons.js';
-import gltfModal from '~/assets/medieval_fantasy_book.glb?url';
+import { DRACOLoader, GLTFLoader, RoomEnvironment } from 'three/examples/jsm/Addons.js';
+
+import gltfModal from '~/assets/medieval_fantasy_book.glb';
 
 export default function ThreeJsBackground() {
   const animateRef = useRef(0);
@@ -42,7 +42,11 @@ export default function ThreeJsBackground() {
     camera.position.set(-1, 80, 30);
     camera.rotation.set(0.05, 1.2, -0.015);
 
+    const dracoLoader = new DRACOLoader();
+    dracoLoader.setDecoderPath('https://threejs.org/examples/js/libs/draco/gltf/');
+
     const loader = new GLTFLoader();
+    loader.setDRACOLoader(dracoLoader);
     loader.load(
       gltfModal,
       gltf => {
