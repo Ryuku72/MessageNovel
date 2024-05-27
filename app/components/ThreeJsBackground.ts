@@ -41,7 +41,7 @@ export default function ThreeJsBackground() {
     camera.rotation.set(0.05, 1.2, -0.015);
 
     const loader = new GLTFLoader();
-    loader.setPath('../app/assets/');
+    loader.setPath('/app/assets/');
     loader.load(
       'medieval_fantasy_book.glb',
       gltf => {
