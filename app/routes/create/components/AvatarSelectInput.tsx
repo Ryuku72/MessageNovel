@@ -4,13 +4,12 @@ import { useRef, useState } from 'react';
 import { Component, PercentCrop, PixelCrop, centerCrop, makeAspectCrop } from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
 
+import DialogWrapper from '~/components/DialogWrapper';
 import CloseIcon from '~/svg/CloseIcon/CloseIcon';
 import LoadingClock from '~/svg/LoadingClock/LoadingClock';
 import PlusIcon from '~/svg/PlusIcon/PlusIcon';
 
 import Default_Avatar from '~/assets/default_avatar.jpeg';
-
-import DialogWrapper from './DialogWrapper';
 
 export type AvatarInputProps = {
   title: string;
