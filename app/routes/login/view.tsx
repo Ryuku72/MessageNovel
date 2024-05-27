@@ -15,7 +15,13 @@ export type LoginProps = {
   passwordValue: string;
   setPasswordValue: (state: string) => void;
 };
-export default function LoginView({ isLoading, signInValue, setSignInValue, passwordValue, setPasswordValue }: LoginProps) {
+export default function LoginView({
+  isLoading,
+  signInValue,
+  setSignInValue,
+  passwordValue,
+  setPasswordValue
+}: LoginProps) {
   const LocalStrings = LOCALES.login;
 
   return (

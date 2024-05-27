@@ -1,9 +1,9 @@
-import { LoaderFunctionArgs} from '@remix-run/node';
+import { LoaderFunctionArgs } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
 
-import { NovelinLibraryEntry } from '~/services/Library';
+import { NovelinLibraryEntry } from '~/types';
 
-import DashNovelIdLoader from './loader';
+import { DashNovelIdLoader } from './services';
 import DashNovelIdView from './view';
 
 export function loader(data: LoaderFunctionArgs) {

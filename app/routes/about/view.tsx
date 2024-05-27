@@ -4,6 +4,7 @@ import { primaryButtonClassName } from '~/common/buttonFactory';
 import LOCALES from '~/locales/language_en.json';
 
 import { PublicLayout } from '~/components/PublicLayout';
+import BunLogo from '~/svg/BunLogo/BunLogo';
 import GsapLogo from '~/svg/GsapLogo/GsapLogo';
 import ReactLogo from '~/svg/ReactLogo/ReactLogo';
 import RemixLogo from '~/svg/RemixLogo/RemixLogo';
@@ -32,6 +33,8 @@ export default function AboutView() {
         return <TailwindLogo uniqueId="credit-twcss" className="w-full h-full p-2" />;
       case 'Supabase':
         return <SupabaseLogo uniqueId="credit-supabase" className="w-full h-full p-2" />;
+      case 'Bun':
+        return <BunLogo uniqueId="credit-bun" className="w-full h-full p-2" />;
     }
   };
 
@@ -43,7 +46,7 @@ export default function AboutView() {
         </h1>
         <div className="flex flex-col gap-3">
           <h2 className="text-red-700 text-4xl m-0 font-mono text-center font-miltonian [text-shadow:_5px_3px_2px_rgb(225_225_225_/_50%)]">
-          {LocalStrings.technology.title}
+            {LocalStrings.technology.title}
           </h2>
           <div className="w-full flex flex-wrap justify-center gap-16 max-[768px]:gap-6">
             {LocalStrings.technology.list.map(tech => (

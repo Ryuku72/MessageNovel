@@ -7,7 +7,7 @@ import { AuthResponse } from '@supabase/supabase-js';
 
 import LOCALES from '~/locales/language_en.json';
 
-import CreateAction from './action';
+import { CreateAction } from './services';
 import CreateView from './view';
 
 export const meta: MetaFunction = () => {

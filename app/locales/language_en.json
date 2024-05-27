@@ -41,6 +41,11 @@
           "name": "Gsap",
           "description": "GSAP is a framework-agnostic JavaScript animation library that turns developers into animation superheroes. Build high-performance animations that work in every major browser.",
           "link": "https://gsap.com/"
+        },
+        {
+          "name": "Bun",
+          "description": "Bun is a JavaScript runtime, package manager, test runner and bundler built from scratch using the Zig programming language. It was designed by Jarred Sumner as a drop-in replacement for Node.js. Bun uses WebKit's JavaScriptCore as the JavaScript engine, unlike Node.js and Deno, which both use V8.",
+          "link": "https://bun.sh/"
         }
       ]
     },

@@ -8,6 +8,7 @@ export type envConfigEntry = {
   SUPABASE_ANON_KEY: string;
   SUPABASE_IMG_STORAGE: string;
 };
+
 export const envConfig = (): envConfigEntry => {
   const env = {
     SUPABASE_URL: process.env.SUPABASE_URL!,

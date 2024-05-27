@@ -7,8 +7,8 @@ import LoadingLayer from '~/components/LoadingLayer';
 
 import stylesheet from '~/styles/tailwind.css?url';
 
-import { ToastAlert } from './components/ToastAlert';
 import ThreeJsBackground from './components/ThreeJsBackground';
+import { ToastAlert } from './components/ToastAlert';
 
 export const links: LinksFunction = () => [
   { rel: 'stylesheet', href: stylesheet },

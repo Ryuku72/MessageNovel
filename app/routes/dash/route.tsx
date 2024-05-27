@@ -3,13 +3,11 @@ import { useLoaderData, useOutletContext, useSubmit } from '@remix-run/react';
 
 import { useEffect } from 'react';
 
-import { NovelinLibraryEntry } from '~/services/Library';
+import { NovelinLibraryEntry, UserDataEntry } from '~/types';
 
 import LOCALES from '~/locales/language_en.json';
 
-import DashAction from './action';
-import DashLoader from './loader';
-import { UserDataEntry } from './type';
+import { DashAction, DashLoader } from './services';
 import DashView from './view';
 
 export const meta: MetaFunction = () => {

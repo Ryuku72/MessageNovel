@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 
-import { NovelinLibraryEntry } from '~/services/Library';
+import { NovelinLibraryEntry } from '~/types';
 
 import { CreateDate } from '~/helpers/DateHelper';
 

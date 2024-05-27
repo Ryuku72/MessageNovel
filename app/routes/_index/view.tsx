@@ -1,5 +1,6 @@
-import { PublicLayout } from '~/components/PublicLayout';
 import LOCALES from '~/locales/language_en.json';
+
+import { PublicLayout } from '~/components/PublicLayout';
 
 export default function IndexView() {
   return (

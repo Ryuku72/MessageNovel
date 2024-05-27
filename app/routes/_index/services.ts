@@ -1,16 +1,17 @@
-import { LoaderFunctionArgs, json, redirect } from '@remix-run/node';
+import { LoaderFunctionArgs, redirect } from '@remix-run/node';
 import { isRouteErrorResponse } from '@remix-run/react';
 
-import { initServer } from '~/services/API';
-import { LoadAuthUser } from '~/services/Auth';
+import { json } from 'react-router';
 
-export default async function LoginLoader(request: LoaderFunctionArgs['request']) {
+import { initServer } from '~/services/API';
+
+export async function indexLoader(request: LoaderFunctionArgs['request']) {
   const { supabaseClient, headers } = await initServer(request);
   try {
-    const response = await LoadAuthUser(supabaseClient);
+    const response = await supabaseClient.auth.getUser();
     const user = response.data?.user;
     if (user?.id) return redirect('/dash', { headers });
-    return json(null, { headers });
+    return null;
   } catch (error) {
     if (isRouteErrorResponse(error)) {
       return new Response(`${error.status} - ${error?.statusText || 'Error'}`, { status: error.status, headers });

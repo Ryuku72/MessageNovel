@@ -22,6 +22,5 @@ export default function About() {
     window.dispatchEvent(sceneEvent);
   }, [sceneReady]);
 
-
   return <AboutView />;
 }

@@ -1,12 +1,10 @@
 import { ActionFunctionArgs, json } from '@remix-run/node';
 import { isRouteErrorResponse } from '@remix-run/react';
 
-import { initServer } from '~/services/API';
-import { ActionSignUpUser, ActionUpdateAuthUser, LoadAuthUser } from '~/services/Auth';
-import { ActionProfileInsert } from '~/services/Profiles';
-import { ActionCreateAvatar } from '~/services/Storage';
+import { envConfig, initServer } from '~/services/API';
 
-export default async function CreateAction(request: ActionFunctionArgs['request']) {
+export async function CreateAction(request: ActionFunctionArgs['request']) {
+  const env = envConfig();
   const data = await request.formData();
   const email = data.get('create-email') as string;
   const password = data.get('create-password') as string;
@@ -20,29 +18,34 @@ export default async function CreateAction(request: ActionFunctionArgs['request'
   const { supabaseClient, headers } = await initServer(request);
 
   try {
-    const authUser = await LoadAuthUser(supabaseClient);
+    const authUser = await supabaseClient.auth.getUser();
 
     const userId = authUser.data.user?.id || '';
     const created_at = authUser.data.user?.created_at || new Date().toISOString();
     const updated_at = authUser.data.user?.updated_at || new Date().toISOString();
 
     if (!userId || (userId && authUser.data.user?.email !== email)) {
-      const response = await ActionSignUpUser({ supabaseClient, email, password });
+      const response = await supabaseClient.auth.signUp({ email, password });
       if (response.error) return json({ error: { message: response.error.message } }, { headers });
       return json(response, { headers });
     } else {
-      if (filename) await ActionCreateAvatar({ supabaseClient, userId, avatar, extension });
-      await ActionUpdateAuthUser({ supabaseClient, userId, filename, extension, username, color });
-      const response = await ActionProfileInsert({
-        supabaseClient,
-        userId,
-        extension,
+      if (filename) await supabaseClient.storage.from('assets').upload(`/${userId}/avatar.${extension}`, avatar);
+      await supabaseClient.auth.updateUser({
+        data: {
+          avatar: filename ? `${env.SUPABASE_IMG_STORAGE}/assets/${userId}/avatar.${extension}` : '',
+          username,
+          color
+        }
+      });
+      const response = await supabaseClient.from('profiles').insert({
+        id: userId,
         email,
         created_at,
         updated_at,
         filename,
         username,
-        color
+        color,
+        avatar: filename ? `${env.SUPABASE_IMG_STORAGE}/assets/${userId}/avatar.${extension}` : ''
       });
       if (response.error) return json({ error: { message: response.error.message } }, { headers });
       return json(response, { headers });

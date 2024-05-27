@@ -1,21 +1,18 @@
-import { ActionFunctionArgs, json, redirect } from '@remix-run/node';
+import { LoaderFunctionArgs, json, redirect } from '@remix-run/node';
 import { isRouteErrorResponse } from '@remix-run/react';
 
 import { initServer } from '~/services/API';
-import { ActionSignOut } from '~/services/Auth';
 
-export default async function DashAction(request: ActionFunctionArgs['request']) {
+export async function DashNovelIdLoader({ request, params }: LoaderFunctionArgs) {
+  if (!params.novelId) return;
   const { supabaseClient, headers } = await initServer(request);
-  const body = await request.formData();
-  const type = body.get('type') as string;
-
   try {
-    if (type === 'sign_out') {
-      await ActionSignOut(supabaseClient);
-      return redirect('/', { headers });
-    }
-
-    return json(null, { headers });
+    const response = await supabaseClient
+      .from('library')
+      .select('*')
+      .match({ id: params.novelId as string });
+    if (!response.data) redirect('/dash', { headers });
+    return json(response, { headers });
   } catch (error) {
     if (isRouteErrorResponse(error)) {
       return new Response(`${error.status} - ${error?.statusText || 'Error'}`, { status: error.status, headers });

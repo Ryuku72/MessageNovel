@@ -3,11 +3,11 @@ import { useLoaderData, useNavigate, useOutletContext } from '@remix-run/react';
 
 import { useEffect } from 'react';
 
+import { UserDataEntry } from '~/types';
+
 import LOCALES from '~/locales/language_en.json';
 
-import SettingsLoader from './loader';
-import SettingsAction from './action';
-import { UserDataEntry } from '../dash/type';
+import { SettingsAction, SettingsLoader } from './services';
 import { SettingsView } from './view';
 
 export const meta: MetaFunction = () => {

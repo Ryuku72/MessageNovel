@@ -1,6 +1,6 @@
 import { Link, Outlet } from '@remix-run/react';
 
-import { NovelinLibraryEntry } from '~/services/Library';
+import { NovelinLibraryEntry } from '~/types';
 
 import { primaryButtonClassName } from '~/common/buttonFactory';
 import { CreateDate } from '~/helpers/DateHelper';

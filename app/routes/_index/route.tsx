@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 
 import LOCALES from '~/locales/language_en.json';
 
-import indexLoader from './loader';
+import { indexLoader } from './services';
 import IndexView from './view';
 
 export const meta: MetaFunction = () => {

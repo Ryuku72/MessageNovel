@@ -7,8 +7,7 @@ import { AuthTokenResponsePassword } from '@supabase/supabase-js';
 
 import LOCALES from '~/locales/language_en.json';
 
-import LoginAction from './action';
-import LoginLoader from './loader';
+import { LoginAction, LoginLoader } from './services';
 import LoginView from './view';
 
 export const meta: MetaFunction = () => {
