@@ -4,7 +4,7 @@ export const loader = () => {
           Disallow: /nogooglebot/
           User-agent: *
           Allow: /
-          Sitemap: https://lukalazic.com/sitemap.xml`;
+          Sitemap: https://messagenovel.vercel.app/sitemap.xml`;
 
   return new Response(robotText, {
     status: 200,
