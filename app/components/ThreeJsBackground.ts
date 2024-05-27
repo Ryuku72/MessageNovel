@@ -11,7 +11,9 @@ import {
   Scene,
   WebGLRenderer
 } from 'three';
-import { GLTFLoader, RoomEnvironment } from 'three/examples/jsm/Addons.js';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { RoomEnvironment } from 'three/examples/jsm/Addons.js';
+import gltfModal from '~/assets/medieval_fantasy_book.glb?url';
 
 export default function ThreeJsBackground() {
   const animateRef = useRef(0);
@@ -42,7 +44,7 @@ export default function ThreeJsBackground() {
 
     const loader = new GLTFLoader();
     loader.load(
-      'medieval_fantasy_book.glb',
+      gltfModal,
       gltf => {
         const model = gltf.scene;
         model.position.set(0, 0, 0);
