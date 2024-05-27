@@ -55,7 +55,7 @@ export default function ThreeJsBackground() {
         animateRef.current = requestAnimationFrame(animate);
       },
       xhr => {
-        console.log(xhr);
+        if (!xhr.total) throw new Error('no file loaded');
         const sceneEvent = new CustomEvent('scene ready', {
           detail: (xhr.loaded / xhr.total) * 100
         });
@@ -64,7 +64,7 @@ export default function ThreeJsBackground() {
       },
       e => {
         // eslint-disable-next-line no-console
-        console.error(e);
+        console.log(e);
       }
     );
 
