@@ -10,21 +10,21 @@ export function PublicLayout({ children }: { children: React.ReactNode }) {
         <NavLink
           to="/login"
           className={({ isActive, isPending, isTransitioning }) =>
-            `text-3xl max-[768px]:text-xl font-semibold tracking-widest ${isActive || isPending || isTransitioning ? ' text-slate-600 underline underline-offset-[14px]' : 'text-slate-100 hover:underline-offset-[14px] hover:underline'} flex items-center justify-center`
+            `text-3xl max-[768px]:text-xl font-semibold tracking-widest ${isActive || isPending || isTransitioning ? ' text-slate-600 max-[768px]:text-white underline underline-offset-[14px]' : 'text-slate-100 hover:underline-offset-[14px] hover:underline'} flex items-center justify-center`
           }>
           &nbsp;&nbsp;{LocalString.primary_button}&nbsp;&nbsp;
         </NavLink>
         <NavLink
           to="/create"
           className={({ isActive, isPending, isTransitioning }) =>
-            `text-3xl max-[768px]:text-xl font-semibold tracking-widest ${isActive || isPending || isTransitioning ? ' text-slate-600 underline underline-offset-[14px]' : 'text-slate-100 hover:underline-offset-[14px] hover:underline'} flex items-center justify-center`
+            `text-3xl max-[768px]:text-xl font-semibold tracking-widest ${isActive || isPending || isTransitioning ? ' text-slate-600 max-[768px]:text-white underline underline-offset-[14px]' : 'text-slate-100 hover:underline-offset-[14px] hover:underline'} flex items-center justify-center`
           }>
           &nbsp;&nbsp;{LocalString.secondary_button}&nbsp;&nbsp;
         </NavLink>
         <NavLink
           to="/about"
           className={({ isActive, isPending, isTransitioning }) =>
-            `text-3xl max-[768px]:text-xl font-semibold tracking-widest ${isActive || isPending || isTransitioning ? ' text-slate-600 underline underline-offset-[14px]' : 'text-slate-100 hover:underline-offset-[14px] hover:underline'} flex items-center justify-center`
+            `text-3xl max-[768px]:text-xl font-semibold tracking-widest ${isActive || isPending || isTransitioning ? ' text-slate-600 max-[768px]:text-white underline underline-offset-[14px]' : 'text-slate-100 hover:underline-offset-[14px] hover:underline'} flex items-center justify-center`
           }>
           &nbsp;&nbsp;{LocalString.tertiary_button}&nbsp;&nbsp;
         </NavLink>
