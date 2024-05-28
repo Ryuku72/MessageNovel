@@ -22,7 +22,7 @@ export default function TitleTextArea({ title, id, value, placeholder, onChange,
         placeholder={placeholder}
         autoComplete={id}
         rows={8}
-        className="w-full text-sm font-normal border border-gray-300 rounded-lg p-3 text-gray-500 resize-none"
+        className="w-full text-base font-normal border border-gray-300 rounded-lg p-3 text-gray-500 resize-none"
         maxLength={limit}
       />
     </div>

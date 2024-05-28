@@ -38,7 +38,7 @@ export default function PasswordInput({
         value={value}
         onChange={e => onChange(e.target.value)}
         placeholder={placeholder}
-        className="w-full h-11 font-normal border text-sm border-gray-300 rounded-lg py-2 px-3 text-gray-500 pr-11"
+        className="w-full h-11 font-normal border text-base border-gray-300 rounded-lg py-2 px-3 text-gray-500 pr-11"
       />
       <div className={`flex gap-3 items-center w-full px-2 text-sm ${labelColor}`}>
         <input

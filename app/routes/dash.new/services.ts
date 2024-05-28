@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { ActionFunctionArgs, json, redirect } from '@remix-run/node';
 import { isRouteErrorResponse } from '@remix-run/react';
 
@@ -25,7 +26,11 @@ export async function DashNewAction(request: ActionFunctionArgs['request']) {
         .select()
         .maybeSingle();
 
-      if (draftInsert.error) return json({ error: { message: draftInsert.error.message } }, { headers });
+      if (draftInsert.error) {
+        console.error(draftInsert.error);
+        console.error('error in dash new');
+        return json({ error: { message: draftInsert.error.message } }, { headers });
+      }
       const libraryInsert = await supabaseClient
         .from('library')
         .insert({
@@ -42,12 +47,10 @@ export async function DashNewAction(request: ActionFunctionArgs['request']) {
       return redirect(`/dash/${libraryInsert.data?.id}`, { headers });
     } else return json({ error: 'Title and Description are requires' }, { headers });
   } catch (error) {
-    if (isRouteErrorResponse(error)) {
+    console.error(error);
+    console.error('process error in dash new');
+    if (isRouteErrorResponse(error))
       return new Response(`${error.status} - ${error?.statusText || 'Error'}`, { status: error.status, headers });
-    } else {
-      // eslint-disable-next-line no-console
-      console.error(error);
-      return json(null, { headers });
-    }
+    return json(null, { headers });
   }
 }

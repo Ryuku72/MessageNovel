@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { LoaderFunctionArgs, redirect } from '@remix-run/node';
 import { isRouteErrorResponse } from '@remix-run/react';
 
@@ -13,12 +14,10 @@ export async function indexLoader(request: LoaderFunctionArgs['request']) {
     if (user?.id) return redirect('/dash', { headers });
     return null;
   } catch (error) {
-    if (isRouteErrorResponse(error)) {
+    console.error(error);
+    console.error('process error in index');
+    if (isRouteErrorResponse(error))
       return new Response(`${error.status} - ${error?.statusText || 'Error'}`, { status: error.status, headers });
-    } else {
-      // eslint-disable-next-line no-console
-      console.error(error);
-      return json(null, { headers });
-    }
+    return json(null, { headers });
   }
 }

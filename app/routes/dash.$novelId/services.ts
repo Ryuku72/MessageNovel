@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { LoaderFunctionArgs, json, redirect } from '@remix-run/node';
 import { isRouteErrorResponse } from '@remix-run/react';
 
@@ -14,12 +15,10 @@ export async function DashNovelIdLoader({ request, params }: LoaderFunctionArgs)
     if (!response.data) redirect('/dash', { headers });
     return json(response, { headers });
   } catch (error) {
-    if (isRouteErrorResponse(error)) {
+    console.error(error);
+    console.error('process error in dash novel id');
+    if (isRouteErrorResponse(error))
       return new Response(`${error.status} - ${error?.statusText || 'Error'}`, { status: error.status, headers });
-    } else {
-      // eslint-disable-next-line no-console
-      console.error(error);
-      return json(null, { headers });
-    }
+    return json(null, { headers });
   }
 }

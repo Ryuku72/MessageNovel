@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { ActionFunctionArgs, LoaderFunctionArgs, json, redirect } from '@remix-run/node';
 import { isRouteErrorResponse } from '@remix-run/react';
 
@@ -15,16 +16,13 @@ export async function DashAction(request: ActionFunctionArgs['request']) {
       await supabaseClient.auth.signOut();
       return redirect('/', { headers });
     }
-
     return json(null, { headers });
   } catch (error) {
-    if (isRouteErrorResponse(error)) {
-      return new Response(`${error.status} - ${error?.statusText || 'Error'}`, { status: error.status, headers });
-    } else {
-      // eslint-disable-next-line no-console
-      console.error(error);
-      return json(null, { headers });
-    }
+    console.error(error);
+    console.error('process error in dash');
+
+    if (isRouteErrorResponse(error)) return new Response(`${error.status} - ${error?.statusText || 'Error'}`, { status: error.status, headers });
+    else return json(null, { headers });
   }
 }
 
@@ -47,12 +45,9 @@ export async function DashLoader(request: LoaderFunctionArgs['request']) {
 
     return json({ library: library?.data, user: userData }, { headers });
   } catch (error) {
-    if (isRouteErrorResponse(error)) {
-      return new Response(`${error.status} - ${error?.statusText || 'Error'}`, { status: error.status, headers });
-    } else {
-      // eslint-disable-next-line no-console
-      console.error(error);
-      return json(null, { headers });
-    }
+    console.error(error);
+    console.error('process error in dash');
+    if (isRouteErrorResponse(error)) return new Response(`${error.status} - ${error?.statusText || 'Error'}`, { status: error.status, headers });
+    else return json(null, { headers });
   }
 }

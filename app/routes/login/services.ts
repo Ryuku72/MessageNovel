@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { ActionFunctionArgs, LoaderFunctionArgs, json, redirect } from '@remix-run/node';
 import { isRouteErrorResponse } from '@remix-run/react';
 
@@ -13,16 +14,17 @@ export async function LoginAction(request: ActionFunctionArgs['request']) {
       email,
       password
     });
-    if (response.error) return json({ error: { message: response.error?.message } }, { headers });
+    if (response.error) {
+      console.error(response.error);
+      console.error('error in login');
+      return json({ error: { message: response.error?.message } }, { headers });
+    }
     return redirect('/dash', { headers });
   } catch (error) {
-    if (isRouteErrorResponse(error)) {
-      return new Response(`${error.status} - ${error?.statusText || 'Error'}`, { status: error.status, headers });
-    } else {
-      // eslint-disable-next-line no-console
-      console.error(error);
-      return json(null, { headers });
-    }
+    console.error(error);
+    console.error('process error in login');
+    if (isRouteErrorResponse(error)) return new Response(`${error.status} - ${error?.statusText || 'Error'}`, { status: error.status, headers });
+    return json(null, { headers });
   }
 }
 
@@ -34,12 +36,10 @@ export async function LoginLoader(request: LoaderFunctionArgs['request']) {
     if (user?.id) return redirect('/dash', { headers });
     return json(null, { headers });
   } catch (error) {
-    if (isRouteErrorResponse(error)) {
+    console.error(error);
+    console.error('process error in login');
+    if (isRouteErrorResponse(error))
       return new Response(`${error.status} - ${error?.statusText || 'Error'}`, { status: error.status, headers });
-    } else {
-      // eslint-disable-next-line no-console
-      console.error(error);
-      return json(null, { headers });
-    }
+    return json(null, { headers });
   }
 }

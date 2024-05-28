@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { ActionFunctionArgs, LoaderFunctionArgs, json, redirect } from '@remix-run/node';
 import { isRouteErrorResponse } from '@remix-run/react';
 
@@ -15,13 +16,11 @@ export async function SettingsAction(request: ActionFunctionArgs['request']) {
       return redirect('/', { headers });
     } else return json(null, { headers });
   } catch (error) {
-    if (isRouteErrorResponse(error)) {
+    console.error(error);
+    console.error('process error in settings');
+    if (isRouteErrorResponse(error))
       return new Response(`${error.status} - ${error?.statusText || 'Error'}`, { status: error.status, headers });
-    } else {
-      // eslint-disable-next-line no-console
-      console.error(error);
-      return json(null, { headers });
-    }
+    return json(null, { headers });
   }
 }
 
@@ -41,12 +40,10 @@ export async function SettingsLoader(request: LoaderFunctionArgs['request']) {
       return json(data, { headers });
     } else return redirect('/', { headers });
   } catch (error) {
-    if (isRouteErrorResponse(error)) {
+    console.error(error);
+    console.error('process error in settings');
+    if (isRouteErrorResponse(error))
       return new Response(`${error.status} - ${error?.statusText || 'Error'}`, { status: error.status, headers });
-    } else {
-      // eslint-disable-next-line no-console
-      console.error(error);
-      return json(null, { headers });
-    }
+    return json(null, { headers });
   }
 }
