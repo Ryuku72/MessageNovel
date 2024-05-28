@@ -60,6 +60,7 @@ export default function ThreeJsBackground() {
         animateRef.current = requestAnimationFrame(animate);
       },
       xhr => {
+        // in production xhr.total = 0;
         if (!xhr.total) {
           const sceneEvent = new CustomEvent('scene ready', {
             detail: 100
