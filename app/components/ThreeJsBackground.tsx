@@ -39,7 +39,8 @@ export default function ThreeJsBackground() {
     scene.environment = pmremGenerator.fromScene(environment).texture;
 
     const camera = new PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 2000);
-    camera.position.set(0, 0, 1000);
+    camera.position.set(-1, 80, 30);
+    camera.rotation.set(0.05, 1.2, -0.015);
 
     const dracoLoader = new DRACOLoader();
     dracoLoader.setDecoderPath('https://threejs.org/examples/js/libs/draco/gltf/');
@@ -58,9 +59,16 @@ export default function ThreeJsBackground() {
 
         animateRef.current = requestAnimationFrame(animate);
       },
-      () => {
+      xhr => {
+        if (!xhr.total) {
+          const sceneEvent = new CustomEvent('scene ready', {
+            detail: 100
+          });
+  
+          return window.dispatchEvent(sceneEvent);
+        }
         const sceneEvent = new CustomEvent('scene ready', {
-          detail: 100
+          detail: (xhr.loaded / xhr.total) * 100
         });
 
         window.dispatchEvent(sceneEvent);
