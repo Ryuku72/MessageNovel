@@ -46,7 +46,7 @@ export default function PasswordInput({
           aria-label={title + '_checkbox'}
           onClick={() => setShowPassword(!showPassword)}
           value={showPassword ? 1 : 0}
-          className="w-4 h-4 text-blue-600 text-sm bg-gray-100 border-emerald-800 rounded focus:ring-blue-500 focus:ring-1 cursor-pointer"
+          className="w-4 h-4 text-blue-600 text-base bg-gray-100 border-emerald-800 rounded focus:ring-blue-500 focus:ring-1 cursor-pointer"
         />
         {LocalStrings.show_password}
       </div>

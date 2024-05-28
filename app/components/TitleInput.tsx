@@ -32,7 +32,7 @@ export default function TitleInput({
         onChange={e => onChange(e.target.value)}
         placeholder={placeholder}
         autoComplete={id}
-        className="w-full h-11 text-sm font-normal border border-gray-300 rounded-lg py-2 px-3 text-gray-500"
+        className="w-full h-11 font-normal text-base border border-gray-300 rounded-lg py-2 px-3 text-gray-500"
       />
     </div>
   );

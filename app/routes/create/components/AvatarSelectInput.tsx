@@ -156,6 +156,7 @@ export default function AvatarInput({ title, id, setImage }: AvatarInputProps) {
         <input
           id={id}
           name={id}
+          accept="image/*"
           className="hidden"
           type="file"
           ref={inputRef}
