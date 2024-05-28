@@ -1,4 +1,3 @@
-
 import { LinksFunction } from '@remix-run/node';
 import { Links, Meta, Outlet, Scripts, ScrollRestoration, isRouteErrorResponse, useRouteError } from '@remix-run/react';
 
@@ -64,7 +63,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <body className="flex flex-col w-full h-full [background:_#bfe3dd] relative">
         <LoadingLayer />
         <ThreeJsBackground />
-        <canvas id="canvas-bg" className="fixed top-0 left-0 w-full h-full" />
         {children}
         <ToastAlert />
         <ScrollRestoration />

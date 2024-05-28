@@ -12,18 +12,18 @@ import {
   WebGLRenderer
 } from 'three';
 import { DRACOLoader, GLTFLoader, RoomEnvironment } from 'three/examples/jsm/Addons.js';
-
-import gltfModal from '~/assets/medieval_fantasy_book.glb';
+import gltfModal from '~/assets/model.glb';
 
 export default function ThreeJsBackground() {
   const animateRef = useRef(0);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
     let mixer: AnimationMixer;
     const clock = new Clock();
 
     const renderer = new WebGLRenderer({
-      canvas: document.querySelector('#canvas-bg') as HTMLCanvasElement
+      canvas: canvasRef.current as HTMLCanvasElement
     });
     renderer.shadowMap.enabled = true;
     renderer.setPixelRatio(window.devicePixelRatio);
@@ -39,8 +39,7 @@ export default function ThreeJsBackground() {
     scene.environment = pmremGenerator.fromScene(environment).texture;
 
     const camera = new PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 2000);
-    camera.position.set(-1, 80, 30);
-    camera.rotation.set(0.05, 1.2, -0.015);
+    camera.position.set(0, 0, 1000);
 
     const dracoLoader = new DRACOLoader();
     dracoLoader.setDecoderPath('https://threejs.org/examples/js/libs/draco/gltf/');
@@ -59,10 +58,9 @@ export default function ThreeJsBackground() {
 
         animateRef.current = requestAnimationFrame(animate);
       },
-      xhr => {
-        if (!xhr.total) throw new Error('no file loaded');
+      () => {
         const sceneEvent = new CustomEvent('scene ready', {
-          detail: (xhr.loaded / xhr.total) * 100
+          detail: 100
         });
 
         window.dispatchEvent(sceneEvent);
@@ -139,5 +137,5 @@ export default function ThreeJsBackground() {
     };
   }, []);
 
-  return null;
+  return <canvas ref={canvasRef} className="fixed top-0 left-0 w-full h-full" />;
 }
