@@ -21,9 +21,9 @@ export default function DashView({ handleSubmit, loaderData, isLoading }: DashVi
   const library = loaderData?.library || [];
 
   return (
-    <div className="w-full h-full flex flex-row relative">
+    <div className="w-full h-full flex flex-row max-[768px]:flex-col-reverse relative">
       <PrivateNavBar user={loaderData.user} isLoading={isLoading} handleSubmit={handleSubmit} />
-      <div className="flex flex-col items-center w-full px-10 max-[768px]:px-3 py-12 max-[768px]:py-4 gap-6 overflow-hidden">
+      <div className="flex flex-col max-[768px]:flex-auto items-center w-full px-10 max-[768px]:px-3 py-12 max-[768px]:py-4 gap-6 overflow-hidden">
         <h1 className="text-red-700 text-4xl m-0 underline underline-offset-8 [text-shadow:_5px_3px_2px_rgb(225_225_225_/_50%)] font-miltonian min-[768px]:hidden">
           &nbsp;&nbsp;{LocalStrings.title}&nbsp;&nbsp;&nbsp;
         </h1>

@@ -22,15 +22,15 @@ export type PrivateNavBarProps = {
 export default function PrivateNavBar({ user, handleSubmit, isLoading }: PrivateNavBarProps) {
   const LocalStrings = LOCALES.dash;
   return (
-    <div className="flex-shrink-0 max-[768px]:w-auto flex flex-col gap-5 px-8 max-[768px]:px-2 py-6 max-[768px]:items-center overflow-auto bg-slate-50 bg-opacity-35 backdrop-blur-sm">
-      <div className="flex flex-col flex-auto gap-6">
+    <div className="flex-shrink-0 max-[768px]:w-auto flex flex-col max-[768px]:flex-row gap-5 px-8 max-[768px]:px-2 py-6 max-[768px]:items-center overflow-auto bg-slate-50 bg-opacity-35 backdrop-blur-sm">
+      <div className="flex flex-col max-[768px]:flex-row flex-auto gap-6">
         <h1 className="text-red-700 text-4xl m-0 underline underline-offset-8 [text-shadow:_5px_3px_2px_rgb(225_225_225_/_50%)] font-miltonian max-[768px]:hidden">
         &#8197;{LocalStrings.title}&nbsp;&nbsp;&nbsp;
         </h1>
         <div className="flex flex-col">
           <NavLink
             to="/settings"
-            className={`${user.color} flex flex-row gap-3 rounded-lg bg-opacity-50 backdrop-blur-sm self-start px-2 py-1.5 shadow-sm cursor-pointer max-[768px]:w-[65px] h-[70px] justify-center items-center min-[768px]:pr-4 overflow-hidden`}>
+            className={`${user.color} flex flex-row gap-3 rounded-lg bg-opacity-50 backdrop-blur-sm self-start px-2 py-1.5 shadow-sm cursor-pointer max-[768px]:w-[65px] h-[70px] max-[768px]:h-[60px] justify-center items-center min-[768px]:pr-4 overflow-hidden`}>
             <div className="flex rounded-full w-12 h-12 flex-none bg-white bg-opacity-50 backdrop-blur-sm p-[2px]">
               <img
                 alt="create-img"
