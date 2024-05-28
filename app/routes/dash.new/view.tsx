@@ -1,5 +1,7 @@
 import { Form, Link } from '@remix-run/react';
 
+import { Fragment } from 'react/jsx-runtime';
+
 import { secondaryButtonClassName } from '~/common/buttonFactory';
 import LOCALES from '~/locales/language_en.json';
 
@@ -42,17 +44,17 @@ export default function DashNewView({
         <Form method="post" action="/dash/new" className="flex w-full pb-4 px-6">
           <fieldset className="flex w-full flex-col gap-5">
             <TitleInput
-              title={'Title'}
+              title={LocalStrings.primary_input}
               id="novel-title"
               value={draftNovelTitle}
-              placeholder={'Novel Title'}
+              placeholder={LocalStrings.primary_input_placeholder}
               onChange={setDraftNovelTitle}
             />
             <TitleTextArea
-              title={'Description'}
+              title={LocalStrings.secondary_input}
               id="novel-description"
               value={draftNovelDescription}
-              placeholder={'Tell us what the story is about...'}
+              placeholder={LocalStrings.secondary_input_placeholder}
               onChange={setDraftNovelDescription}
             />
             <div className="w-full flex gap-3 flex-wrap mt-2">
@@ -64,10 +66,10 @@ export default function DashNewView({
                 {isLoading ? (
                   <LoadingSpinner className="w-full h-10" svgColor="#fff" uniqueId="index-spinner" />
                 ) : (
-                  <>
+                  <Fragment>
                     <PlusIcon uniqueId="dash_plus" svgColor="#fff" className="w-3 h-3" />
                     {LocalStrings.primary_button}
-                  </>
+                  </Fragment>
                 )}
               </button>
             </div>

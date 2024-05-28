@@ -4,14 +4,18 @@ import { isRouteErrorResponse } from '@remix-run/react';
 
 import { initServer } from '~/services/API';
 
-export async function DashNovelIdLoader({ request, params }: LoaderFunctionArgs) {
-  if (!params.novelId) return;
+export async function DashNovelIdLoader({
+  request,
+  params
+}: LoaderFunctionArgs) {
   const { supabaseClient, headers } = await initServer(request);
   try {
     const response = await supabaseClient
       .from('library')
       .select('*')
-      .match({ id: params.novelId as string });
+      .match({ id: params.novelId as string })
+      .maybeSingle();
+
     if (!response.data) redirect('/dash', { headers });
     return json(response, { headers });
   } catch (error) {

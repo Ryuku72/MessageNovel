@@ -12,8 +12,8 @@ export function loader(data: LoaderFunctionArgs) {
 }
 
 export default function DashNovelId() {
-  const loaderData = useLoaderData<{ data: NovelinLibraryEntry[] }>();
-  const data = loaderData?.data?.[0] || {};
+  const loaderData = useLoaderData<{ data: NovelinLibraryEntry }>();
+  const data = loaderData?.data || {};
 
   return <DashNovelIdView loaderData={data} />;
 }

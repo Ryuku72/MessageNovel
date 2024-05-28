@@ -26,16 +26,19 @@ export async function DashNewAction(request: ActionFunctionArgs['request']) {
         .select()
         .maybeSingle();
 
+      console.log(draftInsert);
+
       if (draftInsert.error) {
         console.error(draftInsert.error);
-        console.error('error in dash new');
+        console.error('error in dash new - draft insert');
         return json({ error: { message: draftInsert.error.message } }, { headers });
       }
+      
       const libraryInsert = await supabaseClient
         .from('library')
         .insert({
           owner: userData?.id || '',
-          username: userData?.user_metadata.username || '',
+          owner_username: userData?.user_metadata.username || '',
           title,
           draft_id: draftInsert.data?.id || '',
           description: description,
@@ -43,6 +46,12 @@ export async function DashNewAction(request: ActionFunctionArgs['request']) {
         })
         .select()
         .maybeSingle();
+
+        if (libraryInsert.error) {
+          console.error(libraryInsert.error);
+          console.error('error in dash new - library insert');
+          return json({ error: { message: libraryInsert.error.message } }, { headers });
+        }
 
       return redirect(`/dash/${libraryInsert.data?.id}`, { headers });
     } else return json({ error: 'Title and Description are requires' }, { headers });
