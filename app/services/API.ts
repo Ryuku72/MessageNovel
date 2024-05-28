@@ -24,7 +24,6 @@ export type SupabaseClientAndHeaderEntry = {
 };
 export const initServer = async (request: LoaderFunctionArgs['request']): Promise<SupabaseClientAndHeaderEntry> => {
   const env = envConfig();
-  console.log(env);
   const cookies = parse(request.headers.get('Cookie') ?? '');
   const headers = new Headers();
 
