@@ -16,25 +16,26 @@ export type DashViewProps = {
     user: UserDataEntry;
     library: NovelinLibraryEntry[];
   };
+  isLoading: boolean;
 };
 
-export default function DashView({ handleSubmit, loaderData }: DashViewProps) {
+export default function DashView({ handleSubmit, loaderData, isLoading }: DashViewProps) {
   const LocalStrings = LOCALES.dash;
   const library = loaderData?.library || [];
 
   return (
     <div className="w-full h-full flex flex-col items-center relative">
-      <PrivateNavBar user={loaderData.user} title={LocalStrings.title} handleSubmit={handleSubmit} />
+      <PrivateNavBar user={loaderData.user} isLoading={isLoading} title={LocalStrings.title} handleSubmit={handleSubmit} />
       <div className="flex flex-col max-w-[1250px] w-full px-6 overflow-hidden">
         <div className="flex flex-col flex-auto w-full rounded-lg shadow-xl bg-slate-50 backdrop-blur-sm bg-opacity-75 pb-4 overflow-auto">
           <table className="table-auto w-full text-left border-collapse">
             <thead>
               <tr>
-                <th className="border-b p-4 pl-8 py-4 text-slate-500 text-left min-w-[85px]">Index</th>
-                <th className="border-b p-4 pl-8 py-4 text-slate-500 text-left min-w-[300px]">Title</th>
-                <th className="border-b p-4 pl-8 py-4 text-slate-500 text-left min-w-[165px]">Owner</th>
-                <th className="border-b p-4 pl-8 py-4 text-slate-500 text-left min-w-[165px]">Created</th>
-                <th className="border-b p-4 pl-8 py-4 text-slate-500 text-left min-w-[165px]">Updated</th>
+                <th className="border-b p-4 pl-8 py-4 text-slate-500 text-left min-w-[85px]">{LocalStrings.table_heading.index}</th>
+                <th className="border-b p-4 pl-8 py-4 text-slate-500 text-left min-w-[300px]">{LocalStrings.table_heading.title}</th>
+                <th className="border-b p-4 pl-8 py-4 text-slate-500 text-left min-w-[165px]">{LocalStrings.table_heading.owner}</th>
+                <th className="border-b p-4 pl-8 py-4 text-slate-500 text-left min-w-[165px]">{LocalStrings.table_heading.created}</th>
+                <th className="border-b p-4 pl-8 py-4 text-slate-500 text-left min-w-[165px]">{LocalStrings.table_heading.updated}</th>
               </tr>
             </thead>
             <tbody className="bg-white bg-opacity-75">
@@ -64,7 +65,7 @@ export default function DashView({ handleSubmit, loaderData }: DashViewProps) {
       <div className="w-full flex gap-5 justify-end items-center p-8 sticky bottom-0 right-0">
         <Link className={primaryButtonClassName} type="button" to="/dash/new">
           <PlusIcon uniqueId="dash_plus" svgColor="#fff" className="w-3 h-3" />
-          New Novel
+          {LocalStrings.secondary_button}
         </Link>
         <Outlet />
       </div>

@@ -90,7 +90,24 @@
     "email": "Email",
     "password": "Password",
     "color": "Favourite Color",
-    "primary_button": "Sign out"
+    "primary_button": "Sign out",
+    "secondary_button": "New Novel",
+    "table_heading": {
+      "index": "Index",
+      "title": "Title",
+      "owner": "Owner",
+      "created": "Created",
+      "updated": "Updated"
+    },
+    "view": {
+      "created_at": "Created",
+      "updated_at": "Last Update",
+      "description": "Description"
+    },
+    "new": {
+      "title": "New Novel Details",
+      "primary_button": "Create Novel"
+    }
   },
   "settings": {
     "title": "User Settings",
@@ -102,5 +119,11 @@
   },
   "loading_layer": {
     "title": "Loading"
+  },
+  "password_input": {
+    "show_password": "Show Password"
+  },
+  "error_boundary": {
+    "unknown_error": "Error!"
   }
 }

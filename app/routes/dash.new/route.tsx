@@ -15,7 +15,7 @@ export default function DashNew() {
   const [draftNovelDescription, setDraftNovelDescription] = useState('');
 
   const navigationState = useNavigation();
-  const isLoading = navigationState.state === 'submitting';
+  const isLoading = ['submitting', 'loading'].includes(navigationState.state);
 
   return (
     <DashNewView

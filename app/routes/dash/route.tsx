@@ -1,5 +1,5 @@
 import { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction } from '@remix-run/node';
-import { useLoaderData, useOutletContext, useSubmit } from '@remix-run/react';
+import { useLoaderData, useNavigation, useOutletContext, useSubmit } from '@remix-run/react';
 
 import { useEffect } from 'react';
 
@@ -30,6 +30,9 @@ export default function Dash() {
     }>() || {};
   const { sceneReady } = useOutletContext<{ sceneReady: boolean }>();
   const submit = useSubmit();
+  const navigationState = useNavigation();
+
+  const isLoading = ['submitting', 'loading'].includes(navigationState.state);
 
   useEffect(() => {
     if (!sceneReady) return;
@@ -46,5 +49,5 @@ export default function Dash() {
     submit(formData, { method: 'post' });
   };
 
-  return <DashView handleSubmit={handleSubmit} loaderData={loaderData} />;
+  return <DashView handleSubmit={handleSubmit} loaderData={loaderData} isLoading={isLoading} />;
 }

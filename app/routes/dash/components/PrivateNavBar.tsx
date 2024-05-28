@@ -1,9 +1,11 @@
 import { NavLink } from '@remix-run/react';
 
+import { UserDataEntry } from '~/types';
+
 import { thirdButtonClassName } from '~/common/buttonFactory';
 import LOCALES from '~/locales/language_en.json';
 
-import { UserDataEntry } from '~/routes/dash';
+import LoadingSpinner from '~/svg/LoadingSpinner/LoadingSpinner';
 
 import Default_Avatar from '~/assets/default_avatar.jpeg';
 
@@ -11,9 +13,10 @@ export type PrivateNavBarProps = {
   user: UserDataEntry;
   title: string;
   handleSubmit: (event: React.MouseEvent) => void;
+  isLoading: boolean;
 };
 
-export default function PrivateNavBar({ user, title, handleSubmit }: PrivateNavBarProps) {
+export default function PrivateNavBar({ user, title, handleSubmit, isLoading }: PrivateNavBarProps) {
   const LocalStrings = LOCALES.dash;
   return (
     <div className="w-full flex gap-5 tems-center p-8 flex-wrap">
@@ -39,8 +42,12 @@ export default function PrivateNavBar({ user, title, handleSubmit }: PrivateNavB
         </h1>
       </div>
       <div className="flex flex-1 flex-col items-end">
-        <button className={thirdButtonClassName} type="button" onClick={handleSubmit}>
-          {LocalStrings.primary_button}
+        <button className={`${thirdButtonClassName} ${isLoading ? 'py-0.5' : 'py-2.5'}`} type="button" onClick={handleSubmit}>
+          {isLoading ? (
+            <LoadingSpinner className="w-full h-10" svgColor="#fff" uniqueId="index-spinner" />
+          ) : (
+            LocalStrings.primary_button
+          )}
         </button>
       </div>
     </div>

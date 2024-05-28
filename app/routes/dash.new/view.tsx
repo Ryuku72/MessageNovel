@@ -1,6 +1,7 @@
 import { Form, Link } from '@remix-run/react';
 
 import { secondaryButtonClassName } from '~/common/buttonFactory';
+import LOCALES from '~/locales/language_en.json';
 
 import DialogWrapper from '~/components/DialogWrapper';
 import TitleInput from '~/components/TitleInput';
@@ -24,12 +25,13 @@ export default function DashNewView({
   setDraftNovelDescription,
   isLoading
 }: DashNewViewProps) {
+  const LocalStrings = LOCALES.dash.new;
   return (
     <DialogWrapper open={true} className="max-w-full max-h-full w-full h-full justify-center p-[36px] bg-transparent">
       <div className="w-full max-w-card-l bg-white rounded-b-md rounded-t-lg flex flex-col gap-3 self-center text-mono">
         <div className="w-full pt-4 px-6 flex flex-wrap justify-between items-center">
           <h3 className="font-medium text-xl text-gray-600 underline underline-offset-4">
-            &#8197;New Novel Details&nbsp;&nbsp;&nbsp;
+            &#8197;{LocalStrings.title}&nbsp;&nbsp;&nbsp;
           </h3>
           <Link
             className="w-10 h-10 flex items-center justify-center text-slate-500 hover:text-red-500 hover:border hover:border-red-500 rounded"
@@ -64,7 +66,7 @@ export default function DashNewView({
                 ) : (
                   <>
                     <PlusIcon uniqueId="dash_plus" svgColor="#fff" className="w-3 h-3" />
-                    Create Novel
+                    {LocalStrings.primary_button}
                   </>
                 )}
               </button>

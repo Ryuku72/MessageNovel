@@ -121,7 +121,7 @@ export default function ThreeJsBackground() {
     const sceneAnimate = (event: Event) => {
       if ('detail' in event) {
         // eslint-disable-next-line no-console
-        console.log(event?.detail);
+        // console.log(event?.detail);
         switch (event.detail) {
           case 1:
             return sceneOne();

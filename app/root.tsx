@@ -3,6 +3,8 @@ import { Links, Meta, Outlet, Scripts, ScrollRestoration, isRouteErrorResponse, 
 
 import { useEffect, useState } from 'react';
 
+import LOCALES from '~/locales/language_en.json';
+
 import LoadingLayer from '~/components/LoadingLayer';
 import ThreeJsBackground from '~/components/ThreeJsBackground';
 import { ToastAlert } from '~/components/ToastAlert';
@@ -92,13 +94,14 @@ export default function App() {
 
 export function ErrorBoundary() {
   const error = useRouteError() as { message?: string };
+  const LocalStrings = LOCALES.error_boundary;
 
   if (isRouteErrorResponse(error)) {
     return (
       <div className="flex flex-col gap-3 w-full h-full relative items-center justify-center">
         <div className="p-12 backdrop-blur-sm bg-white bg-opacity-50 rounded">
           <h1 className="text-4xl text-red-700 font-miltonian">
-            {error.status} - {error?.statusText || 'Error'}
+            {error.status} - {error?.statusText || LocalStrings.unknown_error}
           </h1>
           <p className="text-xl text-gray-600">{error.data}</p>
         </div>
@@ -109,7 +112,7 @@ export function ErrorBoundary() {
   return (
     <div className="flex flex-col gap-3 w-full h-full relative items-center justify-center">
       <div className="p-12 backdrop-blur-sm bg-white bg-opacity-50 rounded">
-        <h1 className="text-4xl text-red-700 font-miltonian">Error!</h1>
+        <h1 className="text-4xl text-red-700 font-miltonian">{LocalStrings.unknown_error}</h1>
         <p className="text-xl text-gray-600">{error?.message ?? 'Unknown error'}</p>
       </div>
     </div>

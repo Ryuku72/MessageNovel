@@ -30,7 +30,7 @@ export default function Login() {
   const [signInValue, setSignInValue] = useState('');
   const [passwordValue, setPasswordValue] = useState('');
 
-  const isLoading = navigationState.state === 'submitting';
+  const isLoading = ['submitting', 'loading'].includes(navigationState.state);
 
   useEffect(() => {
     if (!sceneReady) return;

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { NovelinLibraryEntry } from '~/types';
 
 import { CreateDate } from '~/helpers/DateHelper';
+import LOCALES from '~/locales/language_en.json';
 
 import DialogWrapper from '~/components/DialogWrapper';
 import CloseIcon from '~/svg/CloseIcon/CloseIcon';
@@ -10,6 +11,7 @@ import CloseIcon from '~/svg/CloseIcon/CloseIcon';
 export type DashNovelIdViewProps = { loaderData: NovelinLibraryEntry };
 
 export default function DashNovelIdView({ loaderData }: DashNovelIdViewProps) {
+  const LocalStrings = LOCALES.dash.view;
   return (
     <DialogWrapper open={true} className="max-w-full max-h-full w-full h-full justify-center p-[36px] bg-transparent">
       <div className="w-full max-w-card-l bg-white rounded-b-md rounded-t-lg flex flex-col gap-3 self-center text-mono">
@@ -24,9 +26,9 @@ export default function DashNovelIdView({ loaderData }: DashNovelIdViewProps) {
           </Link>
         </div>
         <div className="flex flex-col gap-3 w-full pb-4 px-6">
-          <p>Created: {CreateDate(loaderData.created_at)}</p>
-          <p>Last Update: {CreateDate(loaderData.updated_at)}</p>
-          <p>Description: {loaderData.description}</p>
+          <p>{LocalStrings.created_at}: {CreateDate(loaderData.created_at)}</p>
+          <p>{LocalStrings.updated_at}: {CreateDate(loaderData.updated_at)}</p>
+          <p>{LocalStrings.description}: {loaderData.description}</p>
         </div>
       </div>
     </DialogWrapper>

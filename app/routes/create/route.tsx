@@ -31,7 +31,7 @@ export default function Create() {
   const [password, setPassword] = useState('');
   const [imageFile, setImage] = useState<File | null>(null);
 
-  const isLoading = navigationState.state === 'submitting';
+  const isLoading = ['submitting', 'loading'].includes(navigationState.state);
 
   useEffect(() => {
     if (!sceneReady) return;
