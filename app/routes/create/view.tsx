@@ -41,9 +41,6 @@ export default function CreateView({
   return (
     <PublicLayout>
       <div className="flex flex-col m-auto gap-4 w-full">
-        <h1 className="text-red-700 text-5xl text-center m-0 [text-shadow:_5px_3px_2px_rgb(225_225_225_/_50%)] font-miltonian">
-          {LocalStrings.title}
-        </h1>
         <div className="max-w-full self-center">
           <Form
             aria-label="create-account"

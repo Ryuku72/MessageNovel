@@ -15,7 +15,7 @@ export default function TitleInput({
   placeholder,
   labelColor = 'text-gray-600',
   onChange,
-  type = 'text'
+  type = 'text',
 }: TitleInputProps) {
   return (
     <div className="w-full flex flex-col gap-2 font-mono">

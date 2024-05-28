@@ -2,11 +2,8 @@ import { Link, Outlet } from '@remix-run/react';
 
 import { NovelinLibraryEntry, UserDataEntry } from '~/types';
 
-import { primaryButtonClassName } from '~/common/buttonFactory';
 import { CreateDate } from '~/helpers/DateHelper';
 import LOCALES from '~/locales/language_en.json';
-
-import PlusIcon from '~/svg/PlusIcon/PlusIcon';
 
 import PrivateNavBar from './components/PrivateNavBar';
 
@@ -24,18 +21,31 @@ export default function DashView({ handleSubmit, loaderData, isLoading }: DashVi
   const library = loaderData?.library || [];
 
   return (
-    <div className="w-full h-full flex flex-col items-center relative">
-      <PrivateNavBar user={loaderData.user} isLoading={isLoading} title={LocalStrings.title} handleSubmit={handleSubmit} />
-      <div className="flex flex-col max-w-[1250px] w-full px-6 overflow-hidden">
-        <div className="flex flex-col flex-auto w-full rounded-lg shadow-xl bg-slate-50 backdrop-blur-sm bg-opacity-75 pb-4 overflow-auto">
+    <div className="w-full h-full flex flex-row relative">
+      <PrivateNavBar user={loaderData.user} isLoading={isLoading} handleSubmit={handleSubmit} />
+      <div className="flex flex-col items-center w-full px-10 max-[768px]:px-3 py-12 max-[768px]:py-4 gap-6 overflow-hidden">
+        <h1 className="text-red-700 text-4xl m-0 underline underline-offset-8 [text-shadow:_5px_3px_2px_rgb(225_225_225_/_50%)] font-miltonian min-[768px]:hidden">
+          &nbsp;&nbsp;{LocalStrings.title}&nbsp;&nbsp;&nbsp;
+        </h1>
+        <div className="flex flex-col w-full rounded-lg shadow-xl bg-slate-50 backdrop-blur-sm bg-opacity-55 pb-4 overflow-auto align-start max-w-[1250px]">
           <table className="table-auto w-full text-left border-collapse">
             <thead>
               <tr>
-                <th className="border-b p-4 pl-8 py-4 text-slate-500 text-left min-w-[85px]">{LocalStrings.table_heading.index}</th>
-                <th className="border-b p-4 pl-8 py-4 text-slate-500 text-left min-w-[300px]">{LocalStrings.table_heading.title}</th>
-                <th className="border-b p-4 pl-8 py-4 text-slate-500 text-left min-w-[165px]">{LocalStrings.table_heading.owner}</th>
-                <th className="border-b p-4 pl-8 py-4 text-slate-500 text-left min-w-[165px]">{LocalStrings.table_heading.created}</th>
-                <th className="border-b p-4 pl-8 py-4 text-slate-500 text-left min-w-[165px]">{LocalStrings.table_heading.updated}</th>
+                <th className="border-b p-4 pl-8 py-4 text-slate-500 text-left min-w-[85px]">
+                  {LocalStrings.table_heading.index}
+                </th>
+                <th className="border-b p-4 pl-8 py-4 text-slate-500 text-left min-w-[300px]">
+                  {LocalStrings.table_heading.title}
+                </th>
+                <th className="border-b p-4 pl-8 py-4 text-slate-500 text-left min-w-[165px]">
+                  {LocalStrings.table_heading.owner}
+                </th>
+                <th className="border-b p-4 pl-8 py-4 text-slate-500 text-left min-w-[165px]">
+                  {LocalStrings.table_heading.created}
+                </th>
+                <th className="border-b p-4 pl-8 py-4 text-slate-500 text-left min-w-[165px]">
+                  {LocalStrings.table_heading.updated}
+                </th>
               </tr>
             </thead>
             <tbody className="bg-white bg-opacity-75">
@@ -62,13 +72,7 @@ export default function DashView({ handleSubmit, loaderData, isLoading }: DashVi
           </table>
         </div>
       </div>
-      <div className="w-full flex gap-5 justify-end items-center p-8 sticky bottom-0 right-0">
-        <Link className={primaryButtonClassName} type="button" to="/dash/new">
-          <PlusIcon uniqueId="dash_plus" svgColor="#fff" className="w-3 h-3" />
-          {LocalStrings.secondary_button}
-        </Link>
-        <Outlet />
-      </div>
+      <Outlet />
     </div>
   );
 }
