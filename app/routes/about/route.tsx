@@ -71,12 +71,14 @@ export default function About() {
                 key={tech.name}
                 className="has-tooltip cursor-pointer relative min-[768px]:h-40 max-[768px]:h-24 min-[768px]:w-40 max-[768px]:w-24">
                 <Logo type={tech.name} />
-                <div className="w-full h-full py-2 flex items-center flex-col">
-                  <div
-                    role="tooltip"
-                    className="tooltip z-10 inline-block px-4 py-2 text-sm text-white transition-opacity duration-300 bg-gray-600 backdrop-blur-sm rounded-lg shadow-sm bg-opacity-35 whitespace-pre">
+                <div
+                  role="tooltip"
+                  className="absolute max-[768px]:hidden w-full h-full left-0 bottom-0 tooltip z-10 flex justify-center items-center transition-opacity duration-300">
+                  <Link
+                    to={tech.link}
+                    className=" bg-gray-900 backdrop-blur-sm rounded-lg shadow-sm bg-opacity-45 text-sm px-4 py-2 text-white cursor-pointer max-w-full whitespace-pre-wrap">
                     {tech.name}
-                  </div>
+                  </Link>
                 </div>
               </div>
             ))}

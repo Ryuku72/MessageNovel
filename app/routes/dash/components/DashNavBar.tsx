@@ -30,12 +30,10 @@ export default function DashNavBar({ user, handleSubmit, isLoading }: DashNavBar
           <NavLink to="/dash/settings" className="flex w-[60px] h-[60px] flex-shrink-0">
             <img alt="create-img" className="w-full h-full rounded object-cover" src={user?.avatar || Default_Avatar} />
           </NavLink>
-          <div className="w-full py-2 flex items-center flex-col">
-            <div
-              role="tooltip"
-              className="absolute max-[768px]:hidden left-[80px] top-[8px] tooltip z-10 inline-block px-4 py-2 text-sm text-white transition-opacity duration-300 bg-gray-600 backdrop-blur-sm rounded-lg shadow-sm bg-opacity-35 whitespace-pre">
-              {LocalStrings.primary_button}
-            </div>
+          <div
+            role="tooltip"
+            className="absolute max-[768px]:hidden left-[80px] top-[8px] tooltip z-10 inline-block px-4 py-2 text-sm text-white transition-opacity duration-300 bg-gray-600 backdrop-blur-sm rounded-lg shadow-sm bg-opacity-35 whitespace-pre">
+            {LocalStrings.primary_button}
           </div>
         </div>
 
@@ -49,12 +47,10 @@ export default function DashNavBar({ user, handleSubmit, isLoading }: DashNavBar
             to="/dash">
             <DashIcon uniqueId="dash_icon" svgColor="#fff" className="w-5 h-auto" />
           </NavLink>
-          <div className="w-full py-2 flex items-center flex-col">
-            <div
-              role="tooltip"
-              className="absolute max-[768px]:hidden left-[80px] top-[8px] tooltip z-10 inline-block px-4 py-2 text-sm text-white transition-opacity duration-300 bg-gray-600 backdrop-blur-sm rounded-lg shadow-sm bg-opacity-35 whitespace-pre">
-              {LocalStrings.secondary_button}
-            </div>
+          <div
+            role="tooltip"
+            className="absolute max-[768px]:hidden left-[80px] top-[8px] tooltip z-10 inline-block px-4 py-2 text-sm text-white transition-opacity duration-300 bg-gray-600 backdrop-blur-sm rounded-lg shadow-sm bg-opacity-35 whitespace-pre">
+            {LocalStrings.secondary_button}
           </div>
         </div>
 
@@ -67,12 +63,10 @@ export default function DashNavBar({ user, handleSubmit, isLoading }: DashNavBar
             to="/dash/new">
             <PlusIcon uniqueId="dash_plus" svgColor="#fff" className="w-5 h-auto" />
           </NavLink>
-          <div className="w-full py-2 flex items-center flex-col">
-            <div
-              role="tooltip"
-              className="absolute max-[768px]:hidden left-[80px] top-[8px] tooltip z-10 inline-block px-4 py-2 text-sm text-white transition-opacity duration-300 bg-gray-600 backdrop-blur-sm rounded-lg shadow-sm bg-opacity-35 whitespace-pre">
-              {LocalStrings.tertiary_button}
-            </div>
+          <div
+            role="tooltip"
+            className="absolute max-[768px]:hidden left-[80px] top-[8px] tooltip z-10 inline-block px-4 py-2 text-sm text-white transition-opacity duration-300 bg-gray-600 backdrop-blur-sm rounded-lg shadow-sm bg-opacity-35 whitespace-pre">
+            {LocalStrings.tertiary_button}
           </div>
         </div>
       </div>
@@ -89,12 +83,10 @@ export default function DashNavBar({ user, handleSubmit, isLoading }: DashNavBar
             </Fragment>
           )}
         </button>
-        <div className="w-full py-2 flex items-center flex-col">
-          <div
-            role="tooltip"
-            className="absolute max-[768px]:hidden left-[80px] top-[8px] tooltip z-10 inline-block px-4 py-2 text-sm text-white transition-opacity duration-300 bg-gray-600 backdrop-blur-sm rounded-lg shadow-sm bg-opacity-35 whitespace-pre">
-            {LocalStrings.sign_out_button}
-          </div>
+        <div
+          role="tooltip"
+          className="absolute max-[768px]:hidden left-[80px] top-[8px] tooltip z-10 inline-block px-4 py-2 text-sm text-white transition-opacity duration-300 bg-gray-600 backdrop-blur-sm rounded-lg shadow-sm bg-opacity-35 whitespace-pre">
+          {LocalStrings.sign_out_button}
         </div>
       </div>
     </div>

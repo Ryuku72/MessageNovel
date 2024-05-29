@@ -11,7 +11,7 @@
   @apply self-start;
 }
 
-.has-tooltip:hover .w-full .tooltip {
+.has-tooltip:hover .tooltip {
   visibility: visible;
   z-index: 50;
 }
