@@ -1,14 +1,14 @@
 import { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction } from '@remix-run/node';
-import { useLoaderData, useNavigation, useOutletContext, useSubmit } from '@remix-run/react';
+import { Outlet, useLoaderData, useNavigation, useOutletContext, useSubmit } from '@remix-run/react';
 
 import { useEffect } from 'react';
 
-import { NovelinLibraryEntry, UserDataEntry } from '~/types';
+import { UserDataEntry } from '~/types';
 
 import LOCALES from '~/locales/language_en.json';
 
 import { DashAction, DashLoader } from './services';
-import DashView from './view';
+import DashNavBar from './components/DashNavBar';
 
 export const meta: MetaFunction = () => {
   return [{ title: LOCALES.meta.title }, { name: 'description', content: LOCALES.meta.description }];
@@ -23,11 +23,7 @@ export function action({ request }: ActionFunctionArgs) {
 }
 
 export default function Dash() {
-  const loaderData =
-    useLoaderData<{
-      user: UserDataEntry;
-      library: NovelinLibraryEntry[];
-    }>() || {};
+  const loaderData = useLoaderData<UserDataEntry>();
   const { sceneReady } = useOutletContext<{ sceneReady: boolean }>();
   const submit = useSubmit();
   const navigationState = useNavigation();
@@ -49,5 +45,10 @@ export default function Dash() {
     submit(formData, { method: 'post' });
   };
 
-  return <DashView handleSubmit={handleSubmit} loaderData={loaderData} isLoading={isLoading} />;
+  return (
+    <div className="w-full h-full flex flex-row max-[768px]:flex-col-reverse relative">
+      <DashNavBar user={loaderData} isLoading={isLoading} handleSubmit={handleSubmit} />
+      <Outlet context={{ user: loaderData }} />
+    </div>
+  );
 }

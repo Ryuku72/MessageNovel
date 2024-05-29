@@ -1,5 +1,5 @@
 export const primaryButtonClassName =
-  'rounded-lg px-5 py-2.5 text-gray-100 w-full max-w-button bg-orange-700 font-semibold hover:bg-orange-500 flex items-center justify-center gap-2';
+  'rounded-lg px-5 text-gray-100 w-full max-w-button bg-orange-700 font-semibold hover:bg-orange-500 flex items-center justify-center gap-2';
 
 export const secondaryButtonClassName =
   'rounded-lg px-5 text-gray-100 font-semibold bg-emerald-700 hover:bg-green-500 w-full max-w-button flex items-center justify-center gap-2';

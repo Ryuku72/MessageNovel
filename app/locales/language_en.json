@@ -90,8 +90,10 @@
     "email": "Email",
     "password": "Password",
     "color": "Favourite Color",
-    "primary_button": "Sign out",
-    "secondary_button": "New Novel",
+    "primary_button": "User Settings",
+    "secondary_button": "Dashboard",
+    "tertiary_button": "New Novel",
+    "sign_out_button": "Sign Out",
     "table_heading": {
       "index": "Index",
       "title": "Title",
@@ -103,6 +105,11 @@
       "created_at": "Created",
       "updated_at": "Last Update",
       "description": "Description"
+    },
+    "draft": {
+      "title": "Draft",
+      "primary_button": "Save",
+      "secondary_button": "Back"
     },
     "new": {
       "title": "New Novel Details",

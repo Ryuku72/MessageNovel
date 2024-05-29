@@ -1,14 +1,21 @@
 import type { ActionFunctionArgs, MetaFunction } from '@remix-run/node';
-import { useActionData, useNavigate, useNavigation, useOutletContext, useSubmit } from '@remix-run/react';
+import { Form, Link, useActionData, useNavigate, useNavigation, useOutletContext, useSubmit } from '@remix-run/react';
 
 import { useEffect, useState } from 'react';
 
 import { AuthResponse } from '@supabase/supabase-js';
 
+import { primaryButtonClassName, secondaryButtonClassName } from '~/common/buttonFactory';
 import LOCALES from '~/locales/language_en.json';
 
+import PasswordInput from '~/components/PasswordInput';
+import { PublicLayout } from '~/components/PublicLayout';
+import TitleInput from '~/components/TitleInput';
+import LoadingSpinner from '~/svg/LoadingSpinner/LoadingSpinner';
+
+import AvatarInput from './components/AvatarSelectInput';
+import ColorInput from './components/ColorInput';
 import { CreateAction } from './services';
-import CreateView from './view';
 
 export const meta: MetaFunction = () => {
   return [{ title: LOCALES.meta.title }, { name: 'description', content: LOCALES.meta.description }];
@@ -20,9 +27,9 @@ export function action({ request }: ActionFunctionArgs) {
 
 export default function Create() {
   const { sceneReady } = useOutletContext<{ sceneReady: boolean }>();
+  const actionData = useActionData() as AuthResponse & { success: boolean };
   const navigationState = useNavigation();
   const submit = useSubmit();
-  const actionData = useActionData() as AuthResponse & { success: boolean };
   const navigate = useNavigate();
 
   const [colorSelect, setColorSelect] = useState('bg-pastel-black');
@@ -32,6 +39,7 @@ export default function Create() {
   const [imageFile, setImage] = useState<File | null>(null);
 
   const isLoading = ['submitting', 'loading'].includes(navigationState.state);
+  const LocalStrings = LOCALES.create;
 
   useEffect(() => {
     if (!sceneReady) return;
@@ -67,17 +75,64 @@ export default function Create() {
   }, [actionData, colorSelect, email, imageFile, navigate, password, submit, username]);
 
   return (
-    <CreateView
-      isLoading={isLoading}
-      setColorSelect={setColorSelect}
-      colorSelect={colorSelect}
-      setUsername={setUsername}
-      username={username}
-      setEmail={setEmail}
-      email={email}
-      setPassword={setPassword}
-      password={password}
-      setImage={setImage}
-    />
+    <PublicLayout>
+      <div className="flex flex-col m-auto gap-4 w-full">
+        <div className="max-w-full self-center">
+          <Form
+            aria-label="create-account"
+            method="post"
+            className="w-full max-w-lg flex rounded-lg shadow-xl px-12 max-[768px]:p-4 py-8 bg-white bg-opacity-35 backdrop-blur-sm">
+            <fieldset className="w-full flex flex-col justify-center items-center gap-3" disabled={isLoading}>
+              <div className="flex gap-6 flex-wrap justify-center items-center">
+                <AvatarInput title={LocalStrings.avatar} id="create-avatar" setImage={setImage} />
+                <ColorInput
+                  title={LocalStrings.color}
+                  id="create-color-select"
+                  value={colorSelect}
+                  onChange={setColorSelect}
+                />
+              </div>
+              <TitleInput
+                title={LocalStrings.username}
+                id="create-username"
+                value={username}
+                placeholder={LocalStrings.username_placeholder}
+                onChange={setUsername}
+              />
+              <TitleInput
+                title={LocalStrings.email}
+                id="create-email"
+                placeholder={LocalStrings.email_placeholder}
+                value={email}
+                onChange={setEmail}
+                type="email"
+              />
+              <PasswordInput
+                title={LocalStrings.password}
+                id="create-password"
+                placeholder={LocalStrings.password_placeholder}
+                value={password}
+                onChange={setPassword}
+              />
+              <div className="w-full flex items-center gap-3 justify-center pt-3">
+                <Link to="/" className={primaryButtonClassName + ' py-2.5'}>
+                  {LocalStrings.primary_button}
+                </Link>
+                <button
+                  className={`${secondaryButtonClassName} ${isLoading ? 'py-0.5' : 'py-2.5'}`}
+                  type="submit"
+                  disabled={false}>
+                  {isLoading ? (
+                    <LoadingSpinner className="w-full h-10" svgColor="#fff" uniqueId="index-spinner" />
+                  ) : (
+                    LocalStrings.secondary_button
+                  )}
+                </button>
+              </div>
+            </fieldset>
+          </Form>
+        </div>
+      </div>
+    </PublicLayout>
   );
 }

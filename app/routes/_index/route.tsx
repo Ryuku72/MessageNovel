@@ -5,8 +5,9 @@ import { useEffect } from 'react';
 
 import LOCALES from '~/locales/language_en.json';
 
+import { PublicLayout } from '~/components/PublicLayout';
+
 import { indexLoader } from './services';
-import IndexView from './view';
 
 export const meta: MetaFunction = () => {
   return [{ title: LOCALES.meta.title }, { name: 'description', content: LOCALES.meta.description }];
@@ -27,5 +28,11 @@ export default function Index() {
     window.dispatchEvent(sceneEvent);
   }, [sceneReady]);
 
-  return <IndexView />;
+  return (
+    <PublicLayout>
+      <h1 className="text-red-700 text-6xl m-0 [text-shadow:_5px_3px_2px_rgb(225_225_225_/_50%)] font-miltonian">
+        {LOCALES._index.title}
+      </h1>
+    </PublicLayout>
+  );
 }

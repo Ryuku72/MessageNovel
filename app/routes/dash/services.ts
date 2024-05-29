@@ -33,8 +33,6 @@ export async function DashLoader(request: LoaderFunctionArgs['request']) {
     const response = await supabaseClient.auth.getUser();
     const user = response.data?.user;
     if (!user) return redirect('/', { headers });
-
-    const library = await supabaseClient.from('library').select('*').match({ owner: user.id });
     const userData: UserDataEntry = {
       avatar: user?.user_metadata.avatar,
       id: user?.id || '',
@@ -43,7 +41,7 @@ export async function DashLoader(request: LoaderFunctionArgs['request']) {
       color: user?.user_metadata.color || '#aeaeae'
     };
 
-    return json({ library: library?.data, user: userData }, { headers });
+    return json(userData, { headers });
   } catch (error) {
     console.error(error);
     console.error('process error in dash');

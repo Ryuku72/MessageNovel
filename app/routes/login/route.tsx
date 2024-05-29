@@ -1,14 +1,19 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction } from '@remix-run/node';
-import { useActionData, useNavigation, useOutletContext } from '@remix-run/react';
+import { Form, Link, useActionData, useNavigation, useOutletContext } from '@remix-run/react';
 
 import { useEffect, useState } from 'react';
 
 import { AuthTokenResponsePassword } from '@supabase/supabase-js';
 
+import { primaryButtonClassName, secondaryButtonClassName } from '~/common/buttonFactory';
 import LOCALES from '~/locales/language_en.json';
 
+import PasswordInput from '~/components/PasswordInput';
+import { PublicLayout } from '~/components/PublicLayout';
+import TitleInput from '~/components/TitleInput';
+import LoadingSpinner from '~/svg/LoadingSpinner/LoadingSpinner';
+
 import { LoginAction, LoginLoader } from './services';
-import LoginView from './view';
 
 export const meta: MetaFunction = () => {
   return [{ title: LOCALES.meta.title }, { name: 'description', content: LOCALES.meta.description }];
@@ -51,13 +56,52 @@ export default function Login() {
     }
   }, [actionData]);
 
+  const LocalStrings = LOCALES.login;
+
   return (
-    <LoginView
-      isLoading={isLoading}
-      signInValue={signInValue}
-      setSignInValue={setSignInValue}
-      passwordValue={passwordValue}
-      setPasswordValue={setPasswordValue}
-    />
+    <PublicLayout>
+      <div className="flex justify-center items-center gap-3 flex-col w-full max-w-c-600 flex-auto">
+        <h1 className="text-red-700 text-6xl m-0 font-mono text-center font-miltonian [text-shadow:_5px_3px_2px_rgb(225_225_225_/_50%)]">
+          {LOCALES.login.title}
+        </h1>
+        <Form
+          aria-label="login"
+          method="post"
+          className="flex w-full flex-col gap-3 bg-white bg-opacity-25 backdrop-blur-sm rounded-lg shadow-xl px-8 py-6">
+          <fieldset className="w-full flex flex-col justify-center items-center gap-3" disabled={isLoading}>
+            <TitleInput
+              title="Email"
+              type="email"
+              id="user-email"
+              value={signInValue}
+              onChange={setSignInValue}
+              placeholder="jojo@email.com"
+            />
+            <PasswordInput
+              title="Password"
+              id="user-password"
+              value={passwordValue}
+              onChange={setPasswordValue}
+              placeholder="****"
+            />
+            <div className="w-full flex items-center gap-3 justify-center pt-3">
+              <Link to="/" className={primaryButtonClassName + ' py-2.5'}>
+                {LocalStrings.primary_button}
+              </Link>
+              <button
+                className={`${isLoading ? 'py-0.5 ' : 'py-2.5 '} ${secondaryButtonClassName}`}
+                type="submit"
+                disabled={false}>
+                {isLoading ? (
+                  <LoadingSpinner className="w-full h-10" svgColor="#fff" uniqueId="index-spinner" />
+                ) : (
+                  LocalStrings.secondary_button
+                )}
+              </button>
+            </div>
+          </fieldset>
+        </Form>
+      </div>
+    </PublicLayout>
   );
 }

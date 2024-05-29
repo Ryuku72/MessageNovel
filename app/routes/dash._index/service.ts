@@ -4,25 +4,22 @@ import { isRouteErrorResponse } from '@remix-run/react';
 
 import { initServer } from '~/services/API';
 
-export async function DashNovelIdLoader({
-  request,
-  params
-}: LoaderFunctionArgs) {
+export async function DashIndexLoader(request: LoaderFunctionArgs['request']) {
   const { supabaseClient, headers } = await initServer(request);
-  try {
-    const response = await supabaseClient
-      .from('library')
-      .select('*')
-      .match({ id: params.novelId as string })
-      .maybeSingle();
 
-    if (!response.data) redirect('/dash', { headers });
-    return json(response, { headers });
+  try {
+    const response = await supabaseClient.auth.getUser();
+    const user = response.data?.user;
+    if (!user) return redirect('/', { headers });
+
+    const library = await supabaseClient.from('library').select('*').match({ owner: user.id });
+
+    return json(library?.data, { headers });
   } catch (error) {
     console.error(error);
-    console.error('process error in dash novel id');
+    console.error('process error in dash');
     if (isRouteErrorResponse(error))
       return new Response(`${error.status} - ${error?.statusText || 'Error'}`, { status: error.status, headers });
-    return json(null, { headers });
+    else return json(null, { headers });
   }
 }

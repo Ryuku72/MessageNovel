@@ -12,6 +12,7 @@ import {
   WebGLRenderer
 } from 'three';
 import { DRACOLoader, GLTFLoader, RoomEnvironment } from 'three/examples/jsm/Addons.js';
+
 import gltfModal from '~/assets/model.glb';
 
 export default function ThreeJsBackground() {
@@ -65,7 +66,7 @@ export default function ThreeJsBackground() {
           const sceneEvent = new CustomEvent('scene ready', {
             detail: 100
           });
-  
+
           return window.dispatchEvent(sceneEvent);
         }
         const sceneEvent = new CustomEvent('scene ready', {
@@ -118,6 +119,11 @@ export default function ThreeJsBackground() {
       Gsap.to(camera.rotation, { duration: 3, x: -0.15, y: -0.7, z: -0.015 });
     };
 
+    const sceneSix = () => {
+      Gsap.to(camera.position, { duration: 3, x: -20, y: 4.5, z: 12 });
+      Gsap.to(camera.rotation, { duration: 3, x: 0.2, y: 2.25, z: -0.1 });
+    };
+
     const sceneAnimate = (event: Event) => {
       if ('detail' in event) {
         // eslint-disable-next-line no-console
@@ -133,6 +139,8 @@ export default function ThreeJsBackground() {
             return sceneFour();
           case 5:
             return sceneFive();
+          case 6:
+            return sceneSix();
         }
       }
     };

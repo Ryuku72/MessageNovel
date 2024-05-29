@@ -11,6 +11,16 @@ export type NovelinLibraryEntry = {
   owner_username: string;
 };
 
+export type NovelEntry = {
+  id: string;
+  created_at: string;
+  updated_at: string;
+  body: string;
+  updated_by: string;
+  members: string[];
+  title: string;
+}
+
 export type ProfileEntry = {
   id: string;
   email: string;

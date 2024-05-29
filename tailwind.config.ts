@@ -30,7 +30,7 @@ export default {
         'pastel-indigo': '#99CCFF',
         'pastel-blue': '#DAF0F7',
         'pastel-green': '#B2DFDB',
-        'pastel-emarld': '#CCFFCC',
+        'pastel-emerald': '#CCFFCC',
         'pastel-purple': '#CCCCFF'
       }
     },

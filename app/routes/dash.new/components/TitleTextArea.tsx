@@ -21,7 +21,7 @@ export default function TitleTextArea({ title, id, value, placeholder, onChange,
         onChange={e => onChange(e.target.value)}
         placeholder={placeholder}
         autoComplete={id}
-        rows={8}
+        rows={10}
         className="w-full text-base font-normal border border-gray-300 rounded-lg p-3 text-gray-500 resize-none"
         maxLength={limit}
       />
