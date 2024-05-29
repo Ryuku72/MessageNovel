@@ -19,14 +19,12 @@ export async function DashNewAction(request: ActionFunctionArgs['request']) {
         .from('novel_draft')
         .insert({
           updated_by: userData?.id || '',
-          body: null,
           title,
           members: [userData?.id || '']
         })
         .select()
         .maybeSingle();
 
-      console.log(draftInsert);
 
       if (draftInsert.error) {
         console.error(draftInsert.error);
