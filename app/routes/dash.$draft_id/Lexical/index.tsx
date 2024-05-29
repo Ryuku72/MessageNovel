@@ -29,7 +29,7 @@ export function LexicalRichTextEditor({ namespace, value }: { namespace: string;
         <div className="bg-white bg-opacity-65 flex flex-col flex-auto relative rounded-b-md min-[768px]:overflow-hidden">
           <RichTextPlugin
             contentEditable={
-              <ContentEditable className="flex flex-col flex-auto py-2 px-4 text-gray-600 min-[768px]:overflow-auto" id="lexical " />
+              <ContentEditable className="flex flex-col flex-auto py-2 px-4 text-gray-600 min-[768px]:overflow-auto" id="lexical" />
             }
             placeholder={
               <div className="absolute top-2 z-0 px-4 pointer-events-none text-gray-400">Enter some text...</div>
