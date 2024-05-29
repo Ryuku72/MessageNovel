@@ -28,8 +28,6 @@ export default function DashNovelId() {
   const navigationState = useNavigation();
   const isLoading = ['submitting', 'loading'].includes(navigationState.state);
 
-
-  console.log(loaderData);
   const LocalStrings = LOCALES.dash.draft;
   const [titleValue, setTitleValue] = useState(loaderData?.title);
 
