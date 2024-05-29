@@ -19,7 +19,7 @@ export async function DashNewAction(request: ActionFunctionArgs['request']) {
         .from('novel_draft')
         .insert({
           updated_by: userData?.id || '',
-          body: {},
+          body: null,
           title,
           members: [userData?.id || '']
         })
@@ -53,7 +53,7 @@ export async function DashNewAction(request: ActionFunctionArgs['request']) {
           return json({ error: { message: libraryInsert.error.message } }, { headers });
         }
 
-      return redirect(`/dash/${libraryInsert.data?.id}`, { headers });
+      return redirect(`/dash/${libraryInsert.data?.draft_id}`, { headers });
     } else return json({ error: 'Title and Description are requires' }, { headers });
   } catch (error) {
     console.error(error);
