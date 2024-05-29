@@ -5,4 +5,4 @@ export const secondaryButtonClassName =
   'rounded-lg px-5 text-gray-100 font-semibold bg-emerald-700 hover:bg-green-500 w-full max-w-button flex items-center justify-center gap-2';
 
 export const thirdButtonClassName =
-  'rounded-lg px-5 text-gray-100 bg-slate-400 font-semibold hover:bg-slate-600 hover:text-gray-100 w-full max-w-button flex items-center justify-center bg-opacity-95 backdrop-blur-sm shadow-xl gap-2';
+  'rounded-lg px-5 text-gray-100 bg-slate-400 font-semibold hover:bg-slate-600 hover:text-gray-100 w-full max-w-button flex items-center justify-center bg-opacity-95 backdrop-blur-sm gap-2';

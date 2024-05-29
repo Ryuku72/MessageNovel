@@ -78,14 +78,14 @@ export default function DashNavBar({ user, handleSubmit, isLoading }: DashNavBar
       </div>
       <div className="has-tooltip cursor-pointer relative">
         <button
-          className={`${thirdButtonClassName} ${isLoading ? 'py-0.5' : 'py-2.5'} w-[60px] h-[50px] px-0`}
+          className={`${thirdButtonClassName} ${isLoading ? 'py-0.5' : 'py-2.5'} !w-[60px] !h-[50px] flex-shrink-0 !p-0`}
           type="button"
           onClick={handleSubmit}>
           {isLoading ? (
             <LoadingSpinner className="w-8 h-8" svgColor="#fff" uniqueId="index-spinner" />
           ) : (
             <Fragment>
-              <LogOutIcon svgColor="#fff" uniqueId="dash-logout" className="w-8 h-auto" />
+              <LogOutIcon svgColor="#fff" uniqueId="dash-logout" className="w-auto h-8 translate-x-0.5" />
             </Fragment>
           )}
         </button>
