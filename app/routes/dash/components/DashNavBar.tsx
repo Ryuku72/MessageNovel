@@ -24,10 +24,10 @@ export default function DashNavBar({ user, handleSubmit, isLoading }: DashNavBar
   const LocalStrings = LOCALES.dash;
 
   return (
-    <div className="flex-shrink-0 w-auto flex flex-col max-[768px]:flex-row gap-5 px-3 py-6 items-center bg-slate-50 bg-opacity-35 backdrop-blur-sm relative z-10">
-      <div className="flex flex-col max-[768px]:flex-row flex-auto gap-2">
+    <div className="flex-shrink-0 w-auto flex flex-col max-[768px]:flex-row gap-3 px-3 py-6 items-center bg-slate-50 bg-opacity-35 backdrop-blur-sm relative z-10 max-[768px]:fixed max-[768px]:bottom-0 max-[768px]:w-full max-[768px]:py-3">
+      <div className="flex flex-col max-[768px]:flex-row flex-auto gap-3">
         <div className="has-tooltip cursor-pointer relative">
-          <NavLink to="/dash/settings" className="flex w-[60px] h-[60px]">
+          <NavLink to="/dash/settings" className="flex w-[60px] h-[60px] flex-shrink-0">
             <img alt="create-img" className="w-full h-full rounded object-cover" src={user?.avatar || Default_Avatar} />
           </NavLink>
           <div className="w-full py-2 flex items-center flex-col">

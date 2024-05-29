@@ -6,6 +6,11 @@
   visibility: hidden;
 }
 
+.has-tooltip {
+  @apply flex;
+  @apply self-start;
+}
+
 .has-tooltip:hover .w-full .tooltip {
   visibility: visible;
   z-index: 50;

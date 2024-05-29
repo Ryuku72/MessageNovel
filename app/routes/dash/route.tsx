@@ -46,7 +46,7 @@ export default function Dash() {
   };
 
   return (
-    <div className="w-full h-full flex flex-row max-[768px]:flex-col-reverse relative">
+    <div className="w-full h-full flex flex-row relative">
       <DashNavBar user={loaderData} isLoading={isLoading} handleSubmit={handleSubmit} />
       <Outlet context={{ user: loaderData }} />
     </div>
