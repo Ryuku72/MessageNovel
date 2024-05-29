@@ -19,8 +19,6 @@ export function LexicalRichTextEditor({ namespace, value }: { namespace: string;
   const initialConfig = InitialConfig(namespace, value);
   const [editorState, setEditorState] = useState('');
 
-  console.log(editorState);
-
   return (
     <LexicalComposer initialConfig={initialConfig}>
       <div className={`rounded-sm w-full text-gray-900 font-normal text-left flex flex-col flex-auto min-h-[500px] ${!editorState ? 'overflow-hidden max-h-[600px]' : 'overflow-visible'}`}>

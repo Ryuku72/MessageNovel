@@ -232,7 +232,7 @@ export default function ToolbarPlugin() {
   };
 
   return (
-    <div className="flex mb-[1px] bg-white py-2 px-1 rounded-t-md flex-wrap gap-1" ref={toolbarRef}>
+    <div className="flex mb-[1px] bg-white py-2 px-1 rounded-t-md flex-wrap gap-1 sticky top-0 z-10" ref={toolbarRef}>
       <button
         type="button"
         title="Undo"

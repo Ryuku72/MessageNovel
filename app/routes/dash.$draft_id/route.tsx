@@ -33,7 +33,7 @@ export default function DashNovelId() {
 
   return (
     <div className="w-full h-full flex flex-row relative">
-      <div className="flex flex-col max-[768px]:flex-auto items-center w-full px-10 max-[768px]:px-3 py-12 max-[768px]:pt-6 gap-6 min-[768px]:overflow-hidden">
+      <div className="flex flex-col max-[768px]:flex-auto items-center w-full px-10 max-[768px]:px-0 py-12 max-[768px]:pt-4 gap-6 min-[768px]:overflow-hidden">
         <h1 className="text-red-700 text-4xl m-0 underline underline-offset-8 [text-shadow:_5px_3px_2px_rgb(225_225_225_/_50%)] font-miltonian">
           &nbsp;&nbsp;{LocalStrings.title}&nbsp;&nbsp;&nbsp;
         </h1>
@@ -41,7 +41,7 @@ export default function DashNovelId() {
         <Form
           aria-label="draft-update"
           method="post"
-          className="w-full flex flex-col gap-3 text-mono relative bg-white bg-opacity-50 backdrop-blur-sm rounded-b-md rounded-t-md px-4 py-4 min-[768px]:overflow-hidden">
+          className="w-full flex flex-col gap-3 text-mono relative bg-white bg-opacity-50 backdrop-blur-sm rounded-b-md rounded-t-md px-4 max-[768px]:px-2 py-4 min-[768px]:overflow-hidden">
           <TitleInput
             title="Novel Title"
             id="novel-title"
