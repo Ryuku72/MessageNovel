@@ -77,23 +77,23 @@
     }
 
     .editor-quote {
-      @apply mt-0 mr-0 mb-2 ml-5 text-base text-gray-700 border-l-slate-300 border-l-4 border-solid pl-4;
+      @apply mt-0 mr-0 mb-2 ml-4 pl-4 text-base text-gray-700 border-l-slate-300 border-l-4 border-solid;
     }
 
     .editor-listItemChecked,
     .editor-listItemUnchecked {
-      @apply relative mx-2 px-6 list-none outline-none before:w-4 before:h-4 before:cursor-pointer before:flex before:items-center before:justify-center before:bg-cover before:absolute before:top-1 before:left-0 focus:before:shadow-[0_0_0_2px_#a6cdfe] focus:before:rounded-sm;
+      @apply relative mx-2 px-6 list-none outline-none before:w-4 before:h-4 before:cursor-pointer before:flex before:items-center before:justify-center before:bg-cover before:absolute before:top-1 before:left-0;
     }
 
 
     .editor-listItemUnchecked {
-      @apply line-through before:border before:border-solid before:border-slate-600 before:rounded-sm before:content-normal;
+      @apply before:border before:border-solid before:border-slate-600 before:rounded-sm before:content-normal;
       
     }
 
 
     .editor-listItemChecked {
-      @apply before:border before:border-solid before:border-green-800 before:bg-green-500 before:rounded-sm before:text-white before:font-semibold before:text-xs before:text-center before:content-['\2713'];
+      @apply line-through before:border before:border-solid before:border-green-800 before:bg-green-500 before:rounded-sm before:text-white before:font-semibold before:text-xs before:text-center before:content-['\2713'];
 
     }
   }
