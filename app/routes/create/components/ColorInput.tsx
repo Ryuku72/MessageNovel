@@ -15,7 +15,7 @@ export default function ColorInput({ title, id, value, onChange }: ColorInputPro
     'bg-pastel-indigo',
     'bg-pastel-blue',
     'bg-pastel-green',
-    'bg-pastel-emarld',
+    'bg-pastel-emerald',
     'bg-pastel-purple'
   ];
 
