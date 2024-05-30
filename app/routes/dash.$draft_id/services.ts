@@ -35,26 +35,19 @@ export async function DashNovelIdAction({ request, params}: ActionFunctionArgs) 
   const userData = user.data?.user;
   if (!userData?.id) return null;
 
-  const novel = await supabaseClient
-      .from('novel_draft')
-      .select('*')
-      .match({ id: params.draft_id as string })
-      .maybeSingle();
-
   const response = await supabaseClient
     .from('novel_draft')
     .update({
       body,
       title,
+      updated_at: new Date(),
       updated_by: userData?.id
     })
     .match({ id: params.draft_id })
     .select()
     .maybeSingle();
 
-  if (novel.data?.title !== title) {
-    await supabaseClient.from('library').update({ title }).match({ draft_id: params.draft_id });
-  }
+  await supabaseClient.from('library').update({ title, updated_at: new Date() }).match({ draft_id: params.draft_id });
 
   return json(response?.data, { headers });
 }

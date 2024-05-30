@@ -2,150 +2,98 @@
 @tailwind components;
 @tailwind utilities;
 
-.tooltip {
-  visibility: hidden;
-}
 
-.has-tooltip {
-  @apply flex;
-  @apply self-start;
-}
-
-.has-tooltip:hover .tooltip {
-  visibility: visible;
-  z-index: 50;
-}
-
-dialog {
-  animation: jiggle 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-dialog::-webkit-scrollbar {
-  width: 0;
-  height: 0;
-}
-
-dialog:focus-within {
-  outline: none;
-}
-dialog[open] {
-  display: flex;
-}
-
-dialog::backdrop {
-  background: rgba(0, 0, 0, 0.3);
-}
-
-@keyframes jiggle {
-  0% {
-    transform: scale(1);
+  .tooltip {
+    @apply invisible;
   }
 
-  50% {
-    transform: scale(1.05);
+  .has-tooltip {
+    @apply flex self-start;
   }
 
-  100% {
-    transform: scale(1);
-  }
-}
-
-/* lexical */
-
-#lexical {
-  .underline_line-through {
-    text-decoration: underline line-through;
-  }
-  hr {
-    padding: 2px;
-    border: none;
-    margin: 1em 0;
+  .has-tooltip:hover .tooltip {
+    @apply visible z-50;
   }
 
-  hr:after {
-    content: '';
-    display: block;
-    height: 2px;
-    background-color: #ccc;
-    line-height: 2px;
+  dialog {
+    animation: jiggle 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   }
 
-  .editor-list-ol,
-  .editor-list-ul {
-    padding: 0;
-    margin: 0;
-    list-style-position: outside;
+  dialog::-webkit-scrollbar {
+    @apply w-0 h-0;
   }
 
-  ul {
-    @apply list-disc;
+  dialog[open] {
+    @apply flex;
   }
 
-  ul.editor-checklist {
-    @apply list-none;
+  dialog::backdrop {
+    @apply bg-black bg-opacity-30;
   }
 
-  ol {
-    @apply list-decimal;
+  @keyframes jiggle {
+    0% {
+      transform: scale(1);
+    }
+
+    50% {
+      transform: scale(1.05);
+    }
+
+    100% {
+      transform: scale(1);
+    }
   }
 
-  .editor-listitem {
-    margin: 0 32px;
-  }
+  /* lexical */
 
-  .editor-quote {
-    margin: 0 0 10px 20px;
-    font-size: 15px;
-    color: #65676b;
-    border-left-color: #ced0d4;
-    border-left-width: 4px;
-    border-left-style: solid;
-    padding-left: 16px;
-  }
+  #lexical {
+    .underline_line-through {
+      text-decoration: underline line-through;
+    }
+    hr {
+      @apply p-1 border-none my-4 mx-0 after:content-normal after:block after:h-0.5 after:bg-gray-400 after:leading-[2px];
+    }
 
-  .editor-listItemChecked,
-  .editor-listItemUnchecked {
-    position: relative;
-    margin-left: 8px;
-    margin-right: 8px;
-    padding-left: 24px;
-    padding-right: 24px;
-    list-style-type: none;
-    outline: none;
-  }
+    .editor-list-ol,
+    .editor-list-ul {
+      @apply p-0 m-0 list-outside;
+    }
 
-  .editor-listItemUnchecked:before,
-  .editor-listItemChecked:before {
-    content: '';
-    width: 16px;
-    height: 16px;
-    top: 3px;
-    left: 0;
-    cursor: pointer;
-    display: block;
-    background-size: cover;
-    position: absolute;
-  }
+    ul {
+      @apply list-disc;
+    }
 
-  .editor-listItemUnchecked:before {
-    border: 1px solid #999;
-    border-radius: 2px;
-  }
+    ul.editor-checklist {
+      @apply list-none;
+    }
 
-  .editor-listItemChecked {
-    text-decoration: line-through;
-  }
+    ol {
+      @apply list-decimal;
+    }
 
-  .editor-listItemUnchecked:focus:before,
-  .editor-listItemChecked:focus:before {
-    box-shadow: 0 0 0 2px #a6cdfe;
-    border-radius: 2px;
-  }
+    .editor-listitem {
+      @apply my-0 mx-8;
+    }
 
-  .editor-listItemChecked:before {
-    border: 1px solid rgb(61, 135, 245);
-    border-radius: 2px;
-    background-color: #3d87f5;
-    background-repeat: no-repeat;
+    .editor-quote {
+      @apply mt-0 mr-0 mb-2 ml-5 text-base text-gray-700 border-l-slate-300 border-l-4 border-solid pl-4;
+    }
+
+    .editor-listItemChecked,
+    .editor-listItemUnchecked {
+      @apply relative mx-2 px-6 list-none outline-none before:w-4 before:h-4 before:cursor-pointer before:flex before:items-center before:justify-center before:bg-cover before:absolute before:top-1 before:left-0 focus:before:shadow-[0_0_0_2px_#a6cdfe] focus:before:rounded-sm;
+    }
+
+
+    .editor-listItemUnchecked {
+      @apply line-through before:border before:border-solid before:border-slate-600 before:rounded-sm before:content-normal;
+      
+    }
+
+
+    .editor-listItemChecked {
+      @apply before:border before:border-solid before:border-green-800 before:bg-green-500 before:rounded-sm before:text-white before:font-semibold before:text-xs before:text-center before:content-['\2713'];
+
+    }
   }
-}

@@ -12,7 +12,7 @@ export async function DashIndexLoader(request: LoaderFunctionArgs['request']) {
     const user = response.data?.user;
     if (!user) return redirect('/', { headers });
 
-    const library = await supabaseClient.from('library').select('*').match({ owner: user.id });
+    const library = await supabaseClient.from('library').select('*').match({ owner: user.id }).order('updated_at', { ascending: false });
 
     return json(library?.data, { headers });
   } catch (error) {
