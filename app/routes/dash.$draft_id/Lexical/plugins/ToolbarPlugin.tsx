@@ -465,22 +465,23 @@ export default function ToolbarPlugin() {
         aria-label="Horizonital Rule Insert">
         <HorizontalRuleIcon uniqueId="lexical-justify" className="w-5 h-auto text-gray-500" />
       </button>
-        <button
-          type="button"
-          onClick={() => {
-            editor.dispatchCommand(SPEECH_TO_TEXT_COMMAND, !isSpeechToText);
-            setIsSpeechToText(!isSpeechToText);
-          }}
-          className={!enableSpeech ? 'hidden' :
-            'flex rounded cursor-pointer w-[40px] h-[40px] items-center justify-center ' +
-          (isSpeechToText ? 'border bg-red-400 text-white' : 'text-gray-500')
-          }
-          title="Speech To Text"
-          aria-label={`${
-            isSpeechToText ? 'Enable' : 'Disable'
-          } speech to text`}>
-          <MicIcon uniqueId="lexical-mic" className="w-5 h-auto" />
-        </button>
+      <Divider />
+      <button
+        type="button"
+        onClick={() => {
+          editor.dispatchCommand(SPEECH_TO_TEXT_COMMAND, !isSpeechToText);
+          setIsSpeechToText(!isSpeechToText);
+        }}
+        className={
+          !enableSpeech
+            ? 'hidden'
+            : 'flex rounded cursor-pointer w-[40px] h-[40px] items-center justify-center ' +
+              (isSpeechToText ? 'border bg-red-400 text-white' : 'text-gray-500')
+        }
+        title="Speech To Text"
+        aria-label={`${isSpeechToText ? 'Enable' : 'Disable'} speech to text`}>
+        <MicIcon uniqueId="lexical-mic" className="w-5 h-auto" />
+      </button>
     </div>
   );
 }

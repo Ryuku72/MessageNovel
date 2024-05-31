@@ -2,7 +2,6 @@ import { useEffect, useRef } from 'react';
 
 export type DialogWrapperProps = {
   open: boolean;
-  className?: string;
   children: React.ReactNode;
   dataTestId?: string;
   handleClickOutside?: (e: React.SyntheticEvent) => void;
@@ -10,7 +9,6 @@ export type DialogWrapperProps = {
 
 export default function DialogWrapper({
   open,
-  className = '',
   children,
   handleClickOutside = () => {}
 }: DialogWrapperProps) {
@@ -33,7 +31,7 @@ export default function DialogWrapper({
   return (
     <dialog
       ref={modalRef}
-      className={className}
+      className="max-w-full max-h-full w-full h-full justify-center p-[36px] bg-transparent z-10"
       onKeyUp={e => {
         if (e.key === 'Escape') handleClickOutside(e);
       }}>

@@ -22,7 +22,7 @@ export default function DashNew() {
   const [draftNovelDescription, setDraftNovelDescription] = useState('');
 
   const navigationState = useNavigation();
-  const isLoading = ['submitting', 'loading'].includes(navigationState.state);
+  const isLoading = ['submitting'].includes(navigationState.state);
   const LocalStrings = LOCALES.dash.new;
   return (
     <div className="flex flex-col max-[768px]:flex-auto items-center w-full px-10 max-[768px]:px-3 py-12 max-[768px]:py-4 gap-6 overflow-hidden">

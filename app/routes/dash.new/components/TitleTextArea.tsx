@@ -11,7 +11,7 @@ export default function TitleTextArea({ title, id, value, placeholder, onChange,
   return (
     <div className="w-full flex flex-col gap-2 font-mono">
       <label htmlFor={id} className="w-full text-sm font-medium text-gray-600">
-        {title} <span className="text-xs font-medium text-gray-400">{`(Max Length ${limit} characters)`}</span>
+        {title} <span className="text-xs font-medium text-gray-500">{`(Max Length ${limit} characters)`}</span>
       </label>
       <textarea
         id={id}

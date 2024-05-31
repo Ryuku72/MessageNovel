@@ -1,30 +1,10 @@
 /* eslint-disable no-console */
-import { ActionFunctionArgs, LoaderFunctionArgs, json, redirect } from '@remix-run/node';
+import { LoaderFunctionArgs, json, redirect } from '@remix-run/node';
 import { isRouteErrorResponse } from '@remix-run/react';
 
 import { UserDataEntry } from '~/types';
 
 import { initServer } from '~/services/API';
-
-export async function DashAction(request: ActionFunctionArgs['request']) {
-  const { supabaseClient, headers } = await initServer(request);
-  const body = await request.formData();
-  const type = body.get('type') as string;
-
-  try {
-    if (type === 'sign_out') {
-      await supabaseClient.auth.signOut();
-      return redirect('/', { headers });
-    }
-    return json(null, { headers });
-  } catch (error) {
-    console.error(error);
-    console.error('process error in dash');
-
-    if (isRouteErrorResponse(error)) return new Response(`${error.status} - ${error?.statusText || 'Error'}`, { status: error.status, headers });
-    else return json(null, { headers });
-  }
-}
 
 export async function DashLoader(request: LoaderFunctionArgs['request']) {
   const { supabaseClient, headers } = await initServer(request);

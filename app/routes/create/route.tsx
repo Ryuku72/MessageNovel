@@ -65,13 +65,7 @@ export default function Create() {
       formData.append('create-password', password);
 
       submit(formData, { method: 'post', encType: 'multipart/form-data' });
-    } else if (actionData?.success) {
-      const sceneEvent = new CustomEvent('alertFromError', {
-        detail: 'Profile Created'
-      });
-      window.dispatchEvent(sceneEvent);
-      navigate('/dash');
-    }
+    } 
   }, [actionData, colorSelect, email, imageFile, navigate, password, submit, username]);
 
   return (

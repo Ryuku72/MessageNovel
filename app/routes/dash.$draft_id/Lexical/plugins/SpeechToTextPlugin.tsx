@@ -82,22 +82,22 @@ const VOICE_COMMANDS: Readonly<Record<string, (arg0: { editor: LexicalEditor; se
 export default function SpeechToTextPlugin(): null {
   const [editor] = useLexicalComposerContext();
   const [isEnabled, setIsEnabled] = useState<boolean>(false);
-  // @ts-expect-error missing type
-  const recognition = useRef<typeof SpeechRecognition | null>(null);
+  const recognition = useRef<SpeechRecognition | null>(null);
   const report = useReport();
 
   useEffect(() => {
     const SUPPORT_SPEECH_RECOGNITION: boolean = 'SpeechRecognition' in window || 'webkitSpeechRecognition' in window;
 
     if (isEnabled && recognition.current === null && SUPPORT_SPEECH_RECOGNITION) {
-      // @ts-expect-error missing type
-      const SpeechRecognition = window?.SpeechRecognition || window?.webkitSpeechRecognition;
-      recognition.current = new SpeechRecognition();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const SpeechRecognition = (window as any)?.SpeechRecognition || (window as any)?.webkitSpeechRecognition;
+      recognition.current = new SpeechRecognition() as SpeechRecognition;
       recognition.current.continuous = true;
       recognition.current.interimResults = true;
-      recognition.current.addEventListener('result', (event: typeof SpeechRecognition) => {
+      recognition.current.addEventListener('result', (event: SpeechRecognitionEvent) => {
         const resultItem = event.results.item(event.resultIndex);
         const { transcript } = resultItem.item(0);
+        
         report(transcript);
 
         if (!resultItem.isFinal) {

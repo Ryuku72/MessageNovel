@@ -166,8 +166,7 @@ export default function AvatarInput({ title, id, setImage }: AvatarInputProps) {
       </label>
       {sceneReady && (
         <DialogWrapper
-          open={open}
-          className="max-w-full max-h-full w-full h-full justify-center p-[36px] bg-transparent z-10">
+          open={open}>
           <div className="w-full max-w-card-l bg-slate-300 bg-opacity-75 backdrop-blur-sm rounded-b-md rounded-t-lg flex flex-col gap-1 self-center text-mono">
             <div className="w-full pt-4 px-6 pb-2 flex flex-wrap rounded-t-[inherit] justify-between items-center bg-white bg-opacity-75 backdrop-blur-sm">
               <h3 className="font-medium text-xl text-gray-600 underline underline-offset-4">

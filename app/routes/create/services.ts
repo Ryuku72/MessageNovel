@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { ActionFunctionArgs, json } from '@remix-run/node';
+import { ActionFunctionArgs, json, redirect } from '@remix-run/node';
 import { isRouteErrorResponse } from '@remix-run/react';
 
 import { envConfig, initServer } from '~/services/API';
@@ -14,7 +14,7 @@ export async function CreateAction(request: ActionFunctionArgs['request']) {
   const color = data.get('color') as string;
 
   const filename = avatar?.name;
-  const extension = avatar?.name.split('.').at(-1) || '';
+  const extension = filename.split('.').at(-1) || '';
 
   const { supabaseClient, headers } = await initServer(request);
 
@@ -62,7 +62,7 @@ export async function CreateAction(request: ActionFunctionArgs['request']) {
         console.error('profile insert error');
         return json({ error: { message: response.error.message } }, { headers });
       }
-      return json({ ...response, success: true }, { headers });
+      return redirect('/dash', { headers });
     }
   } catch (error) {
     console.error(error);

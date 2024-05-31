@@ -1,5 +1,5 @@
-import { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction } from '@remix-run/node';
-import { Outlet, useLoaderData, useNavigation, useOutletContext, useSubmit } from '@remix-run/react';
+import { LoaderFunctionArgs, MetaFunction } from '@remix-run/node';
+import { Outlet, useLoaderData, useOutletContext } from '@remix-run/react';
 
 import { useEffect } from 'react';
 
@@ -7,7 +7,7 @@ import { UserDataEntry } from '~/types';
 
 import LOCALES from '~/locales/language_en.json';
 
-import { DashAction, DashLoader } from './services';
+import { DashLoader } from './services';
 import DashNavBar from './components/DashNavBar';
 
 export const meta: MetaFunction = () => {
@@ -18,17 +18,9 @@ export function loader({ request }: LoaderFunctionArgs) {
   return DashLoader(request);
 }
 
-export function action({ request }: ActionFunctionArgs) {
-  return DashAction(request);
-}
-
 export default function Dash() {
   const loaderData = useLoaderData<UserDataEntry>();
   const { sceneReady } = useOutletContext<{ sceneReady: boolean }>();
-  const submit = useSubmit();
-  const navigationState = useNavigation();
-
-  const isLoading = ['submitting', 'loading'].includes(navigationState.state);
 
   useEffect(() => {
     if (!sceneReady) return;
@@ -38,16 +30,9 @@ export default function Dash() {
     window.dispatchEvent(sceneEvent);
   }, [sceneReady]);
 
-  const handleSubmit = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    const formData = new FormData();
-    formData.append('type', 'sign_out');
-    submit(formData, { method: 'post' });
-  };
-
   return (
     <div className="w-full h-full flex flex-row relative">
-      <DashNavBar user={loaderData} isLoading={isLoading} handleSubmit={handleSubmit} />
+      <DashNavBar user={loaderData} />
       <Outlet context={{ user: loaderData }} />
     </div>
   );

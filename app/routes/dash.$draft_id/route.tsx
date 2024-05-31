@@ -26,7 +26,7 @@ export function action(data: ActionFunctionArgs) {
 export default function DashNovelId() {
   const loaderData = useLoaderData<NovelEntry>();
   const navigationState = useNavigation();
-  const isLoading = ['submitting', 'loading'].includes(navigationState.state);
+  const isLoading = ['submitting'].includes(navigationState.state);
 
   const LocalStrings = LOCALES.dash.draft;
   const [titleValue, setTitleValue] = useState(loaderData?.title);

@@ -1,4 +1,4 @@
-import { NavLink } from '@remix-run/react';
+import { Form, NavLink, useNavigation } from '@remix-run/react';
 
 import { Fragment } from 'react/jsx-runtime';
 
@@ -10,17 +10,17 @@ import LOCALES from '~/locales/language_en.json';
 import DashIcon from '~/svg/DashIcon/DashIcon';
 import LoadingSpinner from '~/svg/LoadingSpinner/LoadingSpinner';
 import LogOutIcon from '~/svg/LogOutIcon/LogOutIcon';
-import PlusIcon from '~/svg/PlusIcon/PlusIcon';
 
 import Default_Avatar from '~/assets/default_avatar.jpeg';
+import PlusIcon from '~/svg/PlusIcon/PlusIcon';
 
 export type DashNavBarProps = {
   user: UserDataEntry;
-  handleSubmit: (event: React.MouseEvent) => void;
-  isLoading: boolean;
 };
 
-export default function DashNavBar({ user, handleSubmit, isLoading }: DashNavBarProps) {
+export default function DashNavBar({ user}: DashNavBarProps) {
+  const navigationState = useNavigation();
+  const isLoading = ['submitting'].includes(navigationState.state);
   const LocalStrings = LOCALES.dash;
 
   return (
@@ -53,7 +53,6 @@ export default function DashNavBar({ user, handleSubmit, isLoading }: DashNavBar
             {LocalStrings.secondary_button}
           </div>
         </div>
-
         <div className="has-tooltip cursor-pointer relative">
           <NavLink
             className={({ isActive, isPending, isTransitioning }) =>
@@ -70,11 +69,12 @@ export default function DashNavBar({ user, handleSubmit, isLoading }: DashNavBar
           </div>
         </div>
       </div>
-      <div className="has-tooltip cursor-pointer relative">
+      <Form method="get" action="/auth" className="has-tooltip cursor-pointer relative">
         <button
           className={`${thirdButtonClassName} ${isLoading ? 'py-0.5' : 'py-2.5'} !w-[60px] !h-[50px] flex-shrink-0 !p-0`}
-          type="button"
-          onClick={handleSubmit}>
+          type="submit"
+          name="intent"
+          value="signout">
           {isLoading ? (
             <LoadingSpinner className="w-8 h-8" svgColor="#fff" uniqueId="index-spinner" />
           ) : (
@@ -88,7 +88,7 @@ export default function DashNavBar({ user, handleSubmit, isLoading }: DashNavBar
           className="absolute max-[768px]:hidden left-[80px] top-[8px] tooltip z-10 inline-block px-4 py-2 text-sm text-white transition-opacity duration-300 bg-gray-600 backdrop-blur-sm rounded-lg shadow-sm bg-opacity-35 whitespace-pre">
           {LocalStrings.sign_out_button}
         </div>
-      </div>
+      </Form>
     </div>
   );
 }

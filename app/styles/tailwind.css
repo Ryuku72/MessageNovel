@@ -52,7 +52,7 @@
       text-decoration: underline line-through;
     }
     hr {
-      @apply p-1 border-none my-4 mx-0 after:content-normal after:block after:h-0.5 after:bg-gray-400 after:leading-[2px];
+      @apply p-1 border-none my-4 mx-0 after:content-normal after:block after:h-0.5 after:bg-gray-800 after:leading-[2px] after:bg-opacity-15;
     }
 
     .editor-list-ol,
