@@ -7,7 +7,7 @@ export type TitleTextAreaProps = {
   limit?: number;
 };
 
-export default function TitleTextArea({ title, id, value, placeholder, onChange, limit = 125 }: TitleTextAreaProps) {
+export default function TitleTextArea({ title, id, value, placeholder, onChange, limit = 600 }: TitleTextAreaProps) {
   return (
     <div className="w-full flex flex-col gap-2 font-mono">
       <label htmlFor={id} className="w-full text-sm font-medium text-gray-600">

@@ -1,4 +1,5 @@
-export function CreateDate(date: string) {
+export function CreateDate(date: string | undefined) {
+  if (!date) return '';
   const day = new Date(date).getDate().toLocaleString('en-US', {
     minimumIntegerDigits: 2,
     useGrouping: false

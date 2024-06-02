@@ -46,17 +46,17 @@ export default function DashNew() {
               placeholder={LocalStrings.secondary_input_placeholder}
               onChange={setDraftNovelDescription}
             />
-            <div className="w-full flex gap-3 flex-wrap mt-2">
+            <div className="w-full flex gap-3 flex-wrap mt-2 justify-end">
               <button
                 className={
                   secondaryButtonClassName +
-                  ` whitespace-pre !max-w-[160px] justify-center items-center ${isLoading ? 'py-0.5' : 'py-2.5'}`
+                  ' whitespace-pre !max-w-[160px] !h-[50px] !px-0 justify-center items-center'
                 }>
                 {isLoading ? (
                   <LoadingSpinner className="w-full h-10" svgColor="#fff" uniqueId="index-spinner" />
                 ) : (
                   <Fragment>
-                    <PlusIcon uniqueId="dash_plus" svgColor="#fff" className="w-3 h-3" />
+                    <PlusIcon uniqueId="dash_plus" svgColor="#fff" className="w-4 h-auto" />
                     {LocalStrings.primary_button}
                   </Fragment>
                 )}
