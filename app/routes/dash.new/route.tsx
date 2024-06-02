@@ -1,5 +1,5 @@
-import { ActionFunctionArgs } from '@remix-run/node';
-import { Form, useNavigation } from '@remix-run/react';
+import { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node';
+import { Form, useLoaderData, useNavigation, useSearchParams } from '@remix-run/react';
 
 import { Fragment, useState } from 'react';
 
@@ -11,26 +11,46 @@ import LoadingSpinner from '~/svg/LoadingSpinner/LoadingSpinner';
 import PlusIcon from '~/svg/PlusIcon/PlusIcon';
 
 import TitleTextArea from './components/TitleTextArea';
-import { DashNewAction } from './services';
+import { DashNewAction, DashNewLoader } from './services';
+import { NovelinLibraryEntry } from '~/types';
 
-export function action({ request }: ActionFunctionArgs) {
-  return DashNewAction(request);
+export function loader(data: LoaderFunctionArgs) {
+  return DashNewLoader(data);
+}
+
+export function action(data: ActionFunctionArgs) {
+  return DashNewAction(data);
 }
 
 export default function DashNew() {
-  const [draftNovelTitle, setDraftNovelTitle] = useState('');
-  const [draftNovelDescription, setDraftNovelDescription] = useState('');
+  const library = useLoaderData<NovelinLibraryEntry>();
+  const [draftNovelTitle, setDraftNovelTitle] = useState(library?.title || '');
+  const [draftNovelDescription, setDraftNovelDescription] = useState(library?.description || '');
 
   const navigationState = useNavigation();
+  const [searchParams] = useSearchParams();
+
   const isLoading = ['submitting'].includes(navigationState.state);
+  const searchNovelId = searchParams.get('novel_id');
   const LocalStrings = LOCALES.dash.new;
+
+
   return (
     <div className="flex flex-col max-[768px]:flex-auto items-center w-full px-10 max-[768px]:px-3 py-12 max-[768px]:py-4 gap-6 overflow-hidden">
       <h1 className="text-red-700 text-4xl m-0 underline underline-offset-8 [text-shadow:_5px_3px_2px_rgb(225_225_225_/_50%)] font-miltonian">
-        &nbsp;&nbsp;{LocalStrings.title}&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;{searchNovelId ? 'Update Details' : LocalStrings.title}&nbsp;&nbsp;&nbsp;
       </h1>
       <div className="w-full max-w-[1250px] flex flex-wrap justify-between items-center bg-slate-50 backdrop-blur-sm bg-opacity-55 rounded-lg">
-        <Form method="post" action="/dash/new" className="flex w-full py-4 px-6">
+        <Form
+          method="post"
+          className="flex w-full py-4 px-6"
+          onSubmit={e => {
+            if (draftNovelDescription.length < 120) {
+              e.preventDefault();
+              window.alert('description less than 120 characters');
+              return false;
+            }
+          }}>
           <fieldset className="flex w-full flex-col gap-5">
             <TitleInput
               title={LocalStrings.primary_input}
@@ -38,6 +58,7 @@ export default function DashNew() {
               value={draftNovelTitle}
               placeholder={LocalStrings.primary_input_placeholder}
               onChange={setDraftNovelTitle}
+              minLength={3}
             />
             <TitleTextArea
               title={LocalStrings.secondary_input}
@@ -57,7 +78,7 @@ export default function DashNew() {
                 ) : (
                   <Fragment>
                     <PlusIcon uniqueId="dash_plus" svgColor="#fff" className="w-4 h-auto" />
-                    {LocalStrings.primary_button}
+                    {searchNovelId ? 'Update Novel' : LocalStrings.primary_button}
                   </Fragment>
                 )}
               </button>

@@ -9,11 +9,10 @@ import { secondaryButtonClassName } from '~/common/buttonFactory';
 import { CreateDate } from '~/helpers/DateHelper';
 import LOCALES from '~/locales/language_en.json';
 
-import DialogWrapper from '~/components/DialogWrapper';
-import CloseIcon from '~/svg/CloseIcon/CloseIcon';
 import LoadingSpinner from '~/svg/LoadingSpinner/LoadingSpinner';
 import PlusIcon from '~/svg/PlusIcon/PlusIcon';
 
+import { DescriptionModel } from './components/DescriptionModel';
 import { DashIndexLoader } from './service';
 
 export function loader({ request }: LoaderFunctionArgs) {
@@ -43,41 +42,40 @@ export default function DashIndex() {
             <div
               className={`absolute top-[-80px] right-[-80px] w-[100px] h-[100px] rounded-full transition-all duration-500 ease-linear group-[:nth-child(10n+1)]:bg-pastel-red group-[:nth-child(10n+2)]:bg-pastel-brown group-[:nth-child(10n+3)]:bg-pastel-orange group-[:nth-child(10n+4)]:bg-pastel-yellow group-[:nth-child(10n+5)]:bg-pastel-indigo group-[:nth-child(10n+6)]:bg-pastel-blue group-[:nth-child(10n+7)]:bg-pastel-green group-[:nth-child(10n+8)]:bg-pastel-emerald group-[:nth-child(10n+9)]:bg-pastel-purple group-[:nth-child(10n+0)]:bg-pastel-black ${selectedNovel && selectedNovel?.id === insert?.id ? 'scale-[16]' : 'group-hover:scale-[16]'}`}
             />
-            <h3 className="text-current text-3xl font-semibold mb-2 relative z-10 truncate max-w-full overflow-hidden capitalize">
+            <h3 className="text-current text-3xl font-semibold tracking-wide mb-2 relative z-10 truncate max-w-full overflow-hidden capitalize">
               {insert.title}
             </h3>
             <h4 className="text-current text-lg mb-1 relative z-10 truncate max-w-full overflow-hidden">
               Author:{' '}
-              <strong
-                className={`${selectedNovel && selectedNovel?.id === insert?.id ? 'text-gray-700' : 'text-yellow-400 group-hover:text-gray-700'} transition-all duration-500 ease-linear`}>
+              <span
+                className={`${selectedNovel && selectedNovel?.id === insert?.id ? 'text-gray-700' : ' text-yellow-400 group-hover:text-gray-700'} transition-all duration-500 ease-linear font-semibold tracking-wide`}>
                 {insert.owner_username}
-              </strong>
+              </span>
             </h4>
             <div className="flex flex-wrap gap-3">
               <p className="text-current text-xs relative z-10">
                 Created:{' '}
-                <strong
-                  className={`${selectedNovel && selectedNovel?.id === insert?.id ? 'text-gray-700' : 'text-yellow-400 group-hover:text-gray-700'} transition-all duration-500 ease-linear`}>
+                <span
+                  className={`${selectedNovel && selectedNovel?.id === insert?.id ? 'text-gray-700' : ' text-yellow-400 group-hover:text-gray-700'} transition-all duration-500 ease-linear font-semibold tracking-wide`}>
                   {CreateDate(insert.created_at)}
-                </strong>
+                </span>
               </p>
               <p className="text-current text-xs relative z-10">
                 Last updated:{' '}
-                <strong
-                  className={`${selectedNovel && selectedNovel?.id === insert?.id ? 'text-gray-700' : 'text-yellow-400 group-hover:text-gray-700'} transition-all duration-500 ease-linear`}>
+                <span
+                  className={`${selectedNovel && selectedNovel?.id === insert?.id ? 'text-gray-700' : ' text-yellow-400 group-hover:text-gray-700'} transition-all duration-500 ease-linear font-semibold tracking-wide`}>
                   {CreateDate(insert.updated_at)}{' '}
-                </strong>
+                </span>
               </p>
             </div>
           </button>
         ))}
       </div>
-      <div className="w-full p-2 flex justify-end sticky bottom-0">
+      <div className="w-full max-w-[1850px] p-2 flex justify-end sticky bottom-0">
         <Link
           to="/dash/new"
           className={
-            secondaryButtonClassName +
-            ' whitespace-pre !max-w-[160px] !h-[50px] !px-0 justify-center items-center'
+            secondaryButtonClassName + ' whitespace-pre !max-w-[160px] !h-[50px] !px-0 justify-center items-center'
           }>
           {isLoading ? (
             <LoadingSpinner className="w-full h-10" svgColor="#fff" uniqueId="index-spinner" />
@@ -89,42 +87,7 @@ export default function DashIndex() {
           )}
         </Link>
       </div>
-      <DialogWrapper open={Boolean(selectedNovel)}>
-        <div className="w-full max-w-[800px] p-4 flex flex-col gap-1 self-center text-mono">
-          <div className="bg-slate-50 bg-opacity-55 backdrop-blur-lg flex flex-col gap-0.5 rounded-t-lg rounded-b-md">
-            <div className="w-full pt-4 px-6 pb-2 flex flex-wrap rounded-t-[inherit] justify-between items-center bg-white">
-              <h3 className="font-medium text-xl text-gray-600 underline underline-offset-4 capitalize">
-                &#8197;{selectedNovel?.title}&nbsp;&nbsp;&nbsp;
-              </h3>
-              <button
-                className="w-10 h-10 flex items-center justify-center text-slate-500 hover:text-red-500 hover:border hover:border-red-500 rounded"
-                type="button"
-                onClick={() => setSelectedNovel(null)}>
-                <CloseIcon className="w-3 h-3" uniqueId="dash-close" svgColor="currentColor" />
-              </button>
-            </div>
-            <div className="w-full p-8 pb-4 bg-white flex flex-col gap-3">
-              <p className="text-gray-700">
-                Last Update: <strong className="text-gray-800">{CreateDate(selectedNovel?.updated_at)}</strong>
-              </p>
-              <p className="w-full min-h-[200px] text-gray-700">{selectedNovel?.description}</p>
-            </div>
-            <div className="flex w-full justify-end bg-white rounded-b-md p-2 gap-3">
-              {/* <button
-                  title="selected_novel"
-                  className={thirdButtonClassName + ' h-[50px] w-[165px]'}
-                  value={selectedNovel?.id}>
-                  Delete
-                </button> */}
-              <Link
-                to={`/dash/${selectedNovel?.draft_id}`}
-                className="rounded-lg text-gray-100 font-semibold flex items-center justify-center h-[50px] w-[165px] bg-emerald-700 hover:bg-emerald-500">
-                Write
-              </Link>
-            </div>
-          </div>
-        </div>
-      </DialogWrapper>
+      <DescriptionModel selectedNovel={selectedNovel} close={() => setSelectedNovel(null)} />
     </div>
   );
 }

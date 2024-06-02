@@ -30,6 +30,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-image-crop": "^11.0.5",
+    "supabase": "^1.172.2",
     "three": "^0.164.1"
   },
   "devDependencies": {

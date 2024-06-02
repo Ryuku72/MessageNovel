@@ -39,5 +39,3 @@ export type SVG_Stoke_Component_props = {
 };
 
 export type SVG_Component_props = Omit<SVG_Stoke_Component_props, 'svgStroke'>;
-
-
