@@ -37,7 +37,7 @@ export default function DashIndex() {
           <button
             type="button"
             key={insert.id}
-            className={`flex bg-gray-400 bg-opacity-50 backdrop-blur-lg p-10 overflow-hidden relative rounded-[25px] font-mono flex-col gap-1 group transition-all duration-500 ease-linear ${selectedNovel && selectedNovel?.id === insert?.id ? 'text-gray-700' : 'text-white hover:text-gray-700'}`}
+            className={`flex bg-gray-400 bg-opacity-50 backdrop-blur-xl p-10 overflow-hidden relative rounded-[25px] font-mono flex-col gap-1 group transition-all duration-500 ease-linear ${selectedNovel && selectedNovel?.id === insert?.id ? 'text-gray-700' : 'text-white hover:text-gray-700'}`}
             onClick={() => setSelectedNovel(insert)}>
             <div
               className={`absolute top-[-80px] right-[-80px] w-[100px] h-[100px] rounded-full transition-all duration-500 ease-linear group-[:nth-child(10n+1)]:bg-pastel-red group-[:nth-child(10n+2)]:bg-pastel-brown group-[:nth-child(10n+3)]:bg-pastel-orange group-[:nth-child(10n+4)]:bg-pastel-yellow group-[:nth-child(10n+5)]:bg-pastel-indigo group-[:nth-child(10n+6)]:bg-pastel-blue group-[:nth-child(10n+7)]:bg-pastel-green group-[:nth-child(10n+8)]:bg-pastel-emerald group-[:nth-child(10n+9)]:bg-pastel-purple group-[:nth-child(10n+0)]:bg-pastel-black ${selectedNovel && selectedNovel?.id === insert?.id ? 'scale-[16]' : 'group-hover:scale-[16]'}`}

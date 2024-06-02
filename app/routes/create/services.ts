@@ -14,7 +14,7 @@ export async function CreateAction(request: ActionFunctionArgs['request']) {
   const color = data.get('color') as string;
 
   const filename = avatar?.name;
-  const extension = filename.split('.').at(-1) || '';
+  const extension = filename?.split('.').at(-1) || '';
 
   const { supabaseClient, headers } = await initServer(request);
 
