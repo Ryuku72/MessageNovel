@@ -147,7 +147,7 @@ export default function AvatarInput({ title, id, setImage }: AvatarInputProps) {
   };
 
   return (
-    <div className="flex flex-shrink-0 flex-col justify-center items-center">
+    <div className="flex flex-shrink-0 flex-col max-h-full self-start m-auto">
       <label
         htmlFor={id}
         className="flex flex-col items-center gap-2 font-mono font-medium text-sm text-gray-600 cursor-pointer hover:text-blue-500">
