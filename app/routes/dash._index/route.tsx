@@ -28,7 +28,7 @@ export default function DashIndex() {
   const isLoading = ['submitting'].includes(navigationState.state);
 
   return (
-    <div className="flex flex-col max-[768px]:flex-auto items-center w-full px-10 max-[768px]:px-3 py-12 max-[768px]:py-4 gap-10 min-[768px]:overflow-auto">
+    <div className="flex flex-col max-[768px]:flex-auto items-center w-full px-10 max-[768px]:px-3 py-12 max-[768px]:py-4 gap-10">
       <h1 className="text-red-700 text-4xl m-0 underline underline-offset-8 [text-shadow:_5px_3px_2px_rgb(225_225_225_/_50%)] font-miltonian">
         &nbsp;&nbsp;{LocalStrings.title}&nbsp;&nbsp;&nbsp;
       </h1>

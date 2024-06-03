@@ -33,11 +33,13 @@ export default function DashNew() {
   const isLoading = ['submitting'].includes(navigationState.state);
   const searchNovelId = searchParams.get('novel_id');
   const LocalStrings = LOCALES.dash.new;
+  const resetState = navigationState.state === 'loading' && !navigationState.formMethod;
 
   useEffect(() => {
+    if (resetState) return;
     setDraftNovelTitle(library?.title || '');
     setDraftNovelDescription(library?.description || '');
-  }, [library?.description, library?.title]);
+  }, [library, resetState]);
 
 
   return (
