@@ -20,8 +20,8 @@ export function DescriptionModel({ selectedNovel, close }: DescriptionModelProps
 
   return (
     <DialogWrapper open={Boolean(selectedNovel)}>
-      <div className="w-full max-w-[800px] p-4 flex flex-col gap-1 self-center text-mono">
-        <div className="bg-slate-50 bg-opacity-55 backdrop-blur-lg flex flex-col gap-0.5 rounded-t-lg rounded-b-md">
+      <div className="w-full min-[768px]:max-w-[800px] min-[768px]:p-4 flex flex-col gap-1 min-[768px]:self-center text-mono max-[768px]:self-baseline max-[768px]:m-auto">
+        <div className="bg-slate-50 bg-opacity-55 backdrop-blur-lg flex flex-col gap-0.5 rounded-t-lg rounded-b-md max-[768px]:flex-auto">
           <div className="w-full pt-4 px-6 pb-2 flex flex-wrap rounded-t-[inherit] justify-between items-center bg-white">
             <h3 className="font-medium text-xl text-gray-600 underline underline-offset-4 capitalize">
               &#8197;{selectedNovel?.title}&nbsp;&nbsp;&nbsp;
@@ -33,11 +33,11 @@ export function DescriptionModel({ selectedNovel, close }: DescriptionModelProps
               <CloseIcon className="w-3 h-3" uniqueId="dash-close" svgColor="currentColor" />
             </button>
           </div>
-          <div className="w-full p-8 pb-4 bg-white flex flex-col gap-3">
+          <div className="w-full p-8 pb-4 bg-white flex flex-col gap-3 max-[768px]:flex-auto">
             <p className="text-gray-700">
               Last Update: <span className="text-gray-800">{CreateDate(selectedNovel?.updated_at, true)}</span>
             </p>
-            <div className="py-3 max-h-[400px] overflow-auto">
+            <div className="py-3 min-[768px]:max-h-[400px] overflow-auto">
               <p className="text-6xl font-semibold py-0.5 px-2 capitalize border-4 border-gray-700 float-left mr-3 translate-y-[-0.5rem]">
                 {selectedNovel?.description?.[0]}
               </p>

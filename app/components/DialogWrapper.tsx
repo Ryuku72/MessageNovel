@@ -31,7 +31,7 @@ export default function DialogWrapper({
   return (
     <dialog
       ref={modalRef}
-      className="max-w-full max-h-full w-full h-full justify-center p-[36px] bg-transparent z-10"
+      className="max-w-full max-h-full w-full h-full justify-center min-[768px]:p-[36px] max-[768px]:p-4 bg-transparent z-10"
       onKeyUp={e => {
         if (e.key === 'Escape') handleClickOutside(e);
       }}>
