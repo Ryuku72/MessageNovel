@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { LoaderFunctionArgs, json, redirect } from '@remix-run/node';
+import { ActionFunctionArgs, LoaderFunctionArgs, json, redirect } from '@remix-run/node';
 import { isRouteErrorResponse } from '@remix-run/react';
 
 import { initServer } from '~/services/API';
@@ -22,4 +22,27 @@ export async function DashIndexLoader(request: LoaderFunctionArgs['request']) {
       return new Response(`${error.status} - ${error?.statusText || 'Error'}`, { status: error.status, headers });
     else return json(null, { headers });
   }
+}
+
+export async function DashIndexAction(request: ActionFunctionArgs['request']) {
+  const { supabaseClient, headers } = await initServer(request);
+  const data = await request.formData();
+  const novel_id = data.get('selected_novel');
+
+  if (request.method === 'DELETE' && novel_id) {
+    try {
+      const response = await supabaseClient.auth.getUser();
+      const user = response.data?.user;
+      if (!user) return redirect('/', { headers });
+  
+      const update = await supabaseClient.from('library').delete().match({ id: novel_id }).select();
+      return json(update, { headers });
+    } catch (error) {
+      console.error(error);
+      console.error('process error in dash');
+      if (isRouteErrorResponse(error))
+        return new Response(`${error.status} - ${error?.statusText || 'Error'}`, { status: error.status, headers });
+      else return json(null, { headers });
+    }
+  } return json(null, { headers });
 }

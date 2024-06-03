@@ -1,4 +1,4 @@
-import { LoaderFunctionArgs } from '@remix-run/node';
+import { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node';
 import { Link, useLoaderData, useNavigation } from '@remix-run/react';
 
 import { Fragment, useState } from 'react';
@@ -13,10 +13,14 @@ import LoadingSpinner from '~/svg/LoadingSpinner/LoadingSpinner';
 import PlusIcon from '~/svg/PlusIcon/PlusIcon';
 
 import { DescriptionModel } from './components/DescriptionModel';
-import { DashIndexLoader } from './service';
+import { DashIndexAction, DashIndexLoader } from './service';
 
 export function loader({ request }: LoaderFunctionArgs) {
   return DashIndexLoader(request);
+}
+
+export function action({ request}: ActionFunctionArgs) {
+  return DashIndexAction(request);
 }
 
 export default function DashIndex() {

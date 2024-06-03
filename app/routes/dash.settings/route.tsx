@@ -24,7 +24,7 @@ export default function Settings() {
   const colorSplit = user.color ? user.color.split('bg-') : [];
 
   return (
-    <div className="w-full h-full flex flex-col justify-center items-center relative">
+    <div className="w-full h-full flex flex-col justify-center items-center relative m-auto">
       <h1 className="text-red-700 text-4xl text-center m-0 [text-shadow:_5px_3px_2px_rgb(225_225_225_/_50%)] font-miltonian">
         {LocalStrings.title}
       </h1>
