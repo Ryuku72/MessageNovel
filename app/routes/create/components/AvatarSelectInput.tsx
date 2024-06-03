@@ -179,7 +179,7 @@ export default function AvatarInput({ title, id, setImage }: AvatarInputProps) {
                 <CloseIcon className="w-3 h-3" uniqueId="dash-close" svgColor="currentColor" />
               </button>
             </div>
-            <div className={cropImage ? 'hidden' : 'w-full aspect-square flex items-center  justify-center'}>
+            <div className={cropImage ? 'hidden' : 'w-full aspect-square flex items-center justify-center'}>
               <LoadingClock className="w-24 h-24" svgColor="#fff" uniqueId="image-cropper-svg" />
             </div>
             {/** Due to crop cricle shadow this needs to be a ternary **/}
@@ -197,7 +197,7 @@ export default function AvatarInput({ title, id, setImage }: AvatarInputProps) {
                 <img
                   loading="lazy"
                   alt="Crop me"
-                  className="max-w-full max-h-full m-auto"
+                  className="max-w-full !max-h-[calc(100vh_-_200px)] m-auto"
                   ref={cropImageRef}
                   src={cropImage}
                   onLoad={onImageLoad}

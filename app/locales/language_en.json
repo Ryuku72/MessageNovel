@@ -112,7 +112,7 @@
       "secondary_button": "Back"
     },
     "new": {
-      "title": "New Novel Details",
+      "title": "Novel Details",
       "primary_input": "Title",
       "primary_input_placeholder": "Novel Title",
       "secondary_input": "Description",

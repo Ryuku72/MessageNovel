@@ -31,7 +31,7 @@ export default function Dash() {
   }, [sceneReady]);
 
   return (
-    <div className="w-full h-full flex flex-row relative">
+    <div className="w-full min-[768px]:h-full flex flex-row relative">
       <DashNavBar user={loaderData} />
       <Outlet context={{ user: loaderData }} />
     </div>

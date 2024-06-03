@@ -51,7 +51,7 @@ export function DescriptionModel({ selectedNovel, close }: DescriptionModelProps
               Edit Description
             </Link>
           </div>
-          <div className="flex w-full justify-end bg-white rounded-b-md p-2 gap-3">
+          <div className="flex w-full justify-end bg-white rounded-b-md p-2 gap-3 sticky bottom-0">
             {/* <button
                   title="selected_novel"
                   className={thirdButtonClassName + ' h-[50px] w-[165px]'}
