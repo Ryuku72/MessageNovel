@@ -1,14 +1,13 @@
 import { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node';
-import { Form, useLoaderData, useNavigation, useSearchParams } from '@remix-run/react';
+import { Form, NavLink, useLoaderData, useNavigation, useSearchParams } from '@remix-run/react';
 
 import { Fragment, useEffect, useState } from 'react';
 
-import { secondaryButtonClassName } from '~/common/buttonFactory';
+import { primaryButtonClassName, secondaryButtonClassName } from '~/common/buttonFactory';
 import LOCALES from '~/locales/language_en.json';
 
 import TitleInput from '~/components/TitleInput';
 import LoadingSpinner from '~/svg/LoadingSpinner/LoadingSpinner';
-import PlusIcon from '~/svg/PlusIcon/PlusIcon';
 
 import TitleTextArea from './components/TitleTextArea';
 import { DashNewAction, DashNewLoader } from './services';
@@ -75,6 +74,9 @@ export default function DashNew() {
               onChange={setDraftNovelDescription}
             />
             <div className="w-full flex gap-3 flex-wrap mt-2 justify-end">
+            <NavLink to="/dash" className={primaryButtonClassName + ' py-2.5'}>
+                Back
+            </NavLink>
               <button
                 className={
                   secondaryButtonClassName +
@@ -84,7 +86,6 @@ export default function DashNew() {
                   <LoadingSpinner className="w-full h-10" svgColor="#fff" uniqueId="index-spinner" />
                 ) : (
                   <Fragment>
-                    <PlusIcon uniqueId="dash_plus" svgColor="#fff" className="w-4 h-auto" />
                     {searchNovelId ? 'Update Novel' : LocalStrings.primary_button}
                   </Fragment>
                 )}

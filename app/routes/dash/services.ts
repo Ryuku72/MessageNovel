@@ -12,9 +12,17 @@ export async function DashLoader(request: LoaderFunctionArgs['request']) {
   try {
     const response = await supabaseClient.auth.getUser();
     const user = response.data?.user;
+    const avatarURL = user?.user_metadata?.avatar || '';
     if (!user) return redirect('/', { headers });
+
+    const fetchAvatar = async () => {
+      if (!avatarURL) return '';
+      const avatarImage = await supabaseClient.storage.from('avatars').getPublicUrl(avatarURL);
+      return avatarImage.data.publicUrl;
+    };
+
     const userData: UserDataEntry = {
-      avatar: user?.user_metadata.avatar,
+      avatar: await fetchAvatar(),
       id: user?.id || '',
       username: user?.user_metadata.username || 'Not Found',
       email: user?.email || 'Unknonwn',
@@ -25,7 +33,8 @@ export async function DashLoader(request: LoaderFunctionArgs['request']) {
   } catch (error) {
     console.error(error);
     console.error('process error in dash');
-    if (isRouteErrorResponse(error)) return new Response(`${error.status} - ${error?.statusText || 'Error'}`, { status: error.status, headers });
+    if (isRouteErrorResponse(error))
+      return new Response(`${error.status} - ${error?.statusText || 'Error'}`, { status: error.status, headers });
     else return json(null, { headers });
   }
 }

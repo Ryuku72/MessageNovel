@@ -9,10 +9,10 @@ export async function DashNovelIdLoader({ request, params }: LoaderFunctionArgs)
 
   try {
     const response = await supabaseClient
-      .from('novel_draft')
+      .from('draft_novel')
       .select('*')
       .match({ id: params.draft_id as string })
-      .maybeSingle();
+      .single();
 
     if (!response.data) redirect('/dash', { headers });
     return json(response?.data, { headers });
@@ -36,7 +36,7 @@ export async function DashNovelIdAction({ request, params}: ActionFunctionArgs) 
   if (!userData?.id) return null;
 
   const response = await supabaseClient
-    .from('novel_draft')
+    .from('draft_novel')
     .update({
       body,
       title,
@@ -45,7 +45,7 @@ export async function DashNovelIdAction({ request, params}: ActionFunctionArgs) 
     })
     .match({ id: params.draft_id })
     .select()
-    .maybeSingle();
+    .single();
 
   await supabaseClient.from('library').update({ title, updated_at: new Date() }).match({ draft_id: params.draft_id });
 

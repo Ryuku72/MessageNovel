@@ -75,7 +75,7 @@ export default function DashIndex() {
           </button>
         ))}
       </div>
-      <div className="w-full max-w-[1850px] p-2 flex justify-end min-[768px]:sticky min-[768px]:bottom-0 max-[768px]:pb-[120px]">
+      <div className="w-full max-w-[1850px] p-2 flex min-[768px]:sticky min-[768px]:bottom-0 max-[768px]:pb-[120px]">
         <Link
           to="/dash/new"
           className={

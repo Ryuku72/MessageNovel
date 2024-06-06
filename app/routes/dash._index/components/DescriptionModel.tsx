@@ -48,16 +48,16 @@ export function DescriptionModel({ selectedNovel, close }: DescriptionModelProps
               <CloseIcon className="w-3 h-3" uniqueId="dash-close" svgColor="currentColor" />
             </button>
           </div>
-          <div className="w-full p-8 pb-4 bg-white flex flex-col gap-3 max-[768px]:flex-auto">
-            <p className="text-gray-700">
-              Last Update: <span className="text-gray-800">{CreateDate(selectedNovel?.updated_at, true)}</span>
-            </p>
-            <div className="py-3 min-[768px]:max-h-[400px] overflow-auto">
+          <div className="w-full px-8 py-4 bg-white flex flex-col gap-3 max-[768px]:flex-auto">
+            <div className="py-3 min-h-[160px] min-[768px]:max-h-[400px] overflow-auto">
               <p className="text-6xl font-semibold py-0.5 px-2 capitalize border-4 border-gray-700 float-left mr-3 translate-y-[-0.5rem]">
                 {selectedNovel?.description?.[0]}
               </p>
-              <p className="w-full min-h-[200px] text-gray-700 text-sm pt-3 whitespace-pre-wrap">
+              <p className="w-full text-gray-700 text-sm pt-3 whitespace-pre-wrap">
                 {descriptionDetails(selectedNovel?.description || '')}
+              </p>
+              <p className="pt-4 text-gray-500 text-sm italic">
+                Last Updated <span className="font-semibold">{CreateDate(selectedNovel?.updated_at, true)}</span>
               </p>
             </div>
             <DialogWrapper open={openConfirm}>
@@ -113,7 +113,7 @@ export function DescriptionModel({ selectedNovel, close }: DescriptionModelProps
             <Link
               to={`/dash/new?novel_id=${selectedNovel?.id}`}
               className="rounded-lg text-gray-100 font-semibold flex items-center justify-center h-[50px] w-[165px] bg-slate-700 hover:bg-slate-500">
-              Edit Description
+              Edit Title & Blurb
             </Link>
             <Link
               to={`/dash/${selectedNovel?.draft_id}`}

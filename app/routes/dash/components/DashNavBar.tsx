@@ -61,7 +61,7 @@ export default function DashNavBar({ user }: DashNavBarProps) {
           <div className="has-tooltip cursor-pointer relative">
             <NavLink
               className={({ isActive, isPending, isTransitioning }) =>
-                `rounded-lg px-5 text-gray-100 font-semibold flex items-center justify-center gap-2 w-[60px] h-[50px] ${isActive || isPending || isTransitioning ? 'bg-orange-500' : 'bg-orange-700 hover:bg-orange-500'}`
+                `rounded-lg px-5 text-gray-100 font-semibold flex items-center justify-center gap-2 w-[60px] h-[50px] ${isActive || isPending || isTransitioning ? 'bg-slate-500' : 'bg-slate-700 hover:bg-slate-500'}`
               }
               type="button"
               to="/dash/new">

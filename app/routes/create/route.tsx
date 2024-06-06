@@ -1,5 +1,5 @@
 import type { ActionFunctionArgs, MetaFunction } from '@remix-run/node';
-import { Form, Link, useActionData, useNavigate, useNavigation, useOutletContext, useSubmit } from '@remix-run/react';
+import { Form, Link, useActionData, useNavigation, useOutletContext, useSubmit } from '@remix-run/react';
 
 import { useEffect, useState } from 'react';
 
@@ -30,7 +30,6 @@ export default function Create() {
   const actionData = useActionData() as AuthResponse & { success: boolean };
   const navigationState = useNavigation();
   const submit = useSubmit();
-  const navigate = useNavigate();
 
   const [colorSelect, setColorSelect] = useState('bg-pastel-black');
   const [username, setUsername] = useState('');
@@ -56,17 +55,8 @@ export default function Create() {
         detail: actionData.error?.message || actionData.error.code
       });
       window.dispatchEvent(sceneEvent);
-    } else if (!actionData?.success) {
-      const formData = new FormData();
-      if (imageFile) formData.append('avatar', imageFile);
-      formData.append('username', username);
-      formData.append('color', colorSelect);
-      formData.append('create-email', email);
-      formData.append('create-password', password);
-
-      submit(formData, { method: 'post', encType: 'multipart/form-data' });
-    } 
-  }, [actionData, colorSelect, email, imageFile, navigate, password, submit, username]);
+    }
+  }, [actionData]);
 
   return (
     <PublicLayout>
@@ -75,27 +65,37 @@ export default function Create() {
           <Form
             aria-label="create-account"
             method="post"
+            onSubmit={e => {
+              e.preventDefault();
+              const formData = new FormData();
+              if (imageFile) formData.append('avatar', imageFile);
+              formData.append('email', email);
+              formData.append('password', password);
+              formData.append('color', colorSelect);
+              formData.append('username', username);
+              submit(formData, { method: 'post', encType: 'multipart/form-data' });
+            }}
             className="w-full max-w-lg flex rounded-lg shadow-xl px-12 max-[768px]:p-4 py-8 bg-white bg-opacity-35 backdrop-blur-sm">
             <fieldset className="w-full flex flex-col justify-center items-center gap-3" disabled={isLoading}>
               <div className="flex gap-6 flex-wrap justify-center items-center">
-                <AvatarInput title={LocalStrings.avatar} id="create-avatar" setImage={setImage} />
+                <AvatarInput title={LocalStrings.avatar} id="avatar" setImage={setImage} />
                 <ColorInput
                   title={LocalStrings.color}
-                  id="create-color-select"
+                  id="color"
                   value={colorSelect}
                   onChange={setColorSelect}
                 />
               </div>
               <TitleInput
                 title={LocalStrings.username}
-                id="create-username"
+                id="username"
                 value={username}
                 placeholder={LocalStrings.username_placeholder}
                 onChange={setUsername}
               />
               <TitleInput
                 title={LocalStrings.email}
-                id="create-email"
+                id="email"
                 placeholder={LocalStrings.email_placeholder}
                 value={email}
                 onChange={setEmail}
@@ -103,7 +103,7 @@ export default function Create() {
               />
               <PasswordInput
                 title={LocalStrings.password}
-                id="create-password"
+                id="password"
                 placeholder={LocalStrings.password_placeholder}
                 value={password}
                 onChange={setPassword}

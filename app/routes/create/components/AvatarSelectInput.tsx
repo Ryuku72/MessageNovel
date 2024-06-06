@@ -165,8 +165,7 @@ export default function AvatarInput({ title, id, setImage }: AvatarInputProps) {
         />
       </label>
       {sceneReady && (
-        <DialogWrapper
-          open={open}>
+        <DialogWrapper open={open}>
           <div className="w-full max-w-card-l bg-slate-300 bg-opacity-75 backdrop-blur-sm rounded-b-md rounded-t-lg flex flex-col gap-1 self-center text-mono">
             <div className="w-full pt-4 px-6 pb-2 flex flex-wrap rounded-t-[inherit] justify-between items-center bg-white bg-opacity-75 backdrop-blur-sm">
               <h3 className="font-medium text-xl text-gray-600 underline underline-offset-4">
@@ -183,28 +182,26 @@ export default function AvatarInput({ title, id, setImage }: AvatarInputProps) {
               <LoadingClock className="w-24 h-24" svgColor="#fff" uniqueId="image-cropper-svg" />
             </div>
             {/** Due to crop cricle shadow this needs to be a ternary **/}
-            {cropImage && (
-              <Component
-                minWidth={100}
-                minHeight={100}
-                keepSelection={true}
-                crop={crop}
-                aspect={1/1}
-                circularCrop={false}
-                className="flex w-full max-w-full max-h-full"
-                onChange={onCropChange}
-                onComplete={c => setCompletedCrop(c)}>
-                <img
-                  loading="lazy"
-                  alt="Crop me"
-                  className="max-w-full !max-h-[calc(100vh_-_200px)] m-auto"
-                  ref={cropImageRef}
-                  src={cropImage}
-                  onLoad={onImageLoad}
-                  onError={imageError}
-                />
-              </Component>
-            )}
+            <Component
+              minWidth={100}
+              minHeight={100}
+              keepSelection={true}
+              crop={crop}
+              aspect={1 / 1}
+              circularCrop={false}
+              className="flex w-full max-w-full max-h-full"
+              onChange={onCropChange}
+              onComplete={c => setCompletedCrop(c)}>
+              <img
+                loading="lazy"
+                alt="Crop me"
+                className="max-w-full !max-h-[calc(100vh _-_200px)] m-auto"
+                ref={cropImageRef}
+                src={cropImage}
+                onLoad={onImageLoad}
+                onError={imageError}
+              />
+            </Component>
             <div className="w-full flex gap-3 flex-wrap px-6 py-2 rounded-b-md bg-white bg-opacity-75">
               <button
                 type="button"
