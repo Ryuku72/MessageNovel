@@ -4,7 +4,6 @@ import { Fragment } from 'react/jsx-runtime';
 
 import { UserDataEntry } from '~/types';
 
-import { thirdButtonClassName } from '~/common/buttonFactory';
 import LOCALES from '~/locales/language_en.json';
 
 import DashIcon from '~/svg/DashIcon/DashIcon';
@@ -76,7 +75,7 @@ export default function DashNavBar({ user }: DashNavBarProps) {
         </div>
         <Form method="get" action="/auth" className="has-tooltip cursor-pointer relative">
           <button
-            className={`${thirdButtonClassName} ${isLoading ? 'py-0.5' : 'py-2.5'} !w-[60px] !h-[50px] flex-shrink-0 !p-0`}
+            className={`tertiaryButton ${isLoading ? 'py-0.5' : 'py-2.5'} !w-[60px] !h-[50px] flex-shrink-0 !p-0`}
             type="submit"
             name="intent"
             value="signout">

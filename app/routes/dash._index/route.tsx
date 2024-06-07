@@ -5,7 +5,6 @@ import { Fragment, useState } from 'react';
 
 import { NovelinLibraryEntry } from '~/types';
 
-import { secondaryButtonClassName } from '~/common/buttonFactory';
 import { CreateDate } from '~/helpers/DateHelper';
 import LOCALES from '~/locales/language_en.json';
 
@@ -19,7 +18,7 @@ export function loader({ request }: LoaderFunctionArgs) {
   return DashIndexLoader(request);
 }
 
-export function action({ request}: ActionFunctionArgs) {
+export function action({ request }: ActionFunctionArgs) {
   return DashIndexAction(request);
 }
 
@@ -78,9 +77,8 @@ export default function DashIndex() {
       <div className="w-full max-w-[1850px] p-2 flex min-[768px]:sticky min-[768px]:bottom-0 max-[768px]:pb-[120px]">
         <Link
           to="/dash/new"
-          className={
-            secondaryButtonClassName + ' whitespace-pre !max-w-[160px] !h-[50px] !px-0 justify-center items-center'
-          }>
+          className="
+          secondaryButton whitespace-pre !max-w-[160px] !h-[50px] !px-0 justify-center items-center">
           {isLoading ? (
             <LoadingSpinner className="w-full h-10" svgColor="#fff" uniqueId="index-spinner" />
           ) : (

@@ -24,15 +24,14 @@ export default function TitleTextArea({ title, id, value, placeholder, onChange,
           placeholder={placeholder}
           autoComplete={id}
           rows={10}
-          className="w-full text-base font-normal border border-gray-300 rounded-lg p-3 h-[400px] overflow-y-auto text-gray-500 resize-none"
+          className="w-full text-base font-normal border border-gray-300 rounded-lg p-3 h-[400px] overflow-y-auto text-gray-500 resize-none bg-white"
           minLength={120}
           maxLength={limit}
           required={true}
         />
-        <p
-          className={`absolute bottom-3 right-3 text-xs font-medium ${value?.length >= 120 ? 'text-green-500' : 'text-red-400'}`}>
-          Length: {value.length}
-        </p>
+        <p className={`absolute bottom-3 right-3 p-2 m-2 bg-slate-400 backdrop-blur-sm bg-opacity-20 rounded-lg text-xs self-end ${value?.length >= 120 ? 'text-blue-800' : 'text-red-400'}`}>
+            {value.length} / 120 length 
+          </p>
       </div>
     </div>
   );

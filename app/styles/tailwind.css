@@ -2,72 +2,82 @@
 @tailwind components;
 @tailwind utilities;
 
-.tooltip {
-  @apply invisible;
-}
-
-.has-tooltip {
-  @apply flex self-start;
-}
-
-.has-tooltip:hover .tooltip {
-  @apply visible z-50;
-}
-
-dialog {
-  animation: jiggle 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-dialog::-webkit-scrollbar {
-  @apply w-0 h-0;
-}
-
-dialog[open] {
-  @apply flex;
-}
-
-dialog::backdrop {
-  @apply bg-black bg-opacity-30;
-}
-
-@keyframes jiggle {
-  0% {
-    transform: scale(1);
+@layer base {
+  dialog {
+    animation: jiggle 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   }
 
-  50% {
-    transform: scale(1.05);
+  dialog::-webkit-scrollbar {
+    @apply w-0 h-0;
   }
 
-  100% {
-    transform: scale(1);
+  dialog[open] {
+    @apply flex;
   }
-}
 
-/* lexical */
-
-#lexical {
-  .underline_line-through {
-    text-decoration: underline line-through;
+  dialog::backdrop {
+    @apply bg-black bg-opacity-30;
   }
+
   hr {
     @apply p-1 border-none my-4 mx-0 after:content-normal after:block after:h-0.5 after:bg-gray-800 after:leading-[2px] after:bg-opacity-15;
   }
 
+  @keyframes jiggle {
+    0% {
+      transform: scale(1);
+    }
+
+    50% {
+      transform: scale(1.05);
+    }
+
+    100% {
+      transform: scale(1);
+    }
+  }
+}
+
+@layer components {
+  .primaryButton {
+    @apply rounded-lg px-5 text-gray-100 w-full max-w-button bg-orange-700 font-semibold hover:bg-orange-500 flex items-center justify-center gap-2;
+  }
+
+  .secondaryButton {
+    @apply rounded-lg px-5 text-gray-100 font-semibold bg-emerald-700 hover:bg-green-500 w-full max-w-button flex items-center justify-center gap-2;
+  }
+
+  .tertiaryButton {
+    @apply rounded-lg px-5 text-gray-100 bg-slate-400 font-semibold hover:bg-slate-600 hover:text-gray-100 w-full max-w-button flex items-center justify-center bg-opacity-95 backdrop-blur-sm gap-2;
+  }
+
+  .tooltip {
+    @apply invisible;
+  }
+
+  .has-tooltip {
+    @apply flex self-start;
+  }
+
+  .has-tooltip:hover .tooltip {
+    @apply visible z-50;
+  }
+
+  /* lexical */
   .editor-list-ol,
   .editor-list-ul {
     @apply p-0 m-0 list-outside;
   }
 
-  ul {
+  .editor-list-ul {
     @apply list-disc;
   }
 
-  ul.editor-checklist {
+  .editor-checklist {
     @apply list-none;
   }
 
-  ol {
+  .editor-list-ol {
     @apply list-decimal;
   }
 
@@ -90,5 +100,11 @@ dialog::backdrop {
 
   .editor-listItemChecked {
     @apply line-through before:border before:border-solid before:border-green-800 before:bg-green-500 before:rounded-sm before:text-white before:font-semibold before:text-xs before:text-center before:content-['\2713'];
+  }
+}
+
+@layer utilities {
+  .underline_line-through {
+    text-decoration: underline line-through;
   }
 }

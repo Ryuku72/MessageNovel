@@ -3,7 +3,6 @@ import { Link, useOutletContext } from '@remix-run/react';
 
 import { useEffect } from 'react';
 
-import { primaryButtonClassName } from '~/common/buttonFactory';
 import LOCALES from '~/locales/language_en.json';
 
 import { PublicLayout } from '~/components/PublicLayout';
@@ -92,7 +91,7 @@ export default function About() {
           <p>{LocalStrings.background.source}</p>
           <p>{LocalStrings.background.author}</p>
         </div>
-        <Link to="/" className={primaryButtonClassName + ' py-2.5'}>
+        <Link to="/" className="primaryButton py-2.5">
           {LocalStrings.primary_button}
         </Link>
       </div>

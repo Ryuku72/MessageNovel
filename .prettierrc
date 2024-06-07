@@ -14,7 +14,7 @@
     "^react",
     "<THIRD_PARTY_MODULES>",
     "^([~/|@|@/]+)?services/",
-    "^([~/|@|@/]+)?helpers/|^([~/|@|@/]+)?common/|^([~/|@|@/]+)?locales/",
+    "^([~/|@|@/]+)?helpers/|^([~/|@|@/]+)?locales/",
     "^([~/|@|@/]+)?routes/|^([~/|@|@/]+)?components/|^([~/|@|@/]+)?svg/",
     "^([~/|@|@/]+)?assets/|^([~/|@|@/]+)?favicon/|^([~/|@|@/]+)?styles/",
     "^[./]"

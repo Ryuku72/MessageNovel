@@ -3,7 +3,6 @@ import { Form, NavLink, useLoaderData, useNavigation, useSearchParams } from '@r
 
 import { Fragment, useEffect, useState } from 'react';
 
-import { primaryButtonClassName, secondaryButtonClassName } from '~/common/buttonFactory';
 import LOCALES from '~/locales/language_en.json';
 
 import TitleInput from '~/components/TitleInput';
@@ -74,14 +73,11 @@ export default function DashNew() {
               onChange={setDraftNovelDescription}
             />
             <div className="w-full flex gap-3 flex-wrap mt-2 justify-end">
-            <NavLink to="/dash" className={primaryButtonClassName + ' py-2.5'}>
+            <NavLink to="/dash" className="primaryButton py-2.5">
                 Back
             </NavLink>
               <button
-                className={
-                  secondaryButtonClassName +
-                  ' whitespace-pre !max-w-[160px] !h-[50px] !px-0 justify-center items-center'
-                }>
+                className="secondaryButton whitespace-pre !max-w-[160px] !h-[50px] !px-0 justify-center items-center">
                 {isLoading ? (
                   <LoadingSpinner className="w-full h-10" svgColor="#fff" uniqueId="index-spinner" />
                 ) : (

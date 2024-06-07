@@ -5,7 +5,6 @@ import { useEffect, useState } from 'react';
 
 import { AuthTokenResponsePassword } from '@supabase/supabase-js';
 
-import { primaryButtonClassName, secondaryButtonClassName } from '~/common/buttonFactory';
 import LOCALES from '~/locales/language_en.json';
 
 import PasswordInput from '~/components/PasswordInput';
@@ -85,11 +84,11 @@ export default function Login() {
               placeholder="****"
             />
             <div className="w-full flex items-center gap-3 justify-center pt-3">
-              <Link to="/" className={primaryButtonClassName + ' py-2.5'}>
+              <Link to="/" className="primaryButton py-2.5">
                 {LocalStrings.primary_button}
               </Link>
               <button
-                className={`${isLoading ? 'py-0.5 ' : 'py-2.5 '} ${secondaryButtonClassName}`}
+                className={`${isLoading ? 'py-0.5 ' : 'py-2.5 '} secondaryButton`}
                 type="submit"
                 disabled={false}>
                 {isLoading ? (

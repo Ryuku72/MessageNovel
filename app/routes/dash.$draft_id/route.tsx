@@ -5,7 +5,6 @@ import { useState } from 'react';
 
 import { NovelEntry } from '~/types';
 
-import { primaryButtonClassName, secondaryButtonClassName } from '~/common/buttonFactory';
 import LOCALES from '~/locales/language_en.json';
 
 import TitleInput from '~/components/TitleInput';
@@ -51,11 +50,11 @@ export default function DashNovelId() {
           />
           <LexicalRichTextEditor namespace={loaderData?.id} value={loaderData?.body || ''} />
           <div className="w-full flex items-center gap-3 justify-end pt-3">
-            <NavLink to="/dash" className={primaryButtonClassName + ' py-2.5'}>
+            <NavLink to="/dash" className="primaryButton py-2.5">
                 {LocalStrings.secondary_button}
             </NavLink>
             <button
-              className={`${secondaryButtonClassName} ${isLoading ? 'py-0.5' : 'py-2.5'}`}
+              className={`secondaryButton ${isLoading ? 'py-0.5' : 'py-2.5'}`}
               type="submit"
               disabled={false}>
               {isLoading ? (
