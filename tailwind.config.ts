@@ -13,13 +13,15 @@ export default {
       width: {
         'card-l': '480px',
         'c-600': '600px',
-        'c-800': '800px'
+        'c-800': '800px',
+        'wide': '1850px'
       },
       maxWidth: {
         'card-l': '480px',
         'c-600': '600px',
         'c-800': '800px',
-        button: '145px'
+        'button': '145px',
+        'wide': '1850px'
       },
       colors: {
         'pastel-black': '#D3D3D3',
@@ -32,6 +34,9 @@ export default {
         'pastel-green': '#B2DFDB',
         'pastel-emerald': '#CCFFCC',
         'pastel-purple': '#CCCCFF'
+      },
+      screens: {
+        'wide': '1740px'
       }
     },
     fontFamily: {

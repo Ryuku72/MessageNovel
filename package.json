@@ -17,6 +17,7 @@
     "@lexical/react": "^0.15.0",
     "@lexical/rich-text": "^0.15.0",
     "@lexical/selection": "^0.15.0",
+    "@liveblocks/yjs": "^1.12.0",
     "@remix-run/node": "^2.9.1",
     "@remix-run/react": "^2.9.1",
     "@remix-run/serve": "^2.9.1",
@@ -31,7 +32,8 @@
     "react-dom": "^18.2.0",
     "react-image-crop": "^11.0.5",
     "supabase": "^1.172.2",
-    "three": "^0.164.1"
+    "three": "^0.164.1",
+    "y-supabase": "^0.0.4-7-alpha"
   },
   "devDependencies": {
     "@eslint/js": "^9.2.0",

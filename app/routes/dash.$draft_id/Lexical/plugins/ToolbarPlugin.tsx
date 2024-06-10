@@ -51,6 +51,7 @@ import {
   TypeUnderlineIcon
 } from '../svg';
 import { SPEECH_TO_TEXT_COMMAND } from './SpeechToTextPlugin';
+import CommentPlugin from './CommentPlugin';
 
 const LowPriority = 1;
 const HighPriory = 2;
@@ -71,7 +72,7 @@ const blockTypeToBlockName = {
   quote: 'Quote'
 };
 
-export default function ToolbarPlugin() {
+export default function ToolbarPlugin({ username, color }: { username: string; color: string }) {
   const [editor] = useLexicalComposerContext();
   const toolbarRef = useRef(null);
   const [canUndo, setCanUndo] = useState(false);
@@ -458,12 +459,9 @@ export default function ToolbarPlugin() {
         onClick={() => {
           editor.dispatchCommand(INSERT_HORIZONTAL_RULE_COMMAND, undefined);
         }}
-        className={
-          'flex rounded cursor-pointer w-[40px] h-[40px] items-center justify-center ' +
-          (elementFormat === 'justify' ? 'border bg-gray-200 text-gray-600' : 'text-gray-500')
-        }
+        className="flex rounded cursor-pointer w-[40px] h-[40px] items-center justify-center text-gray-500"
         aria-label="Horizonital Rule Insert">
-        <HorizontalRuleIcon uniqueId="lexical-justify" className="w-5 h-auto text-gray-500" />
+        <HorizontalRuleIcon uniqueId="lexical-justify" className="w-5 h-auto" />
       </button>
       <Divider />
       <button
@@ -482,6 +480,8 @@ export default function ToolbarPlugin() {
         aria-label={`${isSpeechToText ? 'Enable' : 'Disable'} speech to text`}>
         <MicIcon uniqueId="lexical-mic" className="w-5 h-auto" />
       </button>
+      <Divider />
+      <CommentPlugin username={username} color={color} />
     </div>
   );
 }

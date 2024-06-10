@@ -1,0 +1,74 @@
+import { useRef, useState } from 'react';
+
+import { CLEAR_EDITOR_COMMAND, EditorState, LexicalEditor } from 'lexical';
+
+import { Comment, Thread, createComment, handleOnChange } from '../helpers';
+import { SendIcon } from '../svg';
+import BaseTextEditor from './BaseTextEditor';
+
+export default function CommentsComposer({
+  submitAddComment,
+  thread,
+  placeholder,
+  author
+}: {
+  placeholder?: string;
+  author: string;
+  submitAddComment: (
+    commentOrThread: Comment,
+    isInlineComment: boolean,
+    // eslint-disable-next-line no-shadow
+    thread?: Thread
+  ) => void;
+  thread?: Thread;
+}) {
+  const [content, setContent] = useState('');
+  const [canSubmit, setCanSubmit] = useState(false);
+  const editorRef = useRef<LexicalEditor>(null);
+
+  const onChange = (editorState: EditorState, _editor: LexicalEditor) => {
+    const update = handleOnChange(editorState, _editor);
+    setContent(update.text);
+    setCanSubmit(update.canSubmit);
+  };
+
+  const handleSubmit = (editor: LexicalEditor, userText: string) => {
+    submitAddComment(createComment(userText, author), false, thread);
+    if (editor !== null) {
+      editor.dispatchCommand(CLEAR_EDITOR_COMMAND, undefined);
+    }
+  };
+
+  const onClick = () => {
+    if (canSubmit && editorRef.current) handleSubmit(editorRef.current, content);
+  };
+
+  const onSubmit = (editorState: EditorState, _editor: LexicalEditor) => {
+    const update = handleOnChange(editorState, _editor);
+    if (update.text && update.canSubmit) handleSubmit(_editor, update.text);
+  };
+
+  return (
+    <div className="flex w-full gap-1 items-end pr-3">
+      <div className="flex flex-auto">
+        <BaseTextEditor
+          onEscape={() => {
+            return true;
+          }}
+          onChange={onChange}
+          editorRef={editorRef}
+          placeholder={placeholder}
+          onSubmit={onSubmit}
+        />
+      </div>
+      <button
+        type="button"
+        className="w-[40px] h-[40px] flexCenter flex-col flex-shrink-0 disabled:bg-opacity-35 disabled:bg-gray-300 text-white bg-green-700 hover:bg-green-500 rounded-xl mb-2.5"
+        data-id="CommentPlugin_CommentsPanel_SendButton"
+        onClick={onClick}
+        disabled={!canSubmit}>
+        <SendIcon className="w-[20px] h-auto translate-y-0.5 rotate-3" uniqueId="editor-send" svgColor="currentColor" />
+      </button>
+    </div>
+  );
+}

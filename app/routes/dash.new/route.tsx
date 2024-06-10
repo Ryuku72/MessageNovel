@@ -41,14 +41,14 @@ export default function DashNew() {
 
 
   return (
-    <div className="flex flex-col max-[768px]:flex-auto items-center w-full px-10 max-[768px]:px-3 py-6 max-[768px]:pt-4 max-[768px]:pb-[100px] gap-6 m-auto">
+    <div className="flex flex-col flex-auto md:flex-1 items-center w-full md:px-10 px-3 pt-4 pb-[100px] md:py-6 gap-6 m-auto">
       <h1 className="text-red-700 text-4xl m-0 underline underline-offset-8 [text-shadow:_5px_3px_2px_rgb(225_225_225_/_50%)] font-miltonian">
         &nbsp;&nbsp;{searchNovelId ? 'Update Details' : LocalStrings.title}&nbsp;&nbsp;&nbsp;
       </h1>
       <div className="w-full max-w-[1250px] flex flex-wrap justify-between items-center bg-slate-50 backdrop-blur-sm bg-opacity-55 rounded-lg">
         <Form
           method="post"
-          className="flex w-full py-4 max-[768px]:px-2 px-6"
+          className="flex w-full py-4 px-2 md:px-6"
           onSubmit={e => {
             if (draftNovelDescription.trim().length < 120) {
               e.preventDefault();

@@ -56,7 +56,7 @@ export default function About() {
 
   return (
     <PublicLayout>
-      <div className="max-w-[1200px] w-full flex items-center flex-col flex-auto gap-10 pt-[100px] max-[768px]:pt-0">
+      <div className="max-w-[1200px] w-full flex items-center flex-col flex-auto gap-10 md:pt-[100px] pt-0">
         <h1 className="text-red-700 text-6xl m-0 font-mono text-center font-miltonian [text-shadow:_5px_3px_2px_rgb(225_225_225_/_50%)]">
           {LocalStrings.title}
         </h1>
@@ -64,15 +64,15 @@ export default function About() {
           <h2 className="text-red-700 text-4xl m-0 font-mono text-center font-miltonian [text-shadow:_5px_3px_2px_rgb(225_225_225_/_50%)]">
             {LocalStrings.technology.title}
           </h2>
-          <div className="w-full flex flex-wrap justify-center gap-16 max-[768px]:gap-6">
+          <div className="w-full flex flex-wrap justify-center md:gap-16 gap-6">
             {LocalStrings.technology.list.map(tech => (
               <div
                 key={tech.name}
-                className="has-tooltip cursor-pointer relative min-[768px]:h-40 max-[768px]:h-24 min-[768px]:w-40 max-[768px]:w-24">
+                className="has-tooltip cursor-pointer relative md:h-40 h-24 md:w-40 w-24">
                 <Logo type={tech.name} />
                 <div
                   role="tooltip"
-                  className="absolute max-[768px]:hidden w-full h-full left-0 bottom-0 tooltip z-10 flex justify-center items-center transition-opacity duration-300">
+                  className="absolute md:flex hidden w-full h-full left-0 bottom-0 tooltip z-10 justify-center items-center transition-opacity duration-300">
                   <Link
                     to={tech.link}
                     className=" bg-gray-900 backdrop-blur-sm rounded-lg shadow-sm bg-opacity-45 text-sm px-4 py-2 text-white cursor-pointer max-w-full whitespace-pre-wrap">

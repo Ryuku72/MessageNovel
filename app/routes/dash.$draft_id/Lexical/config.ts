@@ -1,11 +1,12 @@
 import { ListItemNode, ListNode } from '@lexical/list';
+import { MarkNode } from '@lexical/mark';
 import { OverflowNode } from '@lexical/overflow';
 import { InitialConfigType } from '@lexical/react/LexicalComposer';
 import { HorizontalRuleNode } from '@lexical/react/LexicalHorizontalRuleNode';
 import { HeadingNode, QuoteNode } from '@lexical/rich-text';
 import { EditorThemeClasses } from 'lexical';
 
-const theme: EditorThemeClasses = {
+export const theme: EditorThemeClasses = {
   // Theme styling goes here
   ltr: 'text-left',
   rtl: 'text-right',
@@ -49,14 +50,7 @@ export function InitialConfig(namespace: string, value: string | null): InitialC
     theme,
     onError,
     editorState: value || null,
-    nodes: [
-      HeadingNode,
-      ListNode,
-      ListItemNode,
-      QuoteNode,
-      OverflowNode,
-      HorizontalRuleNode
-    ],
+    nodes: [HeadingNode, ListNode, ListItemNode, QuoteNode, OverflowNode, HorizontalRuleNode, MarkNode],
     namespace
   };
 }

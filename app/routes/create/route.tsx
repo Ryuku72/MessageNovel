@@ -74,7 +74,7 @@ export default function Create() {
               formData.append('username', username);
               submit(formData, { method: 'post', encType: 'multipart/form-data' });
             }}
-            className="w-full max-w-lg flex rounded-lg shadow-xl px-12 max-[768px]:p-4 py-8 bg-white bg-opacity-35 backdrop-blur-sm">
+            className="w-full max-w-lg flex rounded-lg shadow-xl p-4 md:px-12 md:py-8 bg-white bg-opacity-35 backdrop-blur-sm">
             <fieldset className="w-full flex flex-col justify-center items-center gap-3" disabled={isLoading}>
               <div className="flex gap-6 flex-wrap justify-center items-center">
                 <AvatarInput title={LocalStrings.avatar} id="avatar" setImage={setImage} />

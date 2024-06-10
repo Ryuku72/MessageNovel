@@ -5,11 +5,13 @@ export type DialogWrapperProps = {
   children: React.ReactNode;
   dataTestId?: string;
   handleClickOutside?: (e: React.SyntheticEvent) => void;
+  animate?: boolean;
 };
 
 export default function DialogWrapper({
   open,
   children,
+  animate = true,
   handleClickOutside = () => {}
 }: DialogWrapperProps) {
   const modalRef = useRef<HTMLDialogElement | null>(null);
@@ -31,7 +33,7 @@ export default function DialogWrapper({
   return (
     <dialog
       ref={modalRef}
-      className="max-w-full max-h-full w-full h-full justify-center min-[768px]:p-[36px] max-[768px]:p-4 bg-transparent z-10"
+      className={`max-w-full max-h-full w-full h-full justify-center md:p-[36px] p-4 bg-transparent ${animate ? 'jiggle bg-black bg-opacity-30 z-10' : 'z-10'}`}
       onKeyUp={e => {
         if (e.key === 'Escape') handleClickOutside(e);
       }}>

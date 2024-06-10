@@ -35,8 +35,8 @@ export function DescriptionModel({ selectedNovel, close }: DescriptionModelProps
 
   return (
     <DialogWrapper open={Boolean(selectedNovel)}>
-      <div className="w-full min-[768px]:max-w-[800px] min-[768px]:p-4 flex flex-col gap-1 min-[768px]:self-center text-mono max-[768px]:self-baseline max-[768px]:m-auto">
-        <div className="bg-slate-50 bg-opacity-55 backdrop-blur-lg flex flex-col gap-0.5 rounded-t-lg rounded-b-md max-[768px]:flex-auto">
+      <div className="w-full md:max-w-[800px] md:p-4 flex flex-col gap-1 md:self-center self-baseline text-mono m-auto md:m-0">
+        <div className="bg-slate-50 bg-opacity-55 backdrop-blur-lg flex flex-col gap-0.5 rounded-t-lg rounded-b-md flex-auto md:flex-1">
           <div className="w-full pt-4 px-6 pb-2 flex flex-wrap rounded-t-[inherit] justify-between items-center bg-white">
             <h3 className="font-medium text-xl text-gray-600 underline underline-offset-4 capitalize">
               &#8197;{selectedNovel?.title}&nbsp;&nbsp;&nbsp;
@@ -48,8 +48,8 @@ export function DescriptionModel({ selectedNovel, close }: DescriptionModelProps
               <CloseIcon className="w-3 h-3" uniqueId="dash-close" svgColor="currentColor" />
             </button>
           </div>
-          <div className="w-full px-8 py-4 bg-white flex flex-col gap-3 max-[768px]:flex-auto">
-            <div className="py-3 min-h-[160px] min-[768px]:max-h-[400px] overflow-auto">
+          <div className="w-full px-8 py-4 bg-white flex flex-col gap-3 flex-auto md:flex-1">
+            <div className="py-3 min-h-[160px] md:max-h-[400px] overflow-auto">
               <p className="text-6xl font-semibold py-0.5 px-2 capitalize border-4 border-gray-700 float-left mr-3 translate-y-[-0.5rem]">
                 {selectedNovel?.description?.[0]}
               </p>
