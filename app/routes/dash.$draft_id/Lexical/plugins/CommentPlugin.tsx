@@ -35,15 +35,17 @@ export default function CommentPlugin({ username, color }: { username: string; c
   const [editor] = useLexicalComposerContext();
   const commentStore = useMemo(() => new CommentStore(editor), [editor]);
   const comments = useCommentStore(commentStore);
-  const markNodeMap = useMemo<Map<string, Set<NodeKey>>>(() => {
-    return new Map();
-  }, []);
   const author = useCollabAuthorName(username, color);
+
   const [activeAnchorKey, setActiveAnchorKey] = useState<NodeKey | null>();
   const [activeIDs, setActiveIDs] = useState<Array<string>>([]);
   const [showCommentInput, setShowCommentInput] = useState(false);
   const [showComments, setShowComments] = useState(false);
   const [init, setInit] = useState(false);
+
+  const markNodeMap = useMemo<Map<string, Set<NodeKey>>>(() => {
+    return new Map();
+  }, []);
 
   useEffect(() => {
     setInit(true);
@@ -268,21 +270,22 @@ export default function CommentPlugin({ username, color }: { username: string; c
         data-id="CommentPlugin_ShowCommentsButton"
         onClick={() => setShowComments(!showComments)}
         title={showComments ? 'Hide Comments' : 'Show Comments'}>
-        <ChatIcon uniqueId="commentPlugin-icon" className="w-5 h-auto -scale-x-100" /> {showComments ? 'Hide Comments' : 'Show Comments'}
+        <ChatIcon uniqueId="commentPlugin-icon" className="w-5 h-auto -scale-x-100" />{' '}
+        {showComments ? 'Hide Comments' : 'Show Comments'}
       </button>
       <CreatePortalEl
         condition={init}
         element={
-            <CommentsPanel
-              comments={comments}
-              submitAddComment={submitAddComment}
-              deleteCommentOrThread={deleteCommentOrThread}
-              activeIDs={activeIDs}
-              markNodeMap={markNodeMap}
-              close={() => setShowComments(false)}
-              author={author}
-              show={showComments}
-            />
+          <CommentsPanel
+            comments={comments}
+            submitAddComment={submitAddComment}
+            deleteCommentOrThread={deleteCommentOrThread}
+            activeIDs={activeIDs}
+            markNodeMap={markNodeMap}
+            close={() => setShowComments(false)}
+            author={author}
+            show={showComments}
+          />
         }
       />
       <DialogWrapper open={showCommentInput} animate={false}>

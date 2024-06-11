@@ -7,8 +7,8 @@ import { UserDataEntry } from '~/types';
 
 import LOCALES from '~/locales/language_en.json';
 
-import { DashLoader } from './services';
 import DashNavBar from './components/DashNavBar';
+import { DashLoader } from './services';
 
 export const meta: MetaFunction = () => {
   return [{ title: LOCALES.meta.title }, { name: 'description', content: LOCALES.meta.description }];

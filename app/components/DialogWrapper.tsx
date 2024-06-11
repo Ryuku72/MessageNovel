@@ -33,7 +33,7 @@ export default function DialogWrapper({
   return (
     <dialog
       ref={modalRef}
-      className={`max-w-full max-h-full w-full h-full justify-center md:p-[36px] p-4 bg-transparent ${animate ? 'jiggle bg-black bg-opacity-30 z-10' : 'z-10'}`}
+      className={`max-w-full max-h-full w-full h-full justify-center md:p-[36px] p-4 bg-transparent z-10 ${animate ? 'jiggle' : 'clear'}`}
       onKeyUp={e => {
         if (e.key === 'Escape') handleClickOutside(e);
       }}>

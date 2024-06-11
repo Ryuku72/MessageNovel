@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { createDOMRange, createRectsFromDOMRange } from '@lexical/selection';
 import { $getSelection, $isRangeSelection, EditorState, LexicalEditor, RangeSelection } from 'lexical';
@@ -26,22 +26,23 @@ export default function CommentInputBox({
 }) {
   const [content, setContent] = useState('');
   const [canSubmit, setCanSubmit] = useState(false);
-  const boxRef = useRef<HTMLDivElement>(null);
-
+  const commentBoxRef = useRef<HTMLDivElement>(null);
+  const highlightBoxRef = useRef<HTMLDivElement>(null);
   const selectionRef = useRef<RangeSelection | null>(null);
+  const selectionState = useMemo(() => ({ elements: [] }), []);
 
   const updateLocation = useCallback(() => {
     editor.getEditorState().read(() => {
       const selection = $getSelection();
 
       if ($isRangeSelection(selection)) {
-        const selectionState = { container: document.createElement('div'), elements: [] };
         selectionRef.current = selection.clone();
         const anchor = selection.anchor;
         const focus = selection.focus;
         const range = createDOMRange(editor, anchor.getNode(), anchor.offset, focus.getNode(), focus.offset);
-        const boxElem = boxRef.current;
+        const boxElem = commentBoxRef.current;
         if (range !== null && boxElem !== null) {
+          // code here is for the comment box location
           const { left, bottom, width } = range.getBoundingClientRect();
           const selectionRects = createRectsFromDOMRange(editor, range);
           let correctedLeft = selectionRects.length === 1 ? left + width / 2 - 125 : left - 125;
@@ -50,11 +51,13 @@ export default function CommentInputBox({
           }
           boxElem.style.left = `${correctedLeft}px`;
           boxElem.style.top = `${bottom + 20 + (window.pageYOffset || document.documentElement.scrollTop)}px`;
+
+          // code below is for the hightlighted text
           const selectionRectsLength = selectionRects.length;
-          const { container } = selectionState;
+          const container = highlightBoxRef.current;
           const elements: Array<HTMLSpanElement> = selectionState.elements;
           const elementsLength = elements.length;
-
+          if (!container) return;
           for (let i = 0; i < selectionRectsLength; i++) {
             const selectionRect = selectionRects[i];
             let elem: HTMLSpanElement = elements[i];
@@ -63,7 +66,7 @@ export default function CommentInputBox({
               elements[i] = elem;
               container.appendChild(elem);
             }
-            const color = '255, 212, 0';
+            const color = 'var(--userColor)';
             const style = `position:absolute;top:${
               selectionRect.top + (window.pageYOffset || document.documentElement.scrollTop)
             }px;left:${selectionRect.left}px;height:${selectionRect.height}px;width:${
@@ -71,7 +74,6 @@ export default function CommentInputBox({
             }px;background-color:rgba(${color}, 0.3);pointer-events:none;z-index:5;`;
             elem.style.cssText = style;
           }
-
           for (let i = elementsLength - 1; i >= selectionRectsLength; i--) {
             const elem = elements[i];
             container.removeChild(elem);
@@ -80,17 +82,16 @@ export default function CommentInputBox({
         }
       }
     });
-  }, [editor]);
+  }, [editor, selectionState]);
 
   useEffect(() => {
     updateLocation();
-    const selectionState = { container: document.createElement('div'), elements: [] };
-    const container = selectionState.container;
+    const container = highlightBoxRef.current;
     const body = document.body;
-    if (body !== null) {
-      body.appendChild(container);
+    if (body !== null && container) {
+      container.style.display = 'flex';
       return () => {
-        body.removeChild(container);
+        container.style.display = 'none';
       };
     }
   }, [updateLocation, open]);
@@ -138,31 +139,34 @@ export default function CommentInputBox({
   };
 
   return (
-    <div
-      data-id="CommentPlugin_CommentInputBox"
-      className="absolute before:absolute w-[300px] bg-white shadow-[0_0_5px_rgba(0,_0,_0,_0.05)] rounded z-20 tooltip-spike-t [&>:first-child]:min-h-[100px] flex flex-col p-1 pt-3"
-      ref={boxRef}>
-      <BaseTextEditor onEscape={onEscape} onChange={onChange} closed={!open} onSubmit={onSubmit} />
-      <p className="p-2 pt-0 text-xs italic text-gray-400">
-        Submit: <kbd>Ctrl</kbd> or <kbd>Window</kbd> + <kbd>Enter</kbd>
-      </p>
-      <div className="flex p-2 pt-0.5 gap-3">
-        <button
-          type="button"
-          onClick={cancelAddComment}
-          data-id="CommentPlugin_CommentInputBox_Button"
-          className="primaryButton py-1 font-normal rounded">
-          Cancel
-        </button>
-        <button
-          type="button"
-          onClick={onClick}
-          disabled={!canSubmit}
-          className="secondaryButton py-1 disabled:bg-gray-100 disabled:text-gray-300 font-normal rounded"
-          data-id="CommentPlugin_CommentInputBox_Button primary">
-          Comment
-        </button>
+    <Fragment>
+      <div
+        data-id="CommentPlugin_CommentInputBox"
+        className="absolute before:absolute w-[300px] bg-white shadow-[0_0_5px_rgba(0,_0,_0,_0.05)] rounded z-20 tooltip-spike-t [&>:first-child]:min-h-[100px] flex flex-col p-1 pt-3"
+        ref={commentBoxRef}>
+        <BaseTextEditor onEscape={onEscape} onChange={onChange} closed={!open} onSubmit={onSubmit} />
+        <p className="p-2 pt-0 text-xs italic text-gray-400">
+          Submit: <kbd>Ctrl</kbd> or <kbd>Window</kbd> + <kbd>Enter</kbd>
+        </p>
+        <div className="flex p-2 pt-0.5 gap-3">
+          <button
+            type="button"
+            onClick={cancelAddComment}
+            data-id="CommentPlugin_CommentInputBox_Button"
+            className="primaryButton py-1 font-normal rounded">
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={onClick}
+            disabled={!canSubmit}
+            className="secondaryButton py-1 disabled:bg-gray-100 disabled:text-gray-300 font-normal rounded"
+            data-id="CommentPlugin_CommentInputBox_Button primary">
+            Comment
+          </button>
+        </div>
       </div>
-    </div>
+      <div ref={highlightBoxRef} />
+    </Fragment>
   );
 }

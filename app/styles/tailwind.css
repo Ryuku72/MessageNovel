@@ -7,6 +7,14 @@
     @apply flex;
   }
 
+  dialog[open].clear::backdrop {
+    background-color: unset;
+  }
+
+  dialog[open].jiggle::backdrop {
+    @apply bg-black bg-opacity-30;
+  }
+
   dialog::-webkit-scrollbar {
     @apply w-0 h-0;
   }
@@ -16,10 +24,11 @@
   }
 
   mark {
-    @apply bg-[rgba(255,_212_0,_0.141)] border-b-2 border-b-[rgba(255,_212,_0,_0.5)];
+    /* bg-[rgba(255,_212,_0,_00.141)] */
+    @apply bg-opacity-30 border-b-2 border-opacity-60 bg-[color:rgba(var(--userColor),var(--tw-bg-opacity))] border-b-[color:rgba(var(--userColor),var(--tw-border-opacity))];
   }
   mark.selected {
-    @apply bg-[rgba(255,_212,_0,_0.502)] border-b-2 border-b-[rgba(255,_212,_0,_1)];
+    @apply bg-opacity-70 border-b-2 border-opacity-100;
   }
 
   kbd {

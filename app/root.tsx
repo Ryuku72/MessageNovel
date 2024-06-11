@@ -1,7 +1,7 @@
 import { LinksFunction } from '@remix-run/node';
 import { Links, Meta, Outlet, Scripts, ScrollRestoration, isRouteErrorResponse, useRouteError } from '@remix-run/react';
 
-import { useEffect, useState } from 'react';
+import { CSSProperties, useEffect, useState } from 'react';
 
 import LOCALES from '~/locales/language_en.json';
 
@@ -60,12 +60,14 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta property="og:image" content="/message_novel.png" />
-        <meta property="og:image:width" content="1400"/>
-        <meta property="og:image:height" content="836"/>
+        <meta property="og:image:width" content="1400" />
+        <meta property="og:image:height" content="836" />
         <Meta />
         <Links />
       </head>
-      <body className="flex flex-col w-full h-full [background:_#bfe3dd] relative">
+      <body
+        className="flex flex-col w-full h-full [background:_#bfe3dd] relative"
+        style={{ userColor: '255, 255, 204' } as CSSProperties}>
         <LoadingLayer />
         <ThreeJsBackground />
         {children}

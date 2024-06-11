@@ -85,6 +85,7 @@ export function CommentThread({
   markNodeMapHasId: boolean;
   activeIdExists: boolean;
 }) {
+
   return (
     // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
     <li
@@ -97,7 +98,7 @@ export function CommentThread({
         <blockquote data-id="CommentPlugin_CommentsPanel_List_Thread_Quote" className="mx-3 text-gray-300 font-medium">
           {'> '}
           <span
-            className={`text-gray-700 p-1 pl-0.5 font-bold ${activeIdExists ? 'bg-[rgba(255,_212,_0,_0.141)] border-b-2 border-b-[rgba(255,_212,_0,_0.5)]' : 'border-b-2 border-b-[rgba(255,_212,_0,_1)] bg-[rgba(255,_212,_0,_0.502)]'}`}>
+            className={`text-gray-700 p-1 pl-0.5 font-bold bg-[color:rgba(var(--userColor),var(--tw-bg-opacity))] border-b-[color:rgba(var(--userColor),var(--tw-border-opacity))] ${activeIdExists ? 'bg-opacity-30 border-b-2 border-opacity-60' : 'bg-opacity-70 border-b-2 border-opacity-100'}`}>
             {commentOrThread.quote}
           </span>
         </blockquote>

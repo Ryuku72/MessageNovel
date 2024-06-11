@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin';
 import { CheckListPlugin } from '@lexical/react/LexicalCheckListPlugin';
@@ -36,6 +36,38 @@ export function LexicalRichTextEditor({
   const initialConfig = InitialConfig(namespace, value);
   const [editorState, setEditorState] = useState('');
   const [textLength, setTextLength] = useState(0);
+
+  useEffect(() => {
+    const userColor = (color: string) => {
+      switch (color) {
+        case 'bg-pastel-black':
+          return '211, 211, 211';
+        case 'bg-pastel-red':
+          return '255, 153, 153';
+        case 'bg-pastel-brown':
+          return '255, 204, 204';
+        case 'bg-pastel-orange':
+          return '255, 218, 185';
+        case 'bg-pastel-indigo':
+          return '153, 204, 255';
+        case 'bg-pastel-blue':
+          return '218, 240, 247';
+        case 'bg-pastel-green':
+          return '178, 223, 219';
+        case 'bg-pastel-emerald':
+          return '204, 255, 204';
+        case 'bg-pastel-purple':
+          return '204, 204, 255';
+        default:
+          return '255, 255, 204';
+      }
+    };
+    
+    if (color && typeof document !== 'undefined') {
+      document.body.style.setProperty('--userColor', userColor(color));
+    }
+  }, [color]);
+
 
   return (
     <LexicalComposer initialConfig={initialConfig}>
