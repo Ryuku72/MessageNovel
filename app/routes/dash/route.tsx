@@ -1,5 +1,5 @@
 import { LoaderFunctionArgs, MetaFunction } from '@remix-run/node';
-import { Outlet, useLoaderData, useOutletContext } from '@remix-run/react';
+import { Outlet, useLoaderData, useOutletContext, useSearchParams } from '@remix-run/react';
 
 import { useEffect } from 'react';
 
@@ -21,6 +21,8 @@ export function loader({ request }: LoaderFunctionArgs) {
 export default function Dash() {
   const loaderData = useLoaderData<UserDataEntry>();
   const { sceneReady } = useOutletContext<{ sceneReady: boolean }>();
+  const [searchParams] = useSearchParams();
+  const showComments = searchParams.get('showComments');
 
   useEffect(() => {
     if (!sceneReady) return;
@@ -31,7 +33,7 @@ export default function Dash() {
   }, [sceneReady]);
 
   return (
-    <div className="w-full md:h-full flex flex-row relative">
+    <div className={`w-full md:h-full flex flex-row relative ${showComments ? 'md:overflow-visible overflow-hidden' : 'overflow-visible'}`} id="dash-default">
       <DashNavBar user={loaderData} />
       <Outlet context={{ user: loaderData }} />
     </div>

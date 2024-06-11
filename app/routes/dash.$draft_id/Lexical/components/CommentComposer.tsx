@@ -49,8 +49,7 @@ export default function CommentsComposer({
   };
 
   return (
-    <div className="flex w-full gap-1 items-end pr-3">
-      <div className="flex flex-auto">
+    <div className="flex w-full gap-2 flex-auto p-2 pr-3 items-end">
         <BaseTextEditor
           onEscape={() => {
             return true;
@@ -60,10 +59,9 @@ export default function CommentsComposer({
           placeholder={placeholder}
           onSubmit={onSubmit}
         />
-      </div>
       <button
         type="button"
-        className="w-[40px] h-[40px] flexCenter flex-col flex-shrink-0 disabled:bg-opacity-35 disabled:bg-gray-300 text-white bg-green-700 hover:bg-green-500 rounded-xl mb-2.5"
+        className="w-[40px] h-[40px] flexCenter flex-col flex-shrink-0 disabled:bg-opacity-35 disabled:bg-gray-300 text-white bg-green-700 hover:bg-green-500 rounded-xl -translate-y-0.5"
         data-id="CommentPlugin_CommentsPanel_SendButton"
         onClick={onClick}
         disabled={!canSubmit}>

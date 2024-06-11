@@ -55,7 +55,7 @@ export const links: LinksFunction = () => [
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="flex w-full h-full">
+    <html lang="en" className="flex w-full h-full overflow-auto">
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -66,7 +66,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body
-        className="flex flex-col w-full h-full [background:_#bfe3dd] relative"
+        className="flex flex-col w-full min-h-full [background:_#bfe3dd] relative"
         style={{ userColor: '255, 255, 204' } as CSSProperties}>
         <LoadingLayer />
         <ThreeJsBackground />

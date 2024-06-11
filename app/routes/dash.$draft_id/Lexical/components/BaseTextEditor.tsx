@@ -39,10 +39,10 @@ export default function BaseTextEditor({
 
   return (
     <LexicalComposer initialConfig={initialConfig}>
-      <div data-id="CommentPlugin_CommentInputBox_EditorContainer" className="relative m-2 rounded flex flex-auto border border-gray-300 bg-white">
+      <div data-id="CommentPlugin_CommentInputBox_EditorContainer" className="relative rounded flex flex-auto border border-gray-300 bg-white">
         <PlainTextPlugin
           contentEditable={
-            <ContentEditable className="flex flex-col flex-auto py-2 px-2 text-gray-600 md:overflow-auto" />
+            <ContentEditable className="flex flex-col flex-auto py-2 px-2 text-gray-600 overflow-auto max-h-[350px]" />
           }
           placeholder={<div className="absolute top-2 z-0 px-2 pointer-events-none text-gray-400">{placeholder}</div>}
           ErrorBoundary={LexicalErrorBoundary}

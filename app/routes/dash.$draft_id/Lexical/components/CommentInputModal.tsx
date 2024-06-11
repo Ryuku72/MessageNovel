@@ -6,7 +6,7 @@ import { $getSelection, $isRangeSelection, EditorState, LexicalEditor, RangeSele
 import { Comment, Thread, createComment, createThread, handleOnChange } from '../helpers';
 import BaseTextEditor from './BaseTextEditor';
 
-export default function CommentInputBox({
+export default function CommentInputModal({
   editor,
   cancelAddComment,
   submitAddComment,
@@ -66,13 +66,14 @@ export default function CommentInputBox({
               elements[i] = elem;
               container.appendChild(elem);
             }
-            const color = 'var(--userColor)';
-            const style = `position:absolute;top:${
-              selectionRect.top + (window.pageYOffset || document.documentElement.scrollTop)
-            }px;left:${selectionRect.left}px;height:${selectionRect.height}px;width:${
-              selectionRect.width
-            }px;background-color:rgba(${color}, 0.3);pointer-events:none;z-index:5;`;
-            elem.style.cssText = style;
+            const top = selectionRect.top + (window.pageYOffset || document.documentElement.scrollTop);
+            
+            elem.style.top = `${top}px`;
+            elem.style.left = `${selectionRect.left}px`;
+            elem.style.height = `${selectionRect.height}px`;
+            elem.style.width = `${selectionRect.width}px`;
+            elem.style.backgroundColor = 'rgba(var(--userColor, 0.3)';
+
           }
           for (let i = elementsLength - 1; i >= selectionRectsLength; i--) {
             const elem = elements[i];
@@ -166,7 +167,7 @@ export default function CommentInputBox({
           </button>
         </div>
       </div>
-      <div ref={highlightBoxRef} />
+      <div className="absolute pointer-events-none z-10" ref={highlightBoxRef} />
     </Fragment>
   );
 }

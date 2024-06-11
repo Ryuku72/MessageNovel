@@ -25,7 +25,7 @@ export default function Settings() {
 
   return (
     <div className="w-full h-full flex flex-col justify-center items-center relative m-auto">
-      <h1 className="text-red-700 text-4xl text-center m-0 [text-shadow:_5px_3px_2px_rgb(225_225_225_/_50%)] font-miltonian">
+      <h1 className="text-red-700 text-4xl text-center [text-shadow:_5px_3px_2px_rgb(225_225_225_/_50%)] font-miltonian">
         {LocalStrings.title}
       </h1>
       <div className="p-4 w-card-l max-w-full">

@@ -60,7 +60,7 @@ export default function Login() {
   return (
     <PublicLayout>
       <div className="flex justify-center items-center gap-3 flex-col w-full max-w-c-600 flex-auto">
-        <h1 className="text-red-700 text-6xl m-0 font-mono text-center font-miltonian [text-shadow:_5px_3px_2px_rgb(225_225_225_/_50%)]">
+        <h1 className="text-red-700 text-6xl font-mono text-center font-miltonian [text-shadow:_5px_3px_2px_rgb(225_225_225_/_50%)]">
           {LOCALES.login.title}
         </h1>
         <Form

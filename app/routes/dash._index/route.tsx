@@ -32,7 +32,7 @@ export default function DashIndex() {
 
   return (
     <div className="flex flex-col flex-auto md:flex-1 items-center w-full md:px-10 px-3 md:py-12 py-4 gap-10">
-      <h1 className="text-red-700 text-4xl m-0 underline underline-offset-8 [text-shadow:_5px_3px_2px_rgb(225_225_225_/_50%)] font-miltonian">
+      <h1 className="text-red-700 text-4xl underline underline-offset-8 [text-shadow:_5px_3px_2px_rgb(225_225_225_/_50%)] font-miltonian">
         &nbsp;&nbsp;{LocalStrings.title}&nbsp;&nbsp;&nbsp;
       </h1>
       <div className="grid wide:grid-cols-4 xl:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-4 w-full max-w-wide">

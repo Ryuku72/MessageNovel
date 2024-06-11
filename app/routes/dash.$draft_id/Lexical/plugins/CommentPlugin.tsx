@@ -1,3 +1,5 @@
+import { useNavigate, useParams, useSearchParams } from '@remix-run/react';
+
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 
@@ -21,28 +23,29 @@ import {
   createCommand
 } from 'lexical';
 
-import DialogWrapper from '~/components/DialogWrapper';
-
 import AddCommentBox from '../components/AddCommentBox';
-import CommentInputBox from '../components/CommentInputBox';
+import CommentInputModal from '../components/CommentInputModal';
 import CommentsPanel from '../components/CommentsPanel';
 import { Comment, CommentStore, Thread, useCollabAuthorName, useCommentStore } from '../helpers';
 import { ChatIcon } from '../svg';
 
 export const INSERT_INLINE_COMMAND: LexicalCommand<void> = createCommand('INSERT_INLINE_COMMAND');
 
-export default function CommentPlugin({ username, color }: { username: string; color: string }): JSX.Element {
-  const [editor] = useLexicalComposerContext();
-  const commentStore = useMemo(() => new CommentStore(editor), [editor]);
-  const comments = useCommentStore(commentStore);
-  const author = useCollabAuthorName(username, color);
+export default function CommentPlugin({ username, color }: { username: string; color: string; }): JSX.Element {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const params = useParams();
+  const navigate = useNavigate();
 
   const [activeAnchorKey, setActiveAnchorKey] = useState<NodeKey | null>();
   const [activeIDs, setActiveIDs] = useState<Array<string>>([]);
   const [showCommentInput, setShowCommentInput] = useState(false);
-  const [showComments, setShowComments] = useState(false);
+  const showComments = searchParams.get('showComments');
   const [init, setInit] = useState(false);
 
+  const [editor] = useLexicalComposerContext();
+  const commentStore = useMemo(() => new CommentStore(editor), [editor]);
+  const comments = useCommentStore(commentStore);
+  const author = useCollabAuthorName(username, color);
   const markNodeMap = useMemo<Map<string, Set<NodeKey>>>(() => {
     return new Map();
   }, []);
@@ -61,7 +64,7 @@ export default function CommentPlugin({ username, color }: { username: string; c
           if (elem !== null) {
             elem.classList.add('selected');
             changedElems.push(elem);
-            setShowComments(true);
+            navigate(`/dash/${params.draft_id}?showComments=true`);
           }
         }
       }
@@ -72,7 +75,7 @@ export default function CommentPlugin({ username, color }: { username: string; c
         changedElem.classList.remove('selected');
       }
     };
-  }, [activeIDs, editor, markNodeMap]);
+  }, [activeIDs, editor, markNodeMap, navigate, params.draft_id]);
 
   useEffect(() => {
     const markNodeKeysToIDs: Map<NodeKey, Array<string>> = new Map();
@@ -254,13 +257,19 @@ export default function CommentPlugin({ username, color }: { username: string; c
 
   const CreatePortalEl = useMemo(
     () =>
-      ({ element, condition }: { element: JSX.Element; condition: boolean }) => {
+      ({ children, condition }: { children: JSX.Element; condition: boolean }) => {
         if (!condition) return null;
 
-        return createPortal(element, document.body);
+        return createPortal(children, document.body);
       },
     []
   );
+
+  const handleShowComments = () => {
+    if (showComments) searchParams.delete('showComments');
+    else searchParams.set('showComments', 'true');
+    setSearchParams(searchParams);
+  };
 
   return (
     <div className="relative">
@@ -268,45 +277,35 @@ export default function CommentPlugin({ username, color }: { username: string; c
         type="button"
         className={`flex  gap-3 rounded cursor-pointer h-[40px] items-center justify-center px-2 ${showComments ? 'bg-gray-200 text-gray-600' : 'text-gray-500'}`}
         data-id="CommentPlugin_ShowCommentsButton"
-        onClick={() => setShowComments(!showComments)}
+        onClick={() => handleShowComments()}
         title={showComments ? 'Hide Comments' : 'Show Comments'}>
         <ChatIcon uniqueId="commentPlugin-icon" className="w-5 h-auto -scale-x-100" />{' '}
         {showComments ? 'Hide Comments' : 'Show Comments'}
       </button>
-      <CreatePortalEl
-        condition={init}
-        element={
-          <CommentsPanel
-            comments={comments}
-            submitAddComment={submitAddComment}
-            deleteCommentOrThread={deleteCommentOrThread}
-            activeIDs={activeIDs}
-            markNodeMap={markNodeMap}
-            close={() => setShowComments(false)}
-            author={author}
-            show={showComments}
-          />
-        }
-      />
-      <DialogWrapper open={showCommentInput} animate={false}>
-        <CommentInputBox
+      <CreatePortalEl condition={init}>
+        <CommentsPanel
+          comments={comments}
+          submitAddComment={submitAddComment}
+          deleteCommentOrThread={deleteCommentOrThread}
+          activeIDs={activeIDs}
+          markNodeMap={markNodeMap}
+          close={() => handleShowComments()}
+          author={author}
+          show={Boolean(showComments)}
+        />
+      </CreatePortalEl>
+      <CreatePortalEl condition={showCommentInput}>
+        <CommentInputModal
           editor={editor}
           cancelAddComment={cancelAddComment}
           submitAddComment={submitAddComment}
           open={showCommentInput}
           author={author}
         />
-      </DialogWrapper>
-      <CreatePortalEl
-        condition={openCommentBox && init}
-        element={
-          <AddCommentBox
-            anchorKey={openCommentBox ? activeAnchorKey : ''}
-            editor={editor}
-            onAddComment={onAddComment}
-          />
-        }
-      />
+      </CreatePortalEl>
+      <CreatePortalEl condition={openCommentBox && init}>
+        <AddCommentBox editor={editor} onAddComment={onAddComment} />
+      </CreatePortalEl>
     </div>
   );
 }

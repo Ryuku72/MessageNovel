@@ -87,58 +87,56 @@ export default function CommentsPanel({
   return (
     <div
       data-id="CommentPlugin_CommentsPanel"
-      className={`fixed right-0 w-[400px] md:h-[calc(100%_-_80px)] h-[calc(100%_-_200px)] top-10 bg-white bg-opacity-50 backdrop-blur-sm rounded-l-md shadow-[0_0_10px_rgba(0,_0,_0,_0.1)] z-30 flex flex-col gap-1 transition-transform ease-out duration-500 ${show ? 'translate-x-0' : 'translate-x-[400px]'}`}>
-      <div className="w-full flex-shrink-0 pt-4 px-6 pb-2 flex flex-wrap rounded-t-[inherit] justify-between items-center bg-white bg-opacity-80 backdrop-blur-sm">
-        <h3 className="font-medium text-xl text-gray-600 underline underline-offset-4 capitalize">
-          &#8197;Comments&nbsp;&nbsp;&nbsp;
-        </h3>
-        <button
-          className="w-10 h-10 flex items-center justify-center text-slate-500 hover:text-red-500 hover:border hover:border-red-500 rounded"
-          type="button"
-          onClick={close}>
-          <CloseIcon className="w-3 h-3" uniqueId="dash-close" svgColor="currentColor" />
-        </button>
-      </div>
-      <div
-        data-id="CommentPlugin_CommentsPanel_Empty"
-        className={
-          isEmpty
-            ? 'flexCenter font-base w-full flex-col flex-auto text-gray-700 bg-white bg-opacity-25 backdrop-blur-sm rounded-b-[inherit]'
-            : 'hidden'
-        }>
-        No Comments
-      </div>
-      <ul
-        data-id="CommentPlugin_CommentsPanel_List"
-        className={
-          isEmpty
-            ? 'hidden'
-            : 'flex flex-col gap-1 list-none m-0 w-full overflow-y-auto'
-        }
-        ref={listRef}>
-        {comments.map(commentOrThread => {
-          const id = commentOrThread.id;
-          if (commentOrThread.type === 'thread')
+      className={`fixed flex flex-col flex-auto gap-1 right-0 md:w-[400px] w-full md:h-[calc(100%_-_80px)] h-full md:top-10 top-0 z-40 transition-transform ease-out duration-500 ${show ? 'translate-x-0' : 'md:translate-x-[400px] translate-x-[767px]'}`}>
+      <div className="w-full flex flex-col flex-auto gap-1 overflow-hidden rounded-l-md bg-white bg-opacity-50 backdrop-blur-sm shadow-[0_0_10px_rgba(0,_0,_0,_0.1)] ">
+        <div className="w-full flex-shrink-0 pt-4 px-6 pb-2 flex flex-wrap rounded-t-[inherit] justify-between items-center bg-white bg-opacity-80 backdrop-blur-sm">
+          <h3 className="font-medium text-xl text-gray-600 underline underline-offset-4 capitalize">
+            &#8197;Comments&nbsp;&nbsp;&nbsp;
+          </h3>
+          <button
+            className="w-10 h-10 flex items-center justify-center text-slate-500 hover:text-red-500 hover:border hover:border-red-500 rounded"
+            type="button"
+            onClick={close}>
+            <CloseIcon className="w-3 h-3" uniqueId="dash-close" svgColor="currentColor" />
+          </button>
+        </div>
+        <div
+          data-id="CommentPlugin_CommentsPanel_Empty"
+          className={
+            isEmpty
+              ? 'flexCenter font-base w-full flex-col flex-auto text-gray-700 bg-white bg-opacity-25 backdrop-blur-sm rounded-b-[inherit]'
+              : 'hidden'
+          }>
+          No Comments
+        </div>
+        <ul
+          data-id="CommentPlugin_CommentsPanel_List"
+          className={isEmpty ? 'hidden' : 'flex flex-col gap-1 list-none w-full overflow-y-auto flex-auto'}
+          ref={listRef}>
+          {comments.map(commentOrThread => {
+            const id = commentOrThread.id;
+            if (commentOrThread.type === 'thread')
+              return (
+                <CommentThread
+                  key={id}
+                  author={author}
+                  commentOrThread={commentOrThread}
+                  handleClickThread={() => handleClickThread(id)}
+                  rtf={rtf}
+                  markNodeMapHasId={markNodeMap.has(id)}
+                  activeIdExists={activeIDs.indexOf(id) === -1}
+                  setShowModal={setShowModal}
+                  showModal={showModal}
+                  deleteCommentOrThread={deleteCommentOrThread}
+                  submitAddComment={submitAddComment}
+                />
+              );
             return (
-              <CommentThread
-                key={id}
-                author={author}
-                commentOrThread={commentOrThread}
-                handleClickThread={() => handleClickThread(id)}
-                rtf={rtf}
-                markNodeMapHasId={markNodeMap.has(id)}
-                activeIdExists={activeIDs.indexOf(id) === -1}
-                setShowModal={setShowModal}
-                showModal={showModal}
-                deleteCommentOrThread={deleteCommentOrThread}
-                submitAddComment={submitAddComment}
-              />
+              <CommentsPanelList key={id} comment={commentOrThread} deleteComment={deleteCommentOrThread} rtf={rtf} />
             );
-          return (
-            <CommentsPanelList key={id} comment={commentOrThread} deleteComment={deleteCommentOrThread} rtf={rtf} />
-          );
-        })}
-      </ul>
+          })}
+        </ul>
+      </div>
     </div>
   );
 }

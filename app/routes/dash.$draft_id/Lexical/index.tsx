@@ -62,12 +62,11 @@ export function LexicalRichTextEditor({
           return '255, 255, 204';
       }
     };
-    
+
     if (color && typeof document !== 'undefined') {
       document.body.style.setProperty('--userColor', userColor(color));
     }
   }, [color]);
-
 
   return (
     <LexicalComposer initialConfig={initialConfig}>
