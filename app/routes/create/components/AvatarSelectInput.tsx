@@ -192,7 +192,7 @@ export default function AvatarInput({ title, id, imageSrc, setImage }: AvatarInp
               <img
                 loading="lazy"
                 alt="Crop me"
-                className="max-w-full !max-h-[calc(100vh _-_200px)] m-auto"
+                className="max-w-full !max-h-[calc(100vh _-_200px)] min-h-[400px] m-auto"
                 ref={cropImageRef}
                 src={cropImage}
                 onLoad={onImageLoad}

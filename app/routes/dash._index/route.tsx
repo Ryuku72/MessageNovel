@@ -1,9 +1,9 @@
 import { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node';
-import { Link, useLoaderData, useNavigation } from '@remix-run/react';
+import { Link, useLoaderData, useNavigation, useOutletContext } from '@remix-run/react';
 
 import { Fragment, useState } from 'react';
 
-import { NovelinLibraryEntry } from '~/types';
+import { NovelinLibraryEntry, UserDataEntry } from '~/types';
 
 import { CreateDate } from '~/helpers/DateHelper';
 import LOCALES from '~/locales/language_en.json';
@@ -24,10 +24,11 @@ export function action({ request }: ActionFunctionArgs) {
 
 export default function DashIndex() {
   const library = useLoaderData<NovelinLibraryEntry[]>();
+  const { user } = useOutletContext<{ user: UserDataEntry }>();
+  const navigationState = useNavigation();
+
   const [selectedNovel, setSelectedNovel] = useState<NovelinLibraryEntry | null>(null);
   const LocalStrings = LOCALES.dash;
-
-  const navigationState = useNavigation();
   const isLoading = ['submitting'].includes(navigationState.state);
 
   return (
@@ -89,7 +90,7 @@ export default function DashIndex() {
           )}
         </Link>
       </div>
-      <DescriptionModel selectedNovel={selectedNovel} close={() => setSelectedNovel(null)} />
+      <DescriptionModel selectedNovel={selectedNovel} close={() => setSelectedNovel(null)} ownerId={selectedNovel?.owner || ''} members={selectedNovel?.members || []} userId={user.id} />
     </div>
   );
 }

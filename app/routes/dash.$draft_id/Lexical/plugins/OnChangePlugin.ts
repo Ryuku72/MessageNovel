@@ -9,7 +9,7 @@ export default function OnChangePlugin({ onChange }: OnChangePluginProps) {
 
   useEffect(() => {
     return editor.registerUpdateListener(({ editorState }) => {
-        const editorStateJSON = editorState.toJSON();
+      const editorStateJSON = editorState.toJSON();
       onChange(JSON.stringify(editorStateJSON));
     });
   }, [editor, onChange]);

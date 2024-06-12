@@ -421,3 +421,6 @@ export function useCollabAuthorName(username: string, color: string): string {
   const { yjsDocMap, name } = collabContext;
   return yjsDocMap.has('comments') ? name : username;
 }
+
+export const emptyContent =
+  '{"root":{"children":[{"children":[],"direction":null,"format":"","indent":0,"type":"paragraph","version":1}],"direction":null,"format":"","indent":0,"type":"root","version":1}}';

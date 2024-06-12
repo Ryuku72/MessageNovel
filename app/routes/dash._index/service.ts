@@ -12,8 +12,7 @@ export async function DashIndexLoader(request: LoaderFunctionArgs['request']) {
     const user = response.data?.user;
     if (!user) return redirect('/', { headers });
 
-    const library = await supabaseClient.from('library').select('*').match({ owner: user.id }).order('updated_at', { ascending: false });
-
+    const library = await supabaseClient.from('library').select('*').order('updated_at', { ascending: false });
     return json(library?.data, { headers });
   } catch (error) {
     console.error(error);
@@ -28,13 +27,12 @@ export async function DashIndexAction(request: ActionFunctionArgs['request']) {
   const { supabaseClient, headers } = await initServer(request);
   const data = await request.formData();
   const novel_id = data.get('selected_novel');
+  const response = await supabaseClient.auth.getUser();
+  const user = response.data?.user;
 
+  if (!user) return redirect('/', { headers });
   if (request.method === 'DELETE' && novel_id) {
     try {
-      const response = await supabaseClient.auth.getUser();
-      const user = response.data?.user;
-      if (!user) return redirect('/', { headers });
-  
       const update = await supabaseClient.from('library').delete().match({ id: novel_id }).select();
       return json(update, { headers });
     } catch (error) {
@@ -44,5 +42,20 @@ export async function DashIndexAction(request: ActionFunctionArgs['request']) {
         return new Response(`${error.status} - ${error?.statusText || 'Error'}`, { status: error.status, headers });
       else return json(null, { headers });
     }
-  } return json(null, { headers });
+  } else {
+    const members = data.get('members') as string;
+    const membersData = members.split(',');
+
+    const update = await supabaseClient.from('library').update({
+      members: membersData
+    }).match({ id: novel_id }).select().single();
+    if (update.error) {
+      console.error(update.error);
+      console.error('process error in add member');
+      return json(null, { headers });
+    }
+
+    console.dir(update);
+    return json(update.data, { headers });
+  }
 }

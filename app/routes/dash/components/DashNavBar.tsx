@@ -22,6 +22,8 @@ export default function DashNavBar({ user }: DashNavBarProps) {
   const isLoading = ['submitting'].includes(navigationState.state);
   const LocalStrings = LOCALES.dash;
 
+
+
   return (
     <div className="relative md:pr-[85px]">
       <div className="flex-shrink-0 md:w-auto w-full flex md:flex-col flex-row gap-3 px-3 md:py-6 py-3 items-center bg-slate-50 bg-opacity-35 backdrop-blur-sm z-10 fixed md:h-full bottom-0">
@@ -31,7 +33,7 @@ export default function DashNavBar({ user }: DashNavBarProps) {
               <img
                 alt="create-img"
                 className="w-full h-full rounded object-cover bg-gradient-to-b from-slate-500 to-fuchsia-600"
-                src={user?.avatar + `?${new Date().getTime()}` || Default_Avatar}
+                src={user?.avatar || Default_Avatar}
               />
             </NavLink>
             <div

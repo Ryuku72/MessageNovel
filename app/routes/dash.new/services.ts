@@ -10,7 +10,7 @@ export async function DashNewAction(data: ActionFunctionArgs) {
   const body = await request.formData();
   const title = body.get('novel-title') as string;
   const description = body.get('novel-description') as string;
-
+  const descriptionParse = JSON.parse(description);
   const url = new URL(request.url);
   const novel_id = await url.searchParams.get('novel_id');
 
@@ -24,7 +24,7 @@ export async function DashNewAction(data: ActionFunctionArgs) {
           .from('library')
           .update({
             title,
-            description: description,
+            description: descriptionParse,
             updated_at: new Date(),
             updated_by: userData?.id
           })
@@ -45,7 +45,7 @@ export async function DashNewAction(data: ActionFunctionArgs) {
             owner: userData?.id,
             owner_username: userData?.user_metadata.username,
             title,
-            description: description,
+            description: descriptionParse,
             members: [userData?.id]
           })
           .select()

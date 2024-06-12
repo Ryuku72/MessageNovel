@@ -82,7 +82,7 @@ export default function Settings() {
               title="Upload file"
               id="avatar"
               setImage={setImage}
-              imageSrc={user.avatar + `?${new Date().getTime()}`}
+              imageSrc={user.avatar}
             />
             <TitleInput title={LocalStrings.email} id="email" value={user.email} disabled={true} />
             <TitleInput

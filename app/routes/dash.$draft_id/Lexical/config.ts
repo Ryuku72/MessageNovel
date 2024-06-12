@@ -4,7 +4,7 @@ import { OverflowNode } from '@lexical/overflow';
 import { InitialConfigType } from '@lexical/react/LexicalComposer';
 import { HorizontalRuleNode } from '@lexical/react/LexicalHorizontalRuleNode';
 import { HeadingNode, QuoteNode } from '@lexical/rich-text';
-import { EditorThemeClasses } from 'lexical';
+import { EditorThemeClasses, SerializedEditorState, SerializedLexicalNode } from 'lexical';
 
 export const theme: EditorThemeClasses = {
   // Theme styling goes here
@@ -45,11 +45,11 @@ function onError(error: Error) {
   // eslint-disable-next-line no-console
   console.error(error);
 }
-export function InitialConfig(namespace: string, value: string | null): InitialConfigType {
+export function InitialConfig(namespace: string, value: SerializedEditorState<SerializedLexicalNode> | null): InitialConfigType {
   return {
     theme,
     onError,
-    editorState: value || null,
+    editorState: JSON.stringify(value) || null,
     nodes: [HeadingNode, ListNode, ListItemNode, QuoteNode, OverflowNode, HorizontalRuleNode, MarkNode],
     namespace
   };

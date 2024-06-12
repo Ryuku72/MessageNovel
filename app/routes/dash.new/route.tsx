@@ -3,6 +3,8 @@ import { Form, NavLink, useLoaderData, useNavigation, useSearchParams } from '@r
 
 import { Fragment, useEffect, useState } from 'react';
 
+import { NovelinLibraryEntry } from '~/types';
+
 import LOCALES from '~/locales/language_en.json';
 
 import TitleInput from '~/components/TitleInput';
@@ -10,7 +12,7 @@ import LoadingSpinner from '~/svg/LoadingSpinner/LoadingSpinner';
 
 import TitleTextArea from './components/TitleTextArea';
 import { DashNewAction, DashNewLoader } from './services';
-import { NovelinLibraryEntry } from '~/types';
+import { emptyContent } from '../dash.$draft_id/Lexical/helpers';
 
 export function loader(data: LoaderFunctionArgs) {
   return DashNewLoader(data);
@@ -23,7 +25,8 @@ export function action(data: ActionFunctionArgs) {
 export default function DashNew() {
   const library = useLoaderData<NovelinLibraryEntry>();
   const [draftNovelTitle, setDraftNovelTitle] = useState(library?.title || '');
-  const [draftNovelDescription, setDraftNovelDescription] = useState(library?.description || '');
+  const [draftNovelDescription, setDraftNovelDescription] = useState(JSON.stringify(library?.description) || emptyContent);
+  const [textLength, setTextLength] = useState(0);
 
   const navigationState = useNavigation();
   const [searchParams] = useSearchParams();
@@ -36,9 +39,8 @@ export default function DashNew() {
   useEffect(() => {
     if (resetState) return;
     setDraftNovelTitle(library?.title || '');
-    setDraftNovelDescription(library?.description || '');
+    setDraftNovelDescription(JSON.stringify(library?.description) || '');
   }, [library, resetState]);
-
 
   return (
     <div className="flex flex-col flex-auto md:flex-1 items-center w-full md:px-10 px-3 pt-4 pb-[100px] md:py-6 gap-6 m-auto">
@@ -50,7 +52,7 @@ export default function DashNew() {
           method="post"
           className="flex w-full py-4 px-2 md:px-6"
           onSubmit={e => {
-            if (draftNovelDescription.trim().length < 120) {
+            if (textLength < 120) {
               e.preventDefault();
               window.alert('description less than 120 characters');
               return false;
@@ -70,20 +72,19 @@ export default function DashNew() {
               id="novel-description"
               value={draftNovelDescription}
               placeholder={LocalStrings.secondary_input_placeholder}
-              onChange={setDraftNovelDescription}
+              onChange={(json) => setDraftNovelDescription(json)}
+              textLength={textLength}
+              setTextLength={setTextLength}
             />
             <div className="w-full flex gap-3 flex-wrap mt-2 justify-end">
-            <NavLink to="/dash" className="primaryButton py-2.5">
+              <NavLink to="/dash" className="primaryButton py-2.5">
                 Back
-            </NavLink>
-              <button
-                className="secondaryButton whitespace-pre !max-w-[160px] !h-[50px] !px-0 justify-center items-center">
+              </NavLink>
+              <button className="secondaryButton whitespace-pre !max-w-[160px] !h-[50px] !px-0 justify-center items-center">
                 {isLoading ? (
                   <LoadingSpinner className="w-full h-10" svgColor="#fff" uniqueId="index-spinner" />
                 ) : (
-                  <Fragment>
-                    {searchNovelId ? 'Update Novel' : LocalStrings.primary_button}
-                  </Fragment>
+                  <Fragment>{searchNovelId ? 'Update Novel' : LocalStrings.primary_button}</Fragment>
                 )}
               </button>
             </div>

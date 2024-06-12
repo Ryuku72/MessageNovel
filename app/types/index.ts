@@ -1,17 +1,19 @@
+import { SerializedEditorState, SerializedLexicalNode } from 'lexical';
+
 export type NovelEntry = {
   id: string;
   created_at: string;
   updated_at: string;
   members: string[];
   title: string;
-  body: string;
+  body: SerializedEditorState<SerializedLexicalNode>;
   updated_by: string;
 };
 
 export type NovelinLibraryEntry = Omit<
   NovelEntry & {
     owner: string;
-    description: string;
+    description: SerializedEditorState<SerializedLexicalNode>;
     draft_id: string;
     published_id?: string;
     owner_username: string;

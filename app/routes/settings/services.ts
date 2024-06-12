@@ -46,19 +46,20 @@ export async function SettingsAction(request: ActionFunctionArgs['request']) {
   const color = data.get('color') as string;
 
   const filename = avatar?.name;
-  const imageFilePath = `${new Date().valueOf()}_${username}_${filename}`;
+  const imageFilePath = `public/${new Date().valueOf()}_${filename}`;
 
   if (request.method === 'DELETE') {
+    // To delete you need a different auth token
     const { supabaseClient, headers } = await initAuthServer(request);
     const userDetails = await supabaseClient.auth.getUser();
     if (!userDetails.data.user?.id) return redirect('/', { headers });
-    console.dir(userDetails.data.user.user_metadata.avatar);
+
     const image = await supabaseClient.storage.from('avatars').remove([userDetails.data.user.user_metadata.avatar]);
-    console.dir(image);
     if (image.error) {
       console.error(image.error);
       console.error('delete user update - image');
     }
+
     const response = await supabaseClient.auth.admin.deleteUser(userDetails.data.user.id);
     if (response.error) {
       console.error(response.error);
@@ -76,26 +77,23 @@ export async function SettingsAction(request: ActionFunctionArgs['request']) {
         if (userDetails.data.user?.user_metadata.avatar) {
           const image = await supabaseClient.storage
             .from('avatars')
-            .update(userDetails.data.user.user_metadata.avatar, avatar, {
-              upsert: true,
-              cacheControl: '3600'
-            });
+            .remove([userDetails.data.user.user_metadata.avatar]);
           if (image.error) {
             console.error(image.error);
             console.error('image storage update');
             return json({ error: { message: image.error.message } }, { headers });
           }
-        } else {
-          const image = await supabaseClient.storage.from('avatars').upload(imageFilePath, avatar);
-          if (image.error) {
-            console.error(image.error);
-            console.error('image storage insert');
-            return json({ error: { message: image.error.message } }, { headers });
-          }
+        }
+        const image = await supabaseClient.storage.from('avatars').upload(imageFilePath, avatar);
+        if (image.error) {
+          console.error(image.error);
+          console.error('image storage insert');
+          return json({ error: { message: image.error.message } }, { headers });
         }
       }
+
       const dataUpdate: { username: string; color: string; avatar?: string } = { username, color };
-      if (filename && !userDetails.data.user?.user_metadata.avatar) dataUpdate.avatar = imageFilePath;
+      if (filename) dataUpdate.avatar = imageFilePath;
       const response = await supabaseClient.auth.updateUser({ data: dataUpdate });
 
       if (response.error) {

@@ -19,6 +19,7 @@ import { MaxLengthPlugin } from './plugins/MaxLengthPlugin';
 import OnChangePlugin from './plugins/OnChangePlugin';
 import SpeechToTextPlugin from './plugins/SpeechToTextPlugin';
 import ToolbarPlugin from './plugins/ToolbarPlugin';
+import { SerializedEditorState, SerializedLexicalNode } from 'lexical';
 
 export function LexicalRichTextEditor({
   namespace,
@@ -28,7 +29,7 @@ export function LexicalRichTextEditor({
   color
 }: {
   namespace: string;
-  value: string;
+  value: SerializedEditorState<SerializedLexicalNode>;
   maxLength?: number;
   username: string;
   color: string;

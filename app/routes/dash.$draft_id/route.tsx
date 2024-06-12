@@ -49,7 +49,7 @@ export default function DashNovelId() {
             placeholder={'Enter Novel Title'}
             onChange={setTitleValue}
           />
-          <LexicalRichTextEditor namespace={loaderData?.id} value={loaderData?.body || ''} username={user.username} color={user.color} />
+          <LexicalRichTextEditor namespace={loaderData?.id} value={loaderData?.body} username={user.username} color={user.color} />
           <div className="w-full flex items-center gap-3 justify-end pt-3">
             <NavLink to="/dash" className="primaryButton py-2.5">
                 {LocalStrings.secondary_button}
