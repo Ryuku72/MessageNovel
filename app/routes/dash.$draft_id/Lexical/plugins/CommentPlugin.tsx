@@ -32,14 +32,14 @@ import { ChatIcon } from '../svg';
 export const INSERT_INLINE_COMMAND: LexicalCommand<void> = createCommand('INSERT_INLINE_COMMAND');
 
 export default function CommentPlugin({ username, color }: { username: string; color: string; }): JSX.Element {
-  const [searchParams, setSearchParams] = useSearchParams();
   const params = useParams();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const showComments = searchParams.get('showComments');
 
   const [activeAnchorKey, setActiveAnchorKey] = useState<NodeKey | null>();
   const [activeIDs, setActiveIDs] = useState<Array<string>>([]);
   const [showCommentInput, setShowCommentInput] = useState(false);
-  const showComments = searchParams.get('showComments');
   const [init, setInit] = useState(false);
 
   const [editor] = useLexicalComposerContext();

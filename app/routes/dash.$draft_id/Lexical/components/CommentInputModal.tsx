@@ -68,12 +68,14 @@ export default function CommentInputModal({
             }
             const top = selectionRect.top + (window.pageYOffset || document.documentElement.scrollTop);
             
+            elem.style.position = 'absolute';
+            elem.style.zIndex = '10';
+            elem.style.pointerEvents = 'none';
             elem.style.top = `${top}px`;
             elem.style.left = `${selectionRect.left}px`;
             elem.style.height = `${selectionRect.height}px`;
             elem.style.width = `${selectionRect.width}px`;
-            elem.style.backgroundColor = 'rgba(var(--userColor, 0.3)';
-
+            elem.style.backgroundColor = 'rgba(var(--userColor), 0.3)';
           }
           for (let i = elementsLength - 1; i >= selectionRectsLength; i--) {
             const elem = elements[i];
@@ -167,7 +169,7 @@ export default function CommentInputModal({
           </button>
         </div>
       </div>
-      <div className="absolute pointer-events-none z-10" ref={highlightBoxRef} />
+      <div ref={highlightBoxRef} />
     </Fragment>
   );
 }

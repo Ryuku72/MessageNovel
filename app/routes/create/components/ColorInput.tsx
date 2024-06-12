@@ -24,7 +24,7 @@ export default function ColorInput({ title, id, value, onChange }: ColorInputPro
       <label htmlFor={id} className="text-gray-600 font-medium flex gap-3 justify-center w-full">
         {title}
       </label>
-      <div className="w-full flex gap-3 flex-wrap">
+      <div className="w-full grid grid-cols-5 gap-3">
         {colors.map(color => (
           <button
             key={color}

@@ -2,7 +2,7 @@
 import { ActionFunctionArgs, json, redirect } from '@remix-run/node';
 import { isRouteErrorResponse } from '@remix-run/react';
 
-import { initServer } from '~/services/API';
+import { initAuthServer } from '~/services/API';
 
 export async function CreateAction(request: ActionFunctionArgs['request']) {
   const data = await request.formData();
@@ -13,9 +13,9 @@ export async function CreateAction(request: ActionFunctionArgs['request']) {
   const color = data.get('color') as string;
 
   const filename = avatar?.name;
-  const imageFilePath = `${new Date().valueOf()}_${username}_${filename}`;
+  const imageFilePath = `public/${new Date().valueOf()}_${filename}`;
 
-  const { supabaseClient, headers } = await initServer(request);
+  const { supabaseClient, headers } = await initAuthServer(request);
   try {
       const response = await supabaseClient.auth.signUp({ email, password, options: { data: {
         avatar: filename ? imageFilePath : null,

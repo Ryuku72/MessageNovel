@@ -27,11 +27,11 @@ export default function DashNavBar({ user }: DashNavBarProps) {
       <div className="flex-shrink-0 md:w-auto w-full flex md:flex-col flex-row gap-3 px-3 md:py-6 py-3 items-center bg-slate-50 bg-opacity-35 backdrop-blur-sm z-10 fixed md:h-full bottom-0">
         <div className="flex md:flex-col flex-row flex-auto gap-3">
           <div className="has-tooltip cursor-pointer relative">
-            <NavLink to="/dash/settings" className="flex w-[60px] h-[60px] flex-shrink-0">
+            <NavLink to="/settings" className="flex w-[60px] h-[60px] flex-shrink-0">
               <img
                 alt="create-img"
-                className="w-full h-full rounded object-cover"
-                src={user?.avatar || Default_Avatar}
+                className="w-full h-full rounded object-cover bg-gradient-to-b from-slate-500 to-fuchsia-600"
+                src={user?.avatar + `?${new Date().getTime()}` || Default_Avatar}
               />
             </NavLink>
             <div

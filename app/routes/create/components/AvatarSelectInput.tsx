@@ -1,6 +1,4 @@
-import { useOutletContext } from '@remix-run/react';
-
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Component, PercentCrop, PixelCrop, centerCrop, makeAspectCrop } from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
 
@@ -15,14 +13,13 @@ export type AvatarInputProps = {
   title: string;
   id: string;
   setImage: (image: File) => void;
+  imageSrc?: string;
 };
 
-export default function AvatarInput({ title, id, setImage }: AvatarInputProps) {
-  const { sceneReady } = useOutletContext<{ sceneReady: boolean }>();
-
+export default function AvatarInput({ title, id, imageSrc, setImage }: AvatarInputProps) {
+  const [init, setInit] = useState(false);
   const [cropImage, setCropImage] = useState('');
-  const [viewImage, setViewImage] = useState(Default_Avatar);
-  const [open, setOpen] = useState(false);
+  const [viewImage, setViewImage] = useState(imageSrc || Default_Avatar);
   const [completedCrop, setCompletedCrop] = useState<PixelCrop | null>(null);
   const [crop, setCrop] = useState<PercentCrop>({
     unit: '%',
@@ -34,11 +31,14 @@ export default function AvatarInput({ title, id, setImage }: AvatarInputProps) {
   const cropImageRef = useRef<HTMLImageElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
+  useEffect(() => {
+    setInit(true);
+  }, []);
+
   const handleOnImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
     const [target] = e.target.files;
     if (target) {
-      setOpen(true);
       const reader = new FileReader();
       reader.onload = (event: ProgressEvent<FileReader>) => {
         const img = new Image();
@@ -103,7 +103,6 @@ export default function AvatarInput({ title, id, setImage }: AvatarInputProps) {
       setImage(file);
       const fileUrl = window?.URL.createObjectURL(blob);
       setViewImage(fileUrl);
-      setOpen(false);
       setCropImage('');
       setCompletedCrop(null);
     }, 'png');
@@ -128,10 +127,8 @@ export default function AvatarInput({ title, id, setImage }: AvatarInputProps) {
   };
 
   const handleClose = () => {
-    setOpen(false);
     setCropImage('');
     setCompletedCrop(null);
-    setOpen(false);
     setCrop({
       unit: '%',
       width: 100,
@@ -151,7 +148,7 @@ export default function AvatarInput({ title, id, setImage }: AvatarInputProps) {
       <label
         htmlFor={id}
         className="flex flex-col items-center gap-2 font-mono font-medium text-sm text-gray-600 cursor-pointer hover:text-blue-500">
-        <img alt="create-img" className="w-32 h-32 rounded-full object-cover" src={viewImage} />
+        <img alt="create-img" className="w-32 h-32 rounded-full object-cover bg-gradient-to-b from-slate-500 to-fuchsia-600" src={viewImage} />
         {title}
         <input
           id={id}
@@ -164,8 +161,8 @@ export default function AvatarInput({ title, id, setImage }: AvatarInputProps) {
           onChange={handleOnImageChange}
         />
       </label>
-      {sceneReady && (
-        <DialogWrapper open={open}>
+      {init && cropImage && (
+        <DialogWrapper open={true}>
           <div className="w-full max-w-card-l bg-slate-300 bg-opacity-75 backdrop-blur-sm rounded-b-md rounded-t-lg flex flex-col gap-1 self-center text-mono">
             <div className="w-full pt-4 px-6 pb-2 flex flex-wrap rounded-t-[inherit] justify-between items-center bg-white bg-opacity-75 backdrop-blur-sm">
               <h3 className="font-medium text-xl text-gray-600 underline underline-offset-4">

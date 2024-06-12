@@ -1,0 +1,116 @@
+/* eslint-disable no-console */
+import { ActionFunctionArgs, LoaderFunctionArgs, json, redirect } from '@remix-run/node';
+import { isRouteErrorResponse } from '@remix-run/react';
+
+import { UserDataEntry } from '~/types';
+
+import { initAuthServer, initServer } from '~/services/API';
+
+export async function SettingsLoader(request: LoaderFunctionArgs['request']) {
+  const { supabaseClient, headers } = await initServer(request);
+
+  try {
+    const response = await supabaseClient.auth.getUser();
+    const user = response.data?.user;
+    const avatarURL = user?.user_metadata?.avatar || '';
+    if (!user) return redirect('/', { headers });
+
+    const fetchAvatar = async () => {
+      if (!avatarURL) return '';
+      const avatarImage = await supabaseClient.storage.from('avatars').getPublicUrl(avatarURL);
+      return avatarImage.data.publicUrl;
+    };
+
+    const userData: UserDataEntry = {
+      avatar: await fetchAvatar(),
+      id: user?.id || '',
+      username: user?.user_metadata.username || 'Not Found',
+      email: user?.email || 'Unknonwn',
+      color: user?.user_metadata.color || '#aeaeae'
+    };
+
+    return json(userData, { headers });
+  } catch (error) {
+    console.error(error);
+    console.error('process error in dash');
+    if (isRouteErrorResponse(error))
+      return new Response(`${error.status} - ${error?.statusText || 'Error'}`, { status: error.status, headers });
+    else return json(null, { headers });
+  }
+}
+
+export async function SettingsAction(request: ActionFunctionArgs['request']) {
+  const data = await request.formData();
+  const avatar = data.get('avatar') as File;
+  const username = data.get('username') as string;
+  const color = data.get('color') as string;
+
+  const filename = avatar?.name;
+  const imageFilePath = `${new Date().valueOf()}_${username}_${filename}`;
+
+  if (request.method === 'DELETE') {
+    const { supabaseClient, headers } = await initAuthServer(request);
+    const userDetails = await supabaseClient.auth.getUser();
+    if (!userDetails.data.user?.id) return redirect('/', { headers });
+    console.dir(userDetails.data.user.user_metadata.avatar);
+    const image = await supabaseClient.storage.from('avatars').remove([userDetails.data.user.user_metadata.avatar]);
+    console.dir(image);
+    if (image.error) {
+      console.error(image.error);
+      console.error('delete user update - image');
+    }
+    const response = await supabaseClient.auth.admin.deleteUser(userDetails.data.user.id);
+    if (response.error) {
+      console.error(response.error);
+      console.error('delete user update');
+      return json({ error: { message: response.error.message } }, { headers });
+    }
+    return redirect('/', { headers });
+  } else {
+    const { supabaseClient, headers } = await initServer(request);
+
+    try {
+      const userDetails = await supabaseClient.auth.getUser();
+      if (!userDetails.data.user?.id) return redirect('/', { headers });
+      if (filename) {
+        if (userDetails.data.user?.user_metadata.avatar) {
+          const image = await supabaseClient.storage
+            .from('avatars')
+            .update(userDetails.data.user.user_metadata.avatar, avatar, {
+              upsert: true,
+              cacheControl: '3600'
+            });
+          if (image.error) {
+            console.error(image.error);
+            console.error('image storage update');
+            return json({ error: { message: image.error.message } }, { headers });
+          }
+        } else {
+          const image = await supabaseClient.storage.from('avatars').upload(imageFilePath, avatar);
+          if (image.error) {
+            console.error(image.error);
+            console.error('image storage insert');
+            return json({ error: { message: image.error.message } }, { headers });
+          }
+        }
+      }
+      const dataUpdate: { username: string; color: string; avatar?: string } = { username, color };
+      if (filename && !userDetails.data.user?.user_metadata.avatar) dataUpdate.avatar = imageFilePath;
+      const response = await supabaseClient.auth.updateUser({ data: dataUpdate });
+
+      if (response.error) {
+        console.log('update user');
+        console.dir(response.error);
+        return json({ error: { message: response.error.message } }, { headers });
+      }
+
+      return json(response.data.user, { headers });
+    } catch (error) {
+      console.error(error);
+      console.error('process error in settings');
+      if (isRouteErrorResponse(error))
+        return new Response(`${error.status} - ${error?.statusText || 'Error'}`, { status: error.status, headers });
+      return json(null, { headers });
+    }
+  }
+}

@@ -33,7 +33,9 @@ export default function Dash() {
   }, [sceneReady]);
 
   return (
-    <div className={`w-full md:h-full flex flex-row relative ${showComments ? 'md:overflow-visible overflow-hidden' : 'overflow-visible'}`} id="dash-default">
+    <div
+      className={`w-full md:h-full flex flex-row relative ${showComments ? 'md:overflow-visible overflow-hidden' : 'overflow-visible'}`}
+      id="dash-default">
       <DashNavBar user={loaderData} />
       <Outlet context={{ user: loaderData }} />
     </div>
