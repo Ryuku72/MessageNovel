@@ -24,8 +24,8 @@ export async function CreateAction(request: ActionFunctionArgs['request']) {
       } }});
 
       if (response.error) {
-        console.log('create user');
-        console.dir(response.error);
+        console.error('create user');
+        console.error(response.error);
         return json({ error: { message: response.error.message } }, { headers });
       }
 

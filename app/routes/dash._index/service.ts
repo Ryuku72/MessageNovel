@@ -55,7 +55,6 @@ export async function DashIndexAction(request: ActionFunctionArgs['request']) {
       return json(null, { headers });
     }
 
-    console.dir(update);
     return json(update.data, { headers });
   }
 }

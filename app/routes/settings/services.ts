@@ -97,8 +97,8 @@ export async function SettingsAction(request: ActionFunctionArgs['request']) {
       const response = await supabaseClient.auth.updateUser({ data: dataUpdate });
 
       if (response.error) {
-        console.log('update user');
-        console.dir(response.error);
+        console.error('update user');
+        console.error(response.error);
         return json({ error: { message: response.error.message } }, { headers });
       }
 
