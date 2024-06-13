@@ -41,7 +41,7 @@ export default function DashUsers() {
   }, [channel, user.id]);
 
   return (
-    <div className="flex flex-col flex-auto md:flex-1 items-center w-full md:px-10 px-3 md:py-12 py-4 gap-10">
+    <div className="flex flex-col flex-auto md:flex-1 items-center w-full md:px-10 px-3 md:pt-12 md:pb-12 pb-[200px] pt-4 gap-10">
       <h1 className="text-red-700 text-4xl underline underline-offset-8 [text-shadow:_5px_3px_2px_rgb(225_225_225_/_50%)] font-miltonian">
         &nbsp;&nbsp;Participants&nbsp;&nbsp;&nbsp;
       </h1>
