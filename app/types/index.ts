@@ -1,3 +1,4 @@
+import { User } from '@supabase/supabase-js';
 import { SerializedEditorState, SerializedLexicalNode } from 'lexical';
 
 export type NovelEntry = {
@@ -30,6 +31,14 @@ export type ProfileEntry = {
   created_at: string;
   updated_at: string;
 };
+
+export type AuthProfileEntry = User & {
+  user_metadata: {
+    avatar: string;
+    color: string;
+    username: string;
+  }
+}
 
 export type UserDataEntry = Omit<ProfileEntry, 'created_at' | 'updated_at'>;
 

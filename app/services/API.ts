@@ -3,14 +3,14 @@ import { LoaderFunctionArgs } from '@remix-run/node';
 import { createServerClient, parse, serialize } from '@supabase/ssr';
 import { SupabaseClient } from '@supabase/supabase-js';
 
-export type envConfigEntry = {
+export type EnvConfigEntry = {
   SUPABASE_URL: string;
   SUPABASE_ANON_KEY: string;
   SUPABASE_IMG_STORAGE: string;
   SUPABASE_SERVICE_KEY: string;
 };
 
-export const envConfig = (): envConfigEntry => {
+export const envConfig = (): EnvConfigEntry => {
   const env = {
     SUPABASE_URL: process.env.SUPABASE_URL!,
     SUPABASE_ANON_KEY: process.env.SUPABASE_KEY!,
@@ -23,7 +23,9 @@ export const envConfig = (): envConfigEntry => {
 export type SupabaseClientAndHeaderEntry = {
   supabaseClient: SupabaseClient;
   headers: Headers;
+  env: EnvConfigEntry;
 };
+
 export const initServer = async (request: LoaderFunctionArgs['request']): Promise<SupabaseClientAndHeaderEntry> => {
   const env = envConfig();
   const cookies = parse(request.headers.get('Cookie') ?? '');
@@ -43,7 +45,7 @@ export const initServer = async (request: LoaderFunctionArgs['request']): Promis
     }
   });
 
-  return { supabaseClient, headers };
+  return { supabaseClient, headers, env };
 };
 
 export const initAuthServer = async (request: LoaderFunctionArgs['request']): Promise<SupabaseClientAndHeaderEntry> => {
@@ -65,5 +67,5 @@ export const initAuthServer = async (request: LoaderFunctionArgs['request']): Pr
     }
   });
 
-  return { supabaseClient, headers };
+  return { supabaseClient, headers, env };
 };

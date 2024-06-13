@@ -8,7 +8,7 @@ import { emptyContent } from '~/routes/dash.$draft_id/Lexical/helpers';
 import OnChangePlugin from '~/routes/dash.$draft_id/Lexical/plugins/OnChangePlugin';
 import { TextLengthPlugin } from '~/routes/dash.$draft_id/Lexical/plugins/TextLengthPlugin';
 
-export type TitleTextAreaProps = {
+export type PlainTextEditorProps = {
   title: string;
   id: string;
   value: string;
@@ -19,7 +19,7 @@ export type TitleTextAreaProps = {
   setTextLength: (length: number) => void;
 };
 
-export default function TitleTextArea({
+export default function PlainTextEditor({
   title,
   id,
   value,
@@ -28,7 +28,7 @@ export default function TitleTextArea({
   limit = 500,
   setTextLength,
   textLength
-}: TitleTextAreaProps) {
+}: PlainTextEditorProps) {
   const initialConfig = {
     namespace: 'Description',
     editorState: value || emptyContent,

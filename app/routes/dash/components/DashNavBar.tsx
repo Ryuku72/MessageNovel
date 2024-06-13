@@ -12,6 +12,7 @@ import LogOutIcon from '~/svg/LogOutIcon/LogOutIcon';
 import PlusIcon from '~/svg/PlusIcon/PlusIcon';
 
 import Default_Avatar from '~/assets/default_avatar.jpeg';
+import NetworkIcon from '~/svg/NetworkIcon/NetworkIcon';
 
 export type DashNavBarProps = {
   user: UserDataEntry;
@@ -22,14 +23,12 @@ export default function DashNavBar({ user }: DashNavBarProps) {
   const isLoading = ['submitting'].includes(navigationState.state);
   const LocalStrings = LOCALES.dash;
 
-
-
   return (
     <div className="relative md:pr-[85px]">
       <div className="flex-shrink-0 md:w-auto w-full flex md:flex-col flex-row gap-3 px-3 md:py-6 py-3 items-center bg-slate-50 bg-opacity-35 backdrop-blur-sm z-10 fixed md:h-full bottom-0">
         <div className="flex md:flex-col flex-row flex-auto gap-3">
           <div className="has-tooltip cursor-pointer relative">
-            <NavLink to="/settings" className="flex w-[60px] h-[60px] flex-shrink-0">
+            <NavLink to="/dash/settings" className="flex w-[60px] h-[60px] flex-shrink-0">
               <img
                 alt="create-img"
                 className="w-full h-full rounded object-cover bg-gradient-to-b from-slate-500 to-fuchsia-600"
@@ -47,7 +46,7 @@ export default function DashNavBar({ user }: DashNavBarProps) {
             <NavLink
               end={true}
               className={({ isActive, isPending, isTransitioning }) =>
-                `rounded-lg px-5 text-gray-100 font-semibold flex items-center justify-center gap-2 w-[60px] h-[50px] ${isActive || isPending || isTransitioning ? 'bg-emerald-500' : 'bg-emerald-700 hover:bg-emerald-500'}`
+                `rounded-lg text-gray-100 font-semibold flex items-center justify-center gap-2 w-[60px] h-[50px] ${isActive || isPending || isTransitioning ? 'bg-emerald-700 hover:bg-emerald-500' : 'bg-slate-700 hover:bg-slate-500'}`
               }
               type="button"
               to="/dash">
@@ -62,7 +61,7 @@ export default function DashNavBar({ user }: DashNavBarProps) {
           <div className="has-tooltip cursor-pointer relative">
             <NavLink
               className={({ isActive, isPending, isTransitioning }) =>
-                `rounded-lg px-5 text-gray-100 font-semibold flex items-center justify-center gap-2 w-[60px] h-[50px] ${isActive || isPending || isTransitioning ? 'bg-slate-500' : 'bg-slate-700 hover:bg-slate-500'}`
+                `rounded-lg text-gray-100 font-semibold flex items-center justify-center gap-2 w-[60px] h-[50px] ${isActive || isPending || isTransitioning ?  'bg-emerald-700 hover:bg-emerald-500' : 'bg-slate-700 hover:bg-slate-500'}`
               }
               type="button"
               to="/dash/new">
@@ -72,6 +71,21 @@ export default function DashNavBar({ user }: DashNavBarProps) {
               role="tooltip"
               className="absolute hidden md:inline-block left-[80px] top-[8px] tooltip z-10 px-4 py-2 text-sm text-white transition-opacity duration-300 bg-gray-600 backdrop-blur-sm rounded-lg shadow-sm bg-opacity-35 whitespace-pre">
               {LocalStrings.tertiary_button}
+            </div>
+          </div>
+          <div className="has-tooltip cursor-pointer relative">
+            <NavLink
+              className={({ isActive, isPending, isTransitioning }) =>
+                `rounded-lg text-gray-100 font-semibold flex items-center justify-center gap-2 w-[60px] h-[50px] ${isActive || isPending || isTransitioning ? 'bg-emerald-700 hover:bg-emerald-500' : 'bg-slate-700 hover:bg-slate-500'}`
+              }
+              type="button"
+              to="/dash/users">
+              <NetworkIcon uniqueId="dash_plus" svgColor="#fff" className="w-7 h-auto" />
+            </NavLink>
+            <div
+              role="tooltip"
+              className="absolute hidden md:inline-block left-[80px] top-[8px] tooltip z-10 px-4 py-2 text-sm text-white transition-opacity duration-300 bg-gray-600 backdrop-blur-sm rounded-lg shadow-sm bg-opacity-35 whitespace-pre">
+              Network
             </div>
           </div>
         </div>

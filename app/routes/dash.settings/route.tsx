@@ -1,9 +1,7 @@
-import { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction } from '@remix-run/node';
-import { Form, useLoaderData, useNavigate, useNavigation, useOutletContext, useSubmit } from '@remix-run/react';
+import { ActionFunctionArgs, MetaFunction } from '@remix-run/node';
+import { Form, useActionData, useNavigate, useNavigation, useOutletContext, useSubmit } from '@remix-run/react';
 
 import { useEffect, useState } from 'react';
-
-import { UserDataEntry } from '~/types';
 
 import LOCALES from '~/locales/language_en.json';
 
@@ -15,24 +13,22 @@ import LoadingSpinner from '~/svg/LoadingSpinner/LoadingSpinner';
 import AvatarInput from '../create/components/AvatarSelectInput';
 import ColorInput from '../create/components/ColorInput';
 import { TrashIcon } from '../dash.$draft_id/Lexical/svg';
-import { SettingsAction, SettingsLoader } from './services';
+import { SettingsAction } from './services';
+import { DashOutletContext } from '../dash/route';
+import { UserDataEntry } from '~/types';
 
 export const meta: MetaFunction = () => {
   return [{ title: LOCALES.meta.title }, { name: 'description', content: LOCALES.meta.description }];
 };
 
-export function loader({ request }: LoaderFunctionArgs) {
-  return SettingsLoader(request);
-}
-
 export function action({ request }: ActionFunctionArgs) {
   return SettingsAction(request);
 }
 
-export default function Settings() {
-  const user = useLoaderData<UserDataEntry>();
-  const { sceneReady } = useOutletContext<{ sceneReady: boolean }>();
+export default function DashSettings() {
+  const { user, channel } = useOutletContext<DashOutletContext>();
   const navigationState = useNavigation();
+  const actionData = useActionData<UserDataEntry>();
   const isLoading = 'submitting' === navigationState.state;
   const navigate = useNavigate();
   const submit = useSubmit();
@@ -43,12 +39,15 @@ export default function Settings() {
   const [showDelModal, setShowDelModal] = useState(false);
 
   useEffect(() => {
-    if (!sceneReady) return;
-    const sceneEvent = new CustomEvent('sceneUpdate', {
-      detail: 6
-    });
-    window.dispatchEvent(sceneEvent);
-  }, [sceneReady]);
+    if (!channel || !actionData) return;
+      channel.send({
+        type: 'broadcast',
+        event: 'user update',
+        payload: actionData
+      });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [actionData]);
+
 
   const handleReturn = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -77,7 +76,7 @@ export default function Settings() {
         method="post"
         className="p-4 w-card-l max-w-full">
         <fieldset className="w-full flex flex-col justify-center items-center gap-3" disabled={formDisabled}>
-          <div className="w-full flex justify-center items-center gap-3 flex-col rounded-lg shadow-xl px-12 py-8 bg-white bg-opacity-35 backdrop-blur-sm">
+          <div className={`w-full flex justify-center items-center gap-3 flex-col rounded-lg shadow-xl px-12 py-8 ${user.color} bg-opacity-65 backdrop-blur-lg`}>
             <AvatarInput
               title="Upload file"
               id="avatar"

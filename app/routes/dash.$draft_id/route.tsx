@@ -3,7 +3,7 @@ import { Form, NavLink, useLoaderData, useNavigation, useOutletContext } from '@
 
 import { useState } from 'react';
 
-import { NovelEntry, UserDataEntry } from '~/types';
+import { NovelEntry } from '~/types';
 
 import LOCALES from '~/locales/language_en.json';
 
@@ -12,6 +12,7 @@ import LoadingSpinner from '~/svg/LoadingSpinner/LoadingSpinner';
 
 import { LexicalRichTextEditor } from './Lexical';
 import { DashNovelIdAction, DashNovelIdLoader } from './services';
+import { DashOutletContext } from '../dash/route';
 
 export function loader(data: LoaderFunctionArgs) {
   if (!data.params.draft_id) return null;
@@ -24,7 +25,7 @@ export function action(data: ActionFunctionArgs) {
 
 export default function DashNovelId() {
   const loaderData = useLoaderData<NovelEntry>();
-  const { user } = useOutletContext<{ user: UserDataEntry }>();
+  const { user } = useOutletContext<DashOutletContext>();
   const navigationState = useNavigation();
   const isLoading = ['submitting'].includes(navigationState.state);
 

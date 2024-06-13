@@ -10,7 +10,7 @@ import LOCALES from '~/locales/language_en.json';
 import TitleInput from '~/components/TitleInput';
 import LoadingSpinner from '~/svg/LoadingSpinner/LoadingSpinner';
 
-import TitleTextArea from './components/TitleTextArea';
+import PlainTextEditor from './components/PlainTextEditor';
 import { DashNewAction, DashNewLoader } from './services';
 import { emptyContent } from '../dash.$draft_id/Lexical/helpers';
 
@@ -42,6 +42,7 @@ export default function DashNew() {
     setDraftNovelDescription(JSON.stringify(library?.description) || '');
   }, [library, resetState]);
 
+
   return (
     <div className="flex flex-col flex-auto md:flex-1 items-center w-full md:px-10 px-3 pt-4 pb-[100px] md:py-6 gap-6 m-auto">
       <h1 className="text-red-700 text-4xl underline underline-offset-8 [text-shadow:_5px_3px_2px_rgb(225_225_225_/_50%)] font-miltonian">
@@ -67,7 +68,7 @@ export default function DashNew() {
               onChange={setDraftNovelTitle}
               minLength={3}
             />
-            <TitleTextArea
+            <PlainTextEditor
               title={LocalStrings.secondary_input}
               id="novel-description"
               value={draftNovelDescription}

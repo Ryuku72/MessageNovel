@@ -3,18 +3,17 @@ import { Form, Link, useNavigation } from '@remix-run/react';
 import { useEffect, useState } from 'react';
 
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
-import { ContentEditable } from '@lexical/react/LexicalContentEditable';
-import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
-import { PlainTextPlugin } from '@lexical/react/LexicalPlainTextPlugin';
 import { NovelinLibraryEntry } from '~/types';
 
 import { CreateDate } from '~/helpers/DateHelper';
 
 import DialogWrapper from '~/components/DialogWrapper';
 import { emptyContent } from '~/routes/dash.$draft_id/Lexical/helpers';
-import EditorTextPlugin from '~/routes/dash.$draft_id/Lexical/plugins/EditorTextPlugin';
+import { TrashIcon } from '~/routes/dash.$draft_id/Lexical/svg';
 import CloseIcon from '~/svg/CloseIcon/CloseIcon';
 import LoadingSpinner from '~/svg/LoadingSpinner/LoadingSpinner';
+
+import EditorTextPlugin from './EditorTextPlugin';
 
 type DescriptionModelProps = {
   selectedNovel: NovelinLibraryEntry | null;
@@ -26,7 +25,6 @@ type DescriptionModelProps = {
 
 export function DescriptionModel({ selectedNovel, close, userId, ownerId, members = [] }: DescriptionModelProps) {
   const [openConfirm, setOpenConfirm] = useState(false);
-  const [description, setDescription] = useState('');
   const navigationState = useNavigation();
   const finishedDelete = 'loading' === navigationState.state && navigationState.formMethod === 'DELETE';
   const finishedPost = 'loading' === navigationState.state && navigationState.formMethod === 'POST';
@@ -48,11 +46,6 @@ export function DescriptionModel({ selectedNovel, close, userId, ownerId, member
     }
   }, [close, finishedPost]);
 
-  const descriptionDetails = (detail: string) => {
-    const first = detail.substring(1).trim();
-    return first;
-  };
-
   const initialConfig = {
     namespace: 'DescriptionModal',
     nodes: [],
@@ -71,8 +64,16 @@ export function DescriptionModel({ selectedNovel, close, userId, ownerId, member
       <div className="w-full md:max-w-[800px] md:p-4 flex flex-col gap-1 md:self-center self-baseline text-mono m-auto md:m-0">
         <div className="bg-slate-50 bg-opacity-55 backdrop-blur-lg flex flex-col gap-0.5 rounded-t-lg rounded-b-md flex-auto md:flex-1">
           <div className="w-full pt-4 px-6 pb-2 flex flex-wrap rounded-t-[inherit] justify-between items-center bg-white">
-            <h3 className="font-medium text-xl text-gray-600 underline underline-offset-4 capitalize">
-              &#8197;{selectedNovel?.title}&nbsp;&nbsp;&nbsp;
+            <h3 className="font-medium text-xl text-gray-600 underline underline-offset-4 capitalize flex flex-wrap items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setOpenConfirm(true)}
+                value={selectedNovel?.id}
+                title="selected_novel"
+                className={isOwner ? 'hover:text-red-500 hover:border hover:border-current rounded text-current text-xs h-10 w-10 text-left flexCenter' : 'hidden'}>
+                <TrashIcon className="w-5 h-auto" uniqueId="descript-delete" />
+              </button>
+              &nbsp;{selectedNovel?.title}&nbsp;&nbsp;&nbsp;
             </h3>
             <button
               className="w-10 h-10 flex items-center justify-center text-slate-500 hover:text-red-500 hover:border hover:border-red-500 rounded"
@@ -81,26 +82,22 @@ export function DescriptionModel({ selectedNovel, close, userId, ownerId, member
               <CloseIcon className="w-3 h-3" uniqueId="dash-close" svgColor="currentColor" />
             </button>
           </div>
-          <div className="w-full px-8 py-4 bg-white flex flex-col gap-3 flex-auto md:flex-1">
-            <div className="py-3 min-h-[160px] md:max-h-[400px] overflow-auto">
-              <p className="text-6xl font-semibold py-0.5 px-2 capitalize border-4 border-gray-700 float-left mr-3 translate-y-[-0.5rem]">
-                {description?.[0]}
-              </p>
-              <p className="w-full text-gray-700 text-sm pt-3 whitespace-pre-wrap">
-                {descriptionDetails(description || '')}
-              </p>
-              <p className="pt-4 text-gray-500 text-sm italic">
-                Last Updated <span className="font-semibold">{CreateDate(selectedNovel?.updated_at, true)}</span>
-              </p>
+          <div className="w-full px-8 py-4 bg-white flex flex-col gap-10 flex-auto md:flex-1">
+            {selectedNovel && (
+              <LexicalComposer initialConfig={initialConfig}>
+                <EditorTextPlugin />
+              </LexicalComposer>
+            )}
+            <div>
+              <div>
+                <p className="text-gray-500 text-sm">
+                  <strong>Last Update:</strong> {CreateDate(selectedNovel?.updated_at, true)}
+                </p>
+                <p className="text-gray-500 text-sm">
+                  <strong>Members:</strong> {selectedNovel?.members?.length}
+                </p>
+              </div>
             </div>
-            <button
-              type="button"
-              onClick={() => setOpenConfirm(true)}
-              value={selectedNovel?.id}
-              title="selected_novel"
-              className={isOwner ? 'text-red-500 text-xs h-10 w-[165px] text-left flex items-center' : 'hidden'}>
-              Delete Novel
-            </button>
           </div>
           <div className="flex w-full justify-end bg-white rounded-b-md p-2 gap-3 sticky bottom-0">
             <Link
@@ -115,7 +112,7 @@ export function DescriptionModel({ selectedNovel, close, userId, ownerId, member
             <button
               className={
                 member && !isOwner
-                  ? 'rounded-lg text-gray-100 font-semibold flex items-center justify-center h-[50px] w-[165px] bg-slate-700 hover:bg-slate-500'
+                  ? 'rounded-lg text-gray-100 font-semibold flex items-center justify-center h-[50px] w-[165px] bg-orange-700 hover:bg-orange-500'
                   : 'hidden'
               }
               type="button"
@@ -189,16 +186,6 @@ export function DescriptionModel({ selectedNovel, close, userId, ownerId, member
           </div>
         </div>
       </DialogWrapper>
-      {selectedNovel && (
-        <LexicalComposer initialConfig={initialConfig}>
-          <PlainTextPlugin
-            contentEditable={<ContentEditable className="hidden" />}
-            placeholder={<div className="absolute top-2 z-0 px-2 pointer-events-none text-gray-400">Text...</div>}
-            ErrorBoundary={LexicalErrorBoundary}
-          />
-          <EditorTextPlugin setText={setDescription} />
-        </LexicalComposer>
-      )}
     </DialogWrapper>
   );
 }

@@ -1,43 +1,9 @@
 /* eslint-disable no-console */
-import { ActionFunctionArgs, LoaderFunctionArgs, json, redirect } from '@remix-run/node';
+import { ActionFunctionArgs, json, redirect } from '@remix-run/node';
 import { isRouteErrorResponse } from '@remix-run/react';
 
-import { UserDataEntry } from '~/types';
-
 import { initAuthServer, initServer } from '~/services/API';
-
-export async function SettingsLoader(request: LoaderFunctionArgs['request']) {
-  const { supabaseClient, headers } = await initServer(request);
-
-  try {
-    const response = await supabaseClient.auth.getUser();
-    const user = response.data?.user;
-    const avatarURL = user?.user_metadata?.avatar || '';
-    if (!user) return redirect('/', { headers });
-
-    const fetchAvatar = async () => {
-      if (!avatarURL) return '';
-      const avatarImage = await supabaseClient.storage.from('avatars').getPublicUrl(avatarURL);
-      return avatarImage.data.publicUrl;
-    };
-
-    const userData: UserDataEntry = {
-      avatar: await fetchAvatar(),
-      id: user?.id || '',
-      username: user?.user_metadata.username || 'Not Found',
-      email: user?.email || 'Unknonwn',
-      color: user?.user_metadata.color || '#aeaeae'
-    };
-
-    return json(userData, { headers });
-  } catch (error) {
-    console.error(error);
-    console.error('process error in dash');
-    if (isRouteErrorResponse(error))
-      return new Response(`${error.status} - ${error?.statusText || 'Error'}`, { status: error.status, headers });
-    else return json(null, { headers });
-  }
-}
+import { AuthProfileEntry, UserDataEntry } from '~/types';
 
 export async function SettingsAction(request: ActionFunctionArgs['request']) {
   const data = await request.formData();
@@ -102,7 +68,24 @@ export async function SettingsAction(request: ActionFunctionArgs['request']) {
         return json({ error: { message: response.error.message } }, { headers });
       }
 
-      return json(response.data.user, { headers });
+      const user = response.data.user as AuthProfileEntry;
+
+      const fetchAvatar = async () => {
+        const avatarURL = user?.user_metadata?.avatar || '';
+        if (!avatarURL) return '';
+        const avatarImage = await supabaseClient.storage.from('avatars').getPublicUrl(avatarURL);
+        return avatarImage.data.publicUrl;
+      };
+
+      const userData: UserDataEntry = {
+        avatar: await fetchAvatar(),
+        id: user?.id || '',
+        username: user?.user_metadata.username || 'Not Found',
+        email: user?.email || 'Unknonwn',
+        color: user?.user_metadata.color || '#aeaeae'
+      };
+
+      return json(userData, { headers });
     } catch (error) {
       console.error(error);
       console.error('process error in settings');

@@ -7,7 +7,7 @@ import { UserDataEntry } from '~/types';
 import { initServer } from '~/services/API';
 
 export async function DashLoader(request: LoaderFunctionArgs['request']) {
-  const { supabaseClient, headers } = await initServer(request);
+  const { supabaseClient, headers, env } = await initServer(request);
 
   try {
     const response = await supabaseClient.auth.getUser();
@@ -29,7 +29,7 @@ export async function DashLoader(request: LoaderFunctionArgs['request']) {
       color: user?.user_metadata.color || '#aeaeae'
     };
 
-    return json(userData, { headers });
+    return json({ user: userData, env }, { headers });
   } catch (error) {
     console.error(error);
     console.error('process error in dash');
