@@ -26,7 +26,7 @@ export type DashOutletContext = {
   user: UserDataEntry;
   supabase: SupabaseClient;
   channel: RealtimeChannel;
-  onlineUsers: string[];
+  onlineUsers: { id: string; room: string }[];
 };
 
 export default function Dash() {
@@ -38,7 +38,7 @@ export default function Dash() {
   const supabase = createBrowserClient(env.SUPABASE_URL, env.SUPABASE_ANON_KEY);
 
   const [channel, setChannel] = useState<RealtimeChannel>();
-  const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
+  const [onlineUsers, setOnlineUsers] = useState<{ id: string; room: string }[]>([]);
 
   useEffect(() => {
     if (!sceneReady) return;
@@ -53,13 +53,7 @@ export default function Dash() {
     const channel = supabase.channel('dashboard', {
       config: { broadcast: { self: true } }
     });
-
-    channel.subscribe(status => {
-      if (status === 'SUBSCRIBED') {
-        channel.track({ userId: user.id });
-      }
-    });
-
+    channel.subscribe();
     setChannel(channel);
 
     channel.on('presence', { event: 'sync' }, () => {
@@ -68,12 +62,12 @@ export default function Dash() {
       /** transform the presence */
       const users = Object.keys(presenceState)
         .map(presenceId => {
-          const presences = presenceState[presenceId] as unknown as { userId: string }[];
-          return presences.map(presence => presence.userId);
+          const presences = presenceState[presenceId] as unknown as { userId: string; room: string }[];
+          return presences.map(presence => ({ id: presence.userId, room: presence.room }));
         })
         .flat();
       /** sort and set the users */
-      setOnlineUsers(users.sort());
+      setOnlineUsers(users);
     });
 
     return () => {

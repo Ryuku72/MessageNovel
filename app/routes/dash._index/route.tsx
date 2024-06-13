@@ -1,7 +1,7 @@
 import { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node';
 import { Link, useLoaderData, useNavigation, useOutletContext } from '@remix-run/react';
 
-import { Fragment, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 
 import { NovelinLibraryEntry } from '~/types';
 
@@ -25,12 +25,17 @@ export function action({ request }: ActionFunctionArgs) {
 
 export default function DashIndex() {
   const library = useLoaderData<NovelinLibraryEntry[]>();
-  const { user } = useOutletContext<DashOutletContext>();
+  const { user, channel } = useOutletContext<DashOutletContext>();
   const navigationState = useNavigation();
 
   const [selectedNovel, setSelectedNovel] = useState<NovelinLibraryEntry | null>(null);
   const LocalStrings = LOCALES.dash;
   const isLoading = ['submitting'].includes(navigationState.state);
+
+  useEffect(() => {
+    if (!channel || channel.state !== 'joined') return;
+    channel.track({ userId: user.id, room: 'Dashboard' });
+  }, [channel, user.id]);
 
   return (
     <div className="flex flex-col flex-auto md:flex-1 items-center w-full md:px-10 px-3 md:py-12 py-4 gap-6">

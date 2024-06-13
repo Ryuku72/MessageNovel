@@ -85,7 +85,7 @@ export default function DashNavBar({ user }: DashNavBarProps) {
             <div
               role="tooltip"
               className="absolute hidden md:inline-block left-[80px] top-[8px] tooltip z-10 px-4 py-2 text-sm text-white transition-opacity duration-300 bg-gray-600 backdrop-blur-sm rounded-lg shadow-sm bg-opacity-35 whitespace-pre">
-              Network
+              Participants
             </div>
           </div>
         </div>

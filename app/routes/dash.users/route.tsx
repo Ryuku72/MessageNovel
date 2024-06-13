@@ -5,9 +5,8 @@ import { useEffect, useRef, useState } from 'react';
 
 import { UserDataEntry } from '~/types';
 
-
-import { UserLoader } from './services';
 import { DashOutletContext } from '../dash/route';
+import { UserLoader } from './services';
 
 export function loader({ request }: LoaderFunctionArgs) {
   return UserLoader(request);
@@ -15,22 +14,31 @@ export function loader({ request }: LoaderFunctionArgs) {
 
 export default function DashUsers() {
   const profiles = useLoaderData<UserDataEntry[]>();
-  const { channel, onlineUsers } = useOutletContext<DashOutletContext>();
+  const { channel, onlineUsers, user } = useOutletContext<DashOutletContext>();
   const [userProfiles, setUserProfiles] = useState(profiles);
   const usersRef = useRef(profiles);
 
   useEffect(() => {
-    if (!channel) return;
-    channel.on('broadcast', { event: 'user update'}, (event: { event: string, payload: UserDataEntry, type: string }) => {
-      if (usersRef.current.find(user => user.id === event.payload.id)) {
-        usersRef.current = usersRef.current.map(user => {
-          if (user.id === event.payload.id) return event.payload;
-          return user;
-        });
-        setUserProfiles(usersRef.current);
+    if (!channel || channel.state !== 'joined') return;
+    channel.on(
+      'broadcast',
+      { event: 'user update' },
+      (event: { event: string; payload: UserDataEntry; type: string }) => {
+        if (usersRef.current.find(user => user.id === event.payload.id)) {
+          usersRef.current = usersRef.current.map(user => {
+            if (user.id === event.payload.id) return event.payload;
+            return user;
+          });
+          setUserProfiles(usersRef.current);
+        }
       }
-    });
+    );
   }, [channel]);
+
+  useEffect(() => {
+    if (!channel || channel.state !== 'joined') return;
+    channel.track({ userId: user.id, room: 'Participants' });
+  }, [channel, user.id]);
 
   return (
     <div className="flex flex-col flex-auto md:flex-1 items-center w-full md:px-10 px-3 md:py-12 py-4 gap-10">
@@ -39,11 +47,11 @@ export default function DashUsers() {
       </h1>
       <div className="flex flex-wrap gap-4 w-full max-w-wide">
         {userProfiles?.map(profile => {
-          const online = onlineUsers?.find(user => user === profile?.id);
+          const online = onlineUsers?.find(user => user.id === profile?.id);
           return (
             <div
               key={profile.id}
-              className={`flex flex-wrap md:w-[300px] w-full px-10 py-6 overflow-hidden relative rounded-lg font-mono flex-col gap-1 text-white items-center ${online ? profile.color : 'bg-gray-400'} bg-opacity-65 backdrop-blur-lg`}>
+              className={`flex flex-wrap md:w-[400px] w-full px-10 py-6 overflow-hidden relative rounded-lg font-mono flex-col gap-1 text-white items-center ${online ? profile.color : 'bg-gray-400'} bg-opacity-65 backdrop-blur-lg`}>
               <img
                 alt="create-img"
                 className="w-20 h-20 relative z-10 rounded-full object-cover bg-gradient-to-b from-slate-500 to-fuchsia-600"
@@ -53,8 +61,11 @@ export default function DashUsers() {
                 <h3 className="text-current text-2xl font-semibold tracking-wide truncate max-w-full overflow-hidden capitalize">
                   {profile.username}
                 </h3>
+                <p className="text-white font-semibold tracking-wide truncate max-w-full overflow-hidden">
+                  {online ? 'Room: ' + online.room : 'Away from Keyboard'}
+                </p>
                 <p
-                  className={`${online ? 'text-emerald-600 font-semibold' : 'text-slate-700'} group-hover:text-gray-700 font-semibold tracking-wide overflow-hidden`}>
+                  className={`${online ? 'text-emerald-600 font-semibold' : 'text-slate-700'} font-semibold tracking-wide overflow-hidden`}>
                   {online ? 'Online' : 'Offline'}
                 </p>
               </div>

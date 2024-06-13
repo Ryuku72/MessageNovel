@@ -1,7 +1,7 @@
 import { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node';
 import { Form, NavLink, useLoaderData, useNavigation, useOutletContext } from '@remix-run/react';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { NovelEntry } from '~/types';
 
@@ -25,12 +25,17 @@ export function action(data: ActionFunctionArgs) {
 
 export default function DashNovelId() {
   const loaderData = useLoaderData<NovelEntry>();
-  const { user } = useOutletContext<DashOutletContext>();
+  const { user, channel } = useOutletContext<DashOutletContext>();
   const navigationState = useNavigation();
   const isLoading = ['submitting'].includes(navigationState.state);
 
   const LocalStrings = LOCALES.dash.draft;
   const [titleValue, setTitleValue] = useState(loaderData?.title);
+
+  useEffect(() => {
+    if (!channel || channel.state !== 'joined') return;
+    channel.track({ userId: user.id, room: loaderData?.title + ' DRAFT' });
+  }, [channel, loaderData?.title, user.id]);
 
   return (
     <div className="w-full h-full flex flex-row relative">

@@ -3,6 +3,8 @@ import { Form, useActionData, useNavigate, useNavigation, useOutletContext, useS
 
 import { useEffect, useState } from 'react';
 
+import { UserDataEntry } from '~/types';
+
 import LOCALES from '~/locales/language_en.json';
 
 import DialogWrapper from '~/components/DialogWrapper';
@@ -13,9 +15,8 @@ import LoadingSpinner from '~/svg/LoadingSpinner/LoadingSpinner';
 import AvatarInput from '../create/components/AvatarSelectInput';
 import ColorInput from '../create/components/ColorInput';
 import { TrashIcon } from '../dash.$draft_id/Lexical/svg';
-import { SettingsAction } from './services';
 import { DashOutletContext } from '../dash/route';
-import { UserDataEntry } from '~/types';
+import { SettingsAction } from './services';
 
 export const meta: MetaFunction = () => {
   return [{ title: LOCALES.meta.title }, { name: 'description', content: LOCALES.meta.description }];
@@ -40,14 +41,18 @@ export default function DashSettings() {
 
   useEffect(() => {
     if (!channel || !actionData) return;
-      channel.send({
-        type: 'broadcast',
-        event: 'user update',
-        payload: actionData
-      });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    channel.send({
+      type: 'broadcast',
+      event: 'user update',
+      payload: actionData
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [actionData]);
 
+  useEffect(() => {
+    if (!channel || channel.state !== 'joined') return;
+    channel.track({ userId: user.id, room: 'Settings' });
+  }, [channel, user.id]);
 
   const handleReturn = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -76,13 +81,9 @@ export default function DashSettings() {
         method="post"
         className="p-4 w-card-l max-w-full">
         <fieldset className="w-full flex flex-col justify-center items-center gap-3" disabled={formDisabled}>
-          <div className={`w-full flex justify-center items-center gap-3 flex-col rounded-lg shadow-xl px-12 py-8 ${user.color} bg-opacity-65 backdrop-blur-lg`}>
-            <AvatarInput
-              title="Upload file"
-              id="avatar"
-              setImage={setImage}
-              imageSrc={user.avatar}
-            />
+          <div
+            className={`w-full flex justify-center items-center gap-3 flex-col rounded-lg shadow-xl px-12 py-8 ${user.color} bg-opacity-65 backdrop-blur-lg`}>
+            <AvatarInput title="Upload file" id="avatar" setImage={setImage} imageSrc={user.avatar} />
             <TitleInput title={LocalStrings.email} id="email" value={user.email} disabled={true} />
             <TitleInput
               title={LocalStrings.username}
