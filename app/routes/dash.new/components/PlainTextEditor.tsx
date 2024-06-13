@@ -6,6 +6,7 @@ import { PlainTextPlugin } from '@lexical/react/LexicalPlainTextPlugin';
 import { emptyContent } from '~/routes/dash.$draft_id/Lexical/helpers';
 import OnChangePlugin from '~/routes/dash.$draft_id/Lexical/plugins/OnChangePlugin';
 import { TextLengthPlugin } from '~/routes/dash.$draft_id/Lexical/plugins/TextLengthPlugin';
+import { ClearEditorPlugin } from './ClearEditorPlugin';
 
 export type PlainTextEditorProps = {
   title: string;
@@ -16,6 +17,7 @@ export type PlainTextEditorProps = {
   limit?: number;
   textLength: number;
   setTextLength: (length: number) => void;
+  clearCondition: boolean;
 };
 
 export default function PlainTextEditor({
@@ -26,7 +28,8 @@ export default function PlainTextEditor({
   onChange,
   limit = 500,
   setTextLength,
-  textLength
+  textLength,
+  clearCondition
 }: PlainTextEditorProps) {
   const initialConfig = {
     namespace: id,
@@ -61,6 +64,7 @@ export default function PlainTextEditor({
               ErrorBoundary={LexicalErrorBoundary}
             />
             <TextLengthPlugin setTextLength={setTextLength} />
+            <ClearEditorPlugin clearCondition={clearCondition} value={value} />
             <OnChangePlugin onChange={onChange} />
           </div>
           <input className="hidden" readOnly={true} value={value} name={id} />

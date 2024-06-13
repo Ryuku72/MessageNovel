@@ -31,7 +31,7 @@ export default function DashNew() {
 
   const [draftNovelTitle, setDraftNovelTitle] = useState(library?.title || '');
   const [draftNovelDescription, setDraftNovelDescription] = useState(
-    JSON.stringify(library?.description) || emptyContent
+    library?.description ? JSON.stringify(library?.description) : emptyContent
   );
   const [textLength, setTextLength] = useState(0);
 
@@ -81,9 +81,10 @@ export default function DashNew() {
               id="novel-description"
               value={draftNovelDescription}
               placeholder={LocalStrings.secondary_input_placeholder}
-              onChange={json => setDraftNovelDescription(json)}
+              onChange={setDraftNovelDescription}
               textLength={textLength}
               setTextLength={setTextLength}
+              clearCondition={resetState}
             />
             <div className="w-full flex gap-3 flex-wrap mt-2 justify-end">
               <NavLink to="/dash" className="primaryButton py-2.5">
