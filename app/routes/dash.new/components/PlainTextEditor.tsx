@@ -1,4 +1,3 @@
-import { ClearEditorPlugin } from '@lexical/react/LexicalClearEditorPlugin';
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
 import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
@@ -30,7 +29,7 @@ export default function PlainTextEditor({
   textLength
 }: PlainTextEditorProps) {
   const initialConfig = {
-    namespace: 'Description',
+    namespace: id,
     editorState: value || emptyContent,
     nodes: [],
     onError: (error: Error) => {
@@ -63,7 +62,6 @@ export default function PlainTextEditor({
             />
             <TextLengthPlugin setTextLength={setTextLength} />
             <OnChangePlugin onChange={onChange} />
-            <ClearEditorPlugin />
           </div>
           <input className="hidden" readOnly={true} value={value} name={id} />
         </LexicalComposer>

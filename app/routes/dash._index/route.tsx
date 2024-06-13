@@ -33,10 +33,13 @@ export default function DashIndex() {
   const isLoading = ['submitting'].includes(navigationState.state);
 
   return (
-    <div className="flex flex-col flex-auto md:flex-1 items-center w-full md:px-10 px-3 md:py-12 py-4 gap-10">
+    <div className="flex flex-col flex-auto md:flex-1 items-center w-full md:px-10 px-3 md:py-12 py-4 gap-6">
       <h1 className="text-red-700 text-4xl underline underline-offset-8 [text-shadow:_5px_3px_2px_rgb(225_225_225_/_50%)] font-miltonian">
         &nbsp;&nbsp;{LocalStrings.title}&nbsp;&nbsp;&nbsp;
       </h1>
+      <h4 className="text-slate-600 text-2xl tracking-wide mono w-full italic pl-4">
+        Welcome <strong className="capitalize">{user.username}</strong>,
+      </h4>
       <div className="grid wide:grid-cols-4 xl:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-4 w-full max-w-wide">
         {library.map(insert => (
           <button
@@ -80,13 +83,13 @@ export default function DashIndex() {
         <Link
           to="/dash/new"
           className="
-          secondaryButton whitespace-pre !max-w-[160px] !h-[50px] !px-0 justify-center items-center">
+          secondaryButton whitespace-pre !max-w-[200px] !h-[50px] !px-0 justify-center items-center">
           {isLoading ? (
             <LoadingSpinner className="w-full h-10" svgColor="#fff" uniqueId="index-spinner" />
           ) : (
             <Fragment>
               <PlusIcon uniqueId="dash_plus" svgColor="#fff" className="w-4 h-auto" />
-              New Novel
+              Write a New Novel
             </Fragment>
           )}
         </Link>

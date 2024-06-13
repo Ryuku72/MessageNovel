@@ -55,6 +55,6 @@ export async function DashIndexAction(request: ActionFunctionArgs['request']) {
       return json(null, { headers });
     }
 
-    return json(update.data, { headers });
+    return redirect('/dash/' + update.data.draft_id, { headers });
   }
 }
