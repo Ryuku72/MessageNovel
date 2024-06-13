@@ -64,7 +64,7 @@ export default function DashSettings() {
   const LocalStrings = LOCALES.settings;
 
   return (
-    <div className="w-full h-full flex flex-col justify-center items-center relative m-auto mb-0 md:mb-[200px]">
+    <div className="w-full h-full flex flex-col justify-center items-center relative m-auto md:mb-0 mb-[200px]">
       <h1 className="text-red-700 text-4xl text-center [text-shadow:_5px_3px_2px_rgb(225_225_225_/_50%)] font-miltonian">
         {LocalStrings.title}
       </h1>
