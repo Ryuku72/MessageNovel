@@ -11,8 +11,10 @@ import {
   $wrapSelectionInMarkNode,
   MarkNode
 } from '@lexical/mark';
+import { useCollaborationContext } from '@lexical/react/LexicalCollaborationContext';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { mergeRegister, registerNestedElementResolver } from '@lexical/utils';
+import { Provider } from '@lexical/yjs';
 import type { LexicalCommand, NodeKey, RangeSelection } from 'lexical';
 import {
   $getNodeByKey,
@@ -22,16 +24,26 @@ import {
   COMMAND_PRIORITY_EDITOR,
   createCommand
 } from 'lexical';
+import { Doc } from 'yjs';
 
 import AddCommentBox from '../components/AddCommentBox';
 import CommentInputModal from '../components/CommentInputModal';
 import CommentsPanel from '../components/CommentsPanel';
 import { Comment, CommentStore, Thread, useCollabAuthorName, useCommentStore } from '../helpers';
-import { ChatIcon } from '../svg';
 
 export const INSERT_INLINE_COMMAND: LexicalCommand<void> = createCommand('INSERT_INLINE_COMMAND');
 
-export default function CommentPlugin({ username, color }: { username: string; color: string; }): JSX.Element {
+export default function CommentPlugin({
+  username,
+  color,
+  avatar,
+  providerFactory
+}: {
+  username: string;
+  color: string;
+  avatar: string;
+  providerFactory?: (id: string, yjsDocMap: Map<string, Doc>) => Provider;
+}): JSX.Element {
   const params = useParams();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -43,12 +55,21 @@ export default function CommentPlugin({ username, color }: { username: string; c
   const [init, setInit] = useState(false);
 
   const [editor] = useLexicalComposerContext();
+  const collabContext = useCollaborationContext();
   const commentStore = useMemo(() => new CommentStore(editor), [editor]);
   const comments = useCommentStore(commentStore);
-  const author = useCollabAuthorName(username, color);
+  const author = useCollabAuthorName(username, color, avatar);
   const markNodeMap = useMemo<Map<string, Set<NodeKey>>>(() => {
     return new Map();
   }, []);
+  const { yjsDocMap } = collabContext;
+
+  useEffect(() => {
+    if (providerFactory) {
+      const provider = providerFactory('comments', yjsDocMap);
+      return commentStore.registerCollaboration(provider);
+    }
+  }, [commentStore, providerFactory, yjsDocMap]);
 
   useEffect(() => {
     setInit(true);
@@ -273,15 +294,6 @@ export default function CommentPlugin({ username, color }: { username: string; c
 
   return (
     <div className="relative">
-      <button
-        type="button"
-        className={`flex  gap-3 rounded cursor-pointer h-[40px] items-center justify-center px-2 ${showComments ? 'bg-gray-200 text-gray-600' : 'text-gray-500'}`}
-        data-id="CommentPlugin_ShowCommentsButton"
-        onClick={() => handleShowComments()}
-        title={showComments ? 'Hide Comments' : 'Show Comments'}>
-        <ChatIcon uniqueId="commentPlugin-icon" className="w-5 h-auto -scale-x-100" />{' '}
-        {showComments ? 'Hide Comments' : 'Show Comments'}
-      </button>
       <CreatePortalEl condition={init}>
         <CommentsPanel
           comments={comments}
@@ -306,6 +318,7 @@ export default function CommentPlugin({ username, color }: { username: string; c
       <CreatePortalEl condition={openCommentBox && init}>
         <AddCommentBox editor={editor} onAddComment={onAddComment} />
       </CreatePortalEl>
+      <input name="lexical-comments" value={JSON.stringify(comments)} readOnly={true} className="hidden" />
     </div>
   );
 }

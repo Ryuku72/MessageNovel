@@ -13,11 +13,11 @@
     "typecheck": "tsc"
   },
   "dependencies": {
-    "@lexical/list": "^0.15.0",
-    "@lexical/react": "^0.15.0",
-    "@lexical/rich-text": "^0.15.0",
-    "@lexical/selection": "^0.15.0",
-    "@liveblocks/yjs": "^1.12.0",
+    "@lexical/list": "^0.16.0",
+    "@lexical/react": "^0.16.0",
+    "@lexical/rich-text": "^0.16.0",
+    "@lexical/selection": "^0.16.0",
+    "@lexical/yjs": "^0.16.0",
     "@remix-run/node": "^2.9.1",
     "@remix-run/react": "^2.9.1",
     "@remix-run/serve": "^2.9.1",
@@ -25,15 +25,16 @@
     "@supabase/supabase-js": "^2.42.7",
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",
     "@vercel/remix": "^2.9.2-patch.2",
+    "events": "^3.3.0",
     "gsap": "^3.12.5",
     "isbot": "^4.1.0",
-    "lexical": "^0.15.0",
+    "lexical": "^0.16.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-image-crop": "^11.0.5",
     "supabase": "^1.172.2",
     "three": "^0.164.1",
-    "y-supabase": "^0.0.4-7-alpha"
+    "yjs": "^13.6.16"
   },
   "devDependencies": {
     "@eslint/js": "^9.2.0",

@@ -19,18 +19,6 @@
     @apply w-0 h-0;
   }
 
-  hr {
-    @apply p-1 border-none my-4 mx-0 after:content-normal after:block after:h-0.5 after:bg-gray-800 after:leading-[2px] after:bg-opacity-15;
-  }
-
-  mark {
-    /* bg-[rgba(255,_212,_0,_00.141)] */
-    @apply bg-opacity-30 border-b-2 border-opacity-60 bg-[color:rgba(var(--userColor),var(--tw-bg-opacity))] border-b-[color:rgba(var(--userColor),var(--tw-border-opacity))];
-  }
-  mark.selected {
-    @apply bg-opacity-70 border-b-2 border-opacity-100;
-  }
-
   kbd {
     @apply bg-white rounded-sm border-[#b4b4b4] inline-block text-[0.85em] font-bold px-2 py-0.5 whitespace-nowrap text-gray-800;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2), 1px 2px 0 0 rgba(255, 255, 255, 0.7) inset;
@@ -99,6 +87,18 @@
 
   .editor-listItemChecked {
     @apply line-through before:border before:border-solid before:border-green-800 before:bg-green-500 before:rounded-sm before:text-white before:font-semibold before:text-xs before:text-center before:content-['\2713'];
+  }
+
+  .editor-mark {
+    /* bg-[rgba(255,_212,_0,_00.141)] */
+    @apply bg-opacity-30 border-b-2 border-opacity-60 bg-[color:rgba(var(--userColor),var(--tw-bg-opacity))] border-b-[color:rgba(var(--userColor),var(--tw-border-opacity))];
+  }
+  .editor-mark.selected {
+    @apply bg-opacity-70 border-b-2 border-opacity-100;
+  }
+
+  .editor-hr {
+    @apply p-1 border-none my-4 mx-0 after:content-normal after:block after:h-0.5 after:bg-gray-800 after:leading-[2px] after:bg-opacity-15;
   }
 
   .tooltip-spike-t {

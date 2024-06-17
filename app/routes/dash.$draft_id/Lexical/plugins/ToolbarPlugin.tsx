@@ -1,4 +1,6 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useSearchParams } from '@remix-run/react';
+
+import { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 
 import {
   $isListNode,
@@ -31,7 +33,10 @@ import {
 import {
   ArrowClockwiseIcon,
   ArrowCounterClockwiseIcon,
+  ChatIcon,
   CheckListIcon,
+  ConnectIcon,
+  DisconnectIcon,
   HorizontalRuleIcon,
   JustifyIcon,
   ListOLIcon,
@@ -51,7 +56,6 @@ import {
   TypeUnderlineIcon
 } from '../svg';
 import { SPEECH_TO_TEXT_COMMAND } from './SpeechToTextPlugin';
-import CommentPlugin from './CommentPlugin';
 
 const LowPriority = 1;
 const HighPriory = 2;
@@ -72,7 +76,7 @@ const blockTypeToBlockName = {
   quote: 'Quote'
 };
 
-export default function ToolbarPlugin({ username, color }: { username: string; color: string }) {
+export default function ToolbarPlugin(props: { handleConnectionToggle: () => void; connect: string }) {
   const [editor] = useLexicalComposerContext();
   const toolbarRef = useRef(null);
   const [canUndo, setCanUndo] = useState(false);
@@ -85,6 +89,9 @@ export default function ToolbarPlugin({ username, color }: { username: string; c
   const [elementFormat, setElementFormat] = useState<ElementFormatType>('left');
   const [blockType, setBlockType] = useState<keyof typeof blockTypeToBlockName>('paragraph');
   const [enableSpeech, setEnableSpeech] = useState(false);
+
+  const [searchParams, setSearchParams] = useSearchParams();
+  const showComments = searchParams.get('showComments');
 
   const $updateToolbar = useCallback(() => {
     const selection = $getSelection();
@@ -230,6 +237,12 @@ export default function ToolbarPlugin({ username, color }: { username: string; c
     } else {
       formatParagraph();
     }
+  };
+
+  const handleShowComments = () => {
+    if (showComments) searchParams.delete('showComments');
+    else searchParams.set('showComments', 'true');
+    setSearchParams(searchParams);
   };
 
   return (
@@ -463,25 +476,42 @@ export default function ToolbarPlugin({ username, color }: { username: string; c
         aria-label="Horizonital Rule Insert">
         <HorizontalRuleIcon uniqueId="lexical-justify" className="w-5 h-auto" />
       </button>
+      {enableSpeech && (
+        <Fragment>
+          <Divider />
+          <button
+            type="button"
+            onClick={() => {
+              editor.dispatchCommand(SPEECH_TO_TEXT_COMMAND, !isSpeechToText);
+              setIsSpeechToText(!isSpeechToText);
+            }}
+            className={
+              !enableSpeech
+                ? 'hidden'
+                : 'flex flex-col rounded cursor-pointer w-[40px] h-[40px] items-center justify-center ' +
+                  (isSpeechToText ? 'border bg-red-400 text-white' : 'text-gray-500')
+            }
+            title="Speech To Text"
+            aria-label={`${isSpeechToText ? 'Enable' : 'Disable'} speech to text`}>
+            <MicIcon uniqueId="lexical-mic" className="w-5 h-auto" />
+          </button>
+        </Fragment>
+      )}
       <Divider />
       <button
         type="button"
-        onClick={() => {
-          editor.dispatchCommand(SPEECH_TO_TEXT_COMMAND, !isSpeechToText);
-          setIsSpeechToText(!isSpeechToText);
-        }}
-        className={
-          !enableSpeech
-            ? 'hidden'
-            : 'flex rounded cursor-pointer w-[40px] h-[40px] items-center justify-center ' +
-              (isSpeechToText ? 'border bg-red-400 text-white' : 'text-gray-500')
-        }
-        title="Speech To Text"
-        aria-label={`${isSpeechToText ? 'Enable' : 'Disable'} speech to text`}>
-        <MicIcon uniqueId="lexical-mic" className="w-5 h-auto" />
+        className={`flex gap-3 rounded cursor-pointer h-[40px] items-center justify-center px-2 ${showComments ? 'bg-gray-200 text-gray-600' : 'text-gray-500'}`}
+        data-id="CommentPlugin_ShowCommentsButton"
+        onClick={() => handleShowComments()}
+        title={showComments ? 'Hide Comments' : 'Show Comments'}>
+        <ChatIcon uniqueId="commentPlugin-icon" className="w-5 h-auto -scale-x-100" />{' '}
+        {showComments ? 'Hide Comments' : 'Show Comments'}
       </button>
       <Divider />
-      <CommentPlugin username={username} color={color} />
+      <button type="button" className={`flex gap-2 rounded cursor-pointer h-[40px] items-center justify-center pl-2 pr-3 capitalize text-gray-500 ${props.connect === 'disconnected' ? 'bg-red-300' : 'bg-green-300'} rounded-xl bg-opacity-25 backdrop-blur-sm`} onClick={props.handleConnectionToggle}>
+        {props.connect === 'disconnected' ? <DisconnectIcon  uniqueId="lexical-disconnect" className="w-5 h-auto" /> : <ConnectIcon  uniqueId="lexical-connect" className="w-5 h-auto" />}
+        {props.connect}
+      </button>
     </div>
   );
 }

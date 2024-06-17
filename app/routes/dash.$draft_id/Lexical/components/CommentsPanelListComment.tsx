@@ -20,7 +20,7 @@ export function CommentsPanelList({
   rtf: Intl.RelativeTimeFormat;
   thread?: Thread;
 }): JSX.Element {
-  const seconds = Math.round((comment.timeStamp - performance.now()) / 1000);
+  const seconds = comment?.timeStamp ? Math.round((comment.timeStamp - performance.now()) / 1000) : 0;
   const minutes = Math.round(seconds / 60);
   const [showModal, setShowModal] = useState(false);
 

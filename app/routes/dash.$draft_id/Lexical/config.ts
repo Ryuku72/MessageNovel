@@ -5,6 +5,7 @@ import { InitialConfigType } from '@lexical/react/LexicalComposer';
 import { HorizontalRuleNode } from '@lexical/react/LexicalHorizontalRuleNode';
 import { HeadingNode, QuoteNode } from '@lexical/rich-text';
 import { EditorThemeClasses, SerializedEditorState, SerializedLexicalNode } from 'lexical';
+
 import { emptyContent } from './helpers';
 
 export const theme: EditorThemeClasses = {
@@ -14,6 +15,7 @@ export const theme: EditorThemeClasses = {
   placeholder: 'text-gray-400',
   paragraph: 'text-base',
   quote: 'editor-quote',
+  blockCursor: 'editor-blockCursor',
   heading: {
     h1: 'text-6xl',
     h2: 'text-4xl',
@@ -32,6 +34,7 @@ export const theme: EditorThemeClasses = {
     listitemUnchecked: 'editor-listItemUnchecked'
   },
   link: 'editor-link',
+  mark: 'editor-mark',
   text: {
     bold: 'text-semibold',
     italic: 'italic',

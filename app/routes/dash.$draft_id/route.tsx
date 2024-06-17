@@ -25,7 +25,7 @@ export function action(data: ActionFunctionArgs) {
 
 export default function DashNovelId() {
   const loaderData = useLoaderData<NovelEntry>();
-  const { user, channel } = useOutletContext<DashOutletContext>();
+  const { user, channel, supabase } = useOutletContext<DashOutletContext>();
   const navigationState = useNavigation();
   const isLoading = ['submitting'].includes(navigationState.state);
 
@@ -55,13 +55,13 @@ export default function DashNovelId() {
             placeholder={'Enter Novel Title'}
             onChange={setTitleValue}
           />
-          <LexicalRichTextEditor namespace={loaderData?.id} value={loaderData?.body} username={user.username} color={user.color} />
+          <LexicalRichTextEditor namespace={loaderData?.id} username={user.username} color={user.color} avatar={user.avatar} userId={user.id} supabase={supabase} />
           <div className="w-full flex items-center gap-3 justify-end pt-3">
             <NavLink to="/dash" className="primaryButton py-2.5">
                 {LocalStrings.secondary_button}
             </NavLink>
             <button
-              className={`secondaryButton ${isLoading ? 'py-0.5' : 'py-2.5'}`}
+              className={loaderData.owner === user.id ? `secondaryButton ${isLoading ? 'py-0.5' : 'py-2.5'}` : 'hidden'}
               type="submit"
               disabled={false}>
               {isLoading ? (

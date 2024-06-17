@@ -9,6 +9,9 @@ export type NovelEntry = {
   title: string;
   body: SerializedEditorState<SerializedLexicalNode>;
   updated_by: string;
+  comments: number[];
+  colab: number[];
+  owner: string;
 };
 
 export type NovelinLibraryEntry = Omit<
@@ -37,8 +40,8 @@ export type AuthProfileEntry = User & {
     avatar: string;
     color: string;
     username: string;
-  }
-}
+  };
+};
 
 export type UserDataEntry = Omit<ProfileEntry, 'created_at' | 'updated_at'>;
 

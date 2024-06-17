@@ -1,6 +1,5 @@
-import { useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 
-import { useCollaborationContext } from '@lexical/react/LexicalCollaborationContext';
 import { $isRootTextContentEmpty, $rootTextContent } from '@lexical/text';
 import { Provider, TOGGLE_CONNECT_COMMAND } from '@lexical/yjs';
 import type { EditorState, LexicalEditor } from 'lexical';
@@ -416,8 +415,25 @@ export function useCommentStore(commentStore: CommentStore): Comments {
   return comments;
 }
 
-export function useCollabAuthorName(username: string, color: string): string {
-  const collabContext = useCollaborationContext(username, color);
+const CollaborationContext = createContext({
+  clientID: 0,
+  color: '',
+  isCollabActive: false,
+  name: '',
+  avatar: '',
+  yjsDocMap: new Map()
+});
+
+function useCollaborationContext(props: { username: string; color: string; avatar: string }) {
+  const collabContext = useContext(CollaborationContext);
+  collabContext.name = props.username;
+  collabContext.color = props.color;
+  collabContext.avatar = props.avatar;
+  return collabContext;
+}
+
+export function useCollabAuthorName(username: string, color: string, avatar: string): string {
+  const collabContext = useCollaborationContext({ username, color, avatar });
   const { yjsDocMap, name } = collabContext;
   return yjsDocMap.has('comments') ? name : username;
 }
