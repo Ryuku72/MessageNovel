@@ -42,7 +42,7 @@ export default function DashIndex() {
       <h1 className="text-red-700 text-4xl underline underline-offset-8 [text-shadow:_5px_3px_2px_rgb(225_225_225_/_50%)] font-miltonian">
         &nbsp;&nbsp;{LocalStrings.title}&nbsp;&nbsp;&nbsp;
       </h1>
-      <h4 className="text-slate-600 text-2xl tracking-wide mono w-full italic pl-4">
+      <h4 className="text-slate-600 text-2xl tracking-wide mono w-full italic pl-4 max-w-wide">
         Welcome <strong className="capitalize">{user.username}</strong>,
       </h4>
       <div className="grid wide:grid-cols-4 xl:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-4 w-full max-w-wide">
