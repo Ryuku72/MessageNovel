@@ -1,10 +1,11 @@
-import { createContext, useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
+import { useCollaborationContext } from '@lexical/react/LexicalCollaborationContext';
 import { $isRootTextContentEmpty, $rootTextContent } from '@lexical/text';
 import { Provider, TOGGLE_CONNECT_COMMAND } from '@lexical/yjs';
 import type { EditorState, LexicalEditor } from 'lexical';
 import { COMMAND_PRIORITY_LOW } from 'lexical';
-import { Transaction, Array as YArray, YArrayEvent, YEvent, Map as YMap } from 'yjs';
+import { Doc, Transaction, Array as YArray, YArrayEvent, YEvent, Map as YMap } from 'yjs';
 
 export type Comment = {
   author: string;
@@ -384,7 +385,6 @@ export class CommentStore {
     }
 
     sharedCommentsArray.observeDeep(onSharedCommentChanges);
-
     connect();
 
     return () => {
@@ -415,27 +415,23 @@ export function useCommentStore(commentStore: CommentStore): Comments {
   return comments;
 }
 
-const CollaborationContext = createContext({
-  clientID: 0,
-  color: '',
-  isCollabActive: false,
-  name: '',
-  avatar: '',
-  yjsDocMap: new Map()
-});
-
-function useCollaborationContext(props: { username: string; color: string; avatar: string }) {
-  const collabContext = useContext(CollaborationContext);
-  collabContext.name = props.username;
-  collabContext.color = props.color;
-  collabContext.avatar = props.avatar;
-  return collabContext;
+export function useCollabAuthorName(userData: { username: string; color: string }): string {
+  const collabContext = useCollaborationContext(userData.username, userData.color);
+  const { yjsDocMap, name } = collabContext;
+  return yjsDocMap.has('comments') ? name : userData.username;
 }
 
-export function useCollabAuthorName(username: string, color: string, avatar: string): string {
-  const collabContext = useCollaborationContext({ username, color, avatar });
-  const { yjsDocMap, name } = collabContext;
-  return yjsDocMap.has('comments') ? name : username;
+export function getDocFromMap(id: string, yjsDocMap: Map<string, Doc>): Doc {
+  let doc = yjsDocMap.get(id);
+
+  if (doc === undefined) {
+    doc = new Doc();
+    yjsDocMap.set(id, doc);
+  } else {
+    doc.load();
+  }
+
+  return doc;
 }
 
 export const emptyContent =

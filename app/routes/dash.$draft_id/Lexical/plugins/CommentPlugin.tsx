@@ -34,15 +34,20 @@ import { Comment, CommentStore, Thread, useCollabAuthorName, useCommentStore } f
 export const INSERT_INLINE_COMMAND: LexicalCommand<void> = createCommand('INSERT_INLINE_COMMAND');
 
 export default function CommentPlugin({
-  username,
-  color,
-  avatar,
-  providerFactory
+  userData,
+  providerFactory,
+  status,
+  handleConnectionToggle
 }: {
-  username: string;
-  color: string;
-  avatar: string;
+  userData: {
+    username: string;
+    color: string;
+    avatar: string;
+    userId: string;
+  };
   providerFactory?: (id: string, yjsDocMap: Map<string, Doc>) => Provider;
+  status: string;
+  handleConnectionToggle: () => void;
 }): JSX.Element {
   const params = useParams();
   const navigate = useNavigate();
@@ -58,7 +63,7 @@ export default function CommentPlugin({
   const collabContext = useCollaborationContext();
   const commentStore = useMemo(() => new CommentStore(editor), [editor]);
   const comments = useCommentStore(commentStore);
-  const author = useCollabAuthorName(username, color, avatar);
+  const author = useCollabAuthorName(userData);
   const markNodeMap = useMemo<Map<string, Set<NodeKey>>>(() => {
     return new Map();
   }, []);
@@ -304,6 +309,8 @@ export default function CommentPlugin({
           close={() => handleShowComments()}
           author={author}
           show={Boolean(showComments)}
+          status={status}
+          handleConnectionToggle={handleConnectionToggle}
         />
       </CreatePortalEl>
       <CreatePortalEl condition={showCommentInput}>
@@ -318,7 +325,6 @@ export default function CommentPlugin({
       <CreatePortalEl condition={openCommentBox && init}>
         <AddCommentBox editor={editor} onAddComment={onAddComment} />
       </CreatePortalEl>
-      <input name="lexical-comments" value={JSON.stringify(comments)} readOnly={true} className="hidden" />
     </div>
   );
 }

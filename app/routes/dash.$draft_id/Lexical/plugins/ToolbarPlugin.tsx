@@ -76,7 +76,7 @@ const blockTypeToBlockName = {
   quote: 'Quote'
 };
 
-export default function ToolbarPlugin(props: { handleConnectionToggle: () => void; connect: string }) {
+export default function ToolbarPlugin({ handleConnectionToggle, status }: { handleConnectionToggle: () => void; status: string }) {
   const [editor] = useLexicalComposerContext();
   const toolbarRef = useRef(null);
   const [canUndo, setCanUndo] = useState(false);
@@ -504,13 +504,12 @@ export default function ToolbarPlugin(props: { handleConnectionToggle: () => voi
         data-id="CommentPlugin_ShowCommentsButton"
         onClick={() => handleShowComments()}
         title={showComments ? 'Hide Comments' : 'Show Comments'}>
-        <ChatIcon uniqueId="commentPlugin-icon" className="w-5 h-auto -scale-x-100" />{' '}
-        {showComments ? 'Hide Comments' : 'Show Comments'}
+        <ChatIcon uniqueId="commentPlugin-icon" className="w-5 h-auto -scale-x-100" />Comments
       </button>
       <Divider />
-      <button type="button" className={`flex gap-2 rounded cursor-pointer h-[40px] items-center justify-center pl-2 pr-3 capitalize text-gray-500 ${props.connect === 'disconnected' ? 'bg-red-300' : 'bg-green-300'} rounded-xl bg-opacity-25 backdrop-blur-sm`} onClick={props.handleConnectionToggle}>
-        {props.connect === 'disconnected' ? <DisconnectIcon  uniqueId="lexical-disconnect" className="w-5 h-auto" /> : <ConnectIcon  uniqueId="lexical-connect" className="w-5 h-auto" />}
-        {props.connect}
+      <button type="button"  title={`Novel YJS ${status}`} className={`flex gap-2 rounded cursor-pointer h-[40px] items-center justify-center pl-2 pr-3 capitalize text-gray-500 ${status === 'disconnected' ? 'bg-red-300' : 'bg-green-300'} rounded bg-opacity-25 backdrop-blur-sm`} onClick={handleConnectionToggle}>
+        {status === 'disconnected' ? <DisconnectIcon  uniqueId="lexical-disconnect" className="w-5 h-auto" /> : <ConnectIcon uniqueId="lexical-connect" className="w-5 h-auto" />}
+        {status}
       </button>
     </div>
   );

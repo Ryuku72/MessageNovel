@@ -15,6 +15,7 @@ import { SupabaseClient } from '@supabase/supabase-js';
 import { Doc } from 'yjs';
 
 import { InitialConfig } from './config';
+import { getDocFromMap } from './helpers';
 import SupabaseProvider from './helpers/provider';
 import CommentPlugin from './plugins/CommentPlugin';
 import { MaxLengthPlugin } from './plugins/MaxLengthPlugin';
@@ -27,29 +28,31 @@ export type ActiveUserProfile = { userId: string; username: string; color: strin
 export function LexicalRichTextEditor({
   namespace,
   maxLength = 4200,
-  username,
-  color,
-  avatar,
-  userId,
-  supabase
+  userData,
+  supabase,
+  collab
 }: {
   namespace: string;
   maxLength?: number;
-  username: string;
-  color: string;
-  avatar: string;
-  userId: string;
+  userData: {
+    username: string;
+    color: string;
+    avatar: string;
+    userId: string;
+  };
   supabase: SupabaseClient;
+  collab: number[];
 }) {
   const initialConfig = InitialConfig(namespace, null);
   const [editorState, setEditorState] = useState('');
   const [textLength, setTextLength] = useState(0);
   const [activeUsers, setActiveUsers] = useState<ActiveUserProfile[]>([]);
-  const [yjsProvider, setYjsProvider] = useState<Provider>();
+  const [yjsProvider, setYjsProvider] = useState<SupabaseProvider>();
+  const [yjsChatProvider, setYjsChatProvider] = useState<SupabaseProvider>();
   const [init, setInit] = useState(false);
-  const [connected, setConnected] = useState('disconnected');
+  const [novelStatus, setNovelStatus] = useState('disconnected');
+  const [chatStatus, setChatStatus] = useState('disconnect');
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const yjsChatProvider = useRef<Provider>();
   const updateRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
@@ -57,7 +60,6 @@ export function LexicalRichTextEditor({
 
     return () => {
       if (yjsProvider) (yjsProvider as unknown as SupabaseProvider).destroy();
-      if (yjsChatProvider!.current) (yjsChatProvider!.current! as unknown as SupabaseProvider).destroy();
       if (updateRef.current) clearTimeout(updateRef.current);
     };
   }, []);
@@ -82,84 +84,59 @@ export function LexicalRichTextEditor({
   }, [yjsProvider]);
 
   useEffect(() => {
-    if (color && typeof document !== 'undefined') {
-      document.body.style.setProperty('--userColor', userColor(color));
+    if (userData.color && typeof document !== 'undefined') {
+      document.body.style.setProperty('--userColor', userColor(userData.color));
     }
-  }, [color]);
+  }, [userData.color]);
 
-  const getDocFromMap = (id: string, yjsDocMap: Map<string, Doc>): Doc => {
-    let doc = yjsDocMap.get(id);
-
-    if (doc === undefined) {
-      doc = new Doc();
-      yjsDocMap.set(id, doc);
-    } else {
-      doc.load();
-    }
-
-    return doc;
+  const handleConnectionToggle = (provider: SupabaseProvider, status: string) => {
+    if (status === 'connected') provider.onDisconnect();
+    else if (status === 'disconnected') provider.onConnecting();
   };
 
-  const handleConnectionToggle = () => {
-    if (!yjsProvider) return;
-    const provider = yjsProvider as unknown as SupabaseProvider;
-    if (connected === 'connected') provider.onDisconnect();
-    else if (connected === 'disconnected') provider.onConnecting();
-  };
+  const createProviderFactory = useCallback((id: string, yjsDocMap: Map<string, Doc>): Provider => {
+    const doc = getDocFromMap(id, yjsDocMap);
+    const provider = new SupabaseProvider(doc, supabase, {
+      tableName: 'draft_novel',
+      id: namespace,
+      channel: namespace + '_collab',
+      columnName: 'collab',
+      enableLogger: false,
+      resyncInterval: 30000,
+      initialData: collab,
+      userData
+    });
 
-  const createProviderFactory = useCallback(
-    (id: string, yjsDocMap: Map<string, Doc>): Provider => {
-      const doc = getDocFromMap(id, yjsDocMap);
-      const provider = new SupabaseProvider(doc, supabase, {
-        tableName: 'draft_novel',
-        id: namespace,
-        channel: namespace + '_collab',
-        columnName: 'collab',
-        enableLogger: false,
-        resyncInterval: 600000,
-        userData: {
-          username,
-          color,
-          avatar,
-          userId
-        }
-      });
+    provider.on('status', (event: { status: string }) => {
+      if (event.status) setNovelStatus(event.status);
+    });
 
-      provider.on('status', (event: { status: string }) => {
-        if (event.status) setConnected(event.status);
-      });
+    // This is a hack to get reference to provider with standard CollaborationPlugin.
+    // To be fixed in future versions of Lexical.
+    setTimeout(() => setYjsProvider(provider), 0);
 
-      // This is a hack to get reference to provider with standard CollaborationPlugin.
-      // To be fixed in future versions of Lexical.
-      setTimeout(() => setYjsProvider(provider as unknown as Provider), 0);
+    return provider as unknown as Provider;
+  }, []);
 
-      return provider as unknown as Provider;
-    },
-    [namespace, supabase]
-  );
+  const createChatProviderFactory = useCallback((id: string, yjsDocMap: Map<string, Doc>) => {
+    const doc = getDocFromMap(id, yjsDocMap);
+    const provider = new SupabaseProvider(doc, supabase, {
+      tableName: 'draft_novel',
+      id: namespace,
+      channel: namespace + '_comments',
+      columnName: 'comments',
+      enableLogger: false,
+      resyncInterval: 600000,
+      userData
+    });
 
-  const createChatProviderFactory = useCallback(
-    (id: string, yjsDocMap: Map<string, Doc>) => {
-      const doc = getDocFromMap(id, yjsDocMap);
-      const provider = new SupabaseProvider(doc, supabase, {
-        tableName: 'draft_novel',
-        id: namespace,
-        channel: namespace + '_comments',
-        columnName: 'comments',
-        enableLogger: false,
-        resyncInterval: 600000,
-        userData: {
-          username,
-          color,
-          avatar,
-          userId
-        }
-      });
-      yjsChatProvider.current = provider as unknown as Provider;
-      return yjsChatProvider.current;
-    },
-    [namespace, supabase]
-  );
+    provider.on('status', (event: { status: string }) => {
+      if (event.status) setChatStatus(event.status);
+    });
+
+    setTimeout(() => setYjsChatProvider(provider), 0);
+    return provider as unknown as Provider;
+  }, []);
 
   const userColor = (color: string) => {
     switch (color) {
@@ -204,7 +181,7 @@ export function LexicalRichTextEditor({
         <label htmlFor="lexical" className="w-full text-sm font-medium text-gray-600 mb-2">
           Body
         </label>
-        <ToolbarPlugin connect={connected} handleConnectionToggle={handleConnectionToggle} />
+        <ToolbarPlugin status={novelStatus} handleConnectionToggle={() => yjsProvider && handleConnectionToggle(yjsProvider, novelStatus)} />
         <div className="bg-white bg-opacity-65 flex flex-col flex-auto rounded-b-md md:overflow-hidden relative">
           <RichTextPlugin
             contentEditable={
@@ -219,12 +196,13 @@ export function LexicalRichTextEditor({
             ErrorBoundary={LexicalErrorBoundary}
           />
           <OnChangePlugin onChange={setEditorState} />
+          {/* Only using init because Collabration Plugin references document */}
           {init && (
             <CollaborationPlugin
               id={namespace}
               providerFactory={createProviderFactory}
-              username={username}
-              cursorColor={`rgb(${userColor(color)})`}
+              username={userData?.username}
+              cursorColor={`rgb(${userColor(userData?.color)})`}
               cursorsContainerRef={containerRef}
               shouldBootstrap={false}
             />
@@ -236,15 +214,10 @@ export function LexicalRichTextEditor({
           <SpeechToTextPlugin />
           <ClearEditorPlugin />
           <MaxLengthPlugin maxLength={maxLength} setTextLength={setTextLength} />
-          <CommentPlugin
-            username={username}
-            color={color}
-            avatar={avatar}
-            providerFactory={createChatProviderFactory}
-          />
+          <CommentPlugin userData={userData} providerFactory={createChatProviderFactory} status={chatStatus} handleConnectionToggle={() => yjsChatProvider && handleConnectionToggle(yjsChatProvider, chatStatus)}  />
           <p
             className={`sticky md:bottom-1 bottom-[90px] right-4 p-2 m-2 bg-slate-400 backdrop-blur-sm bg-opacity-50 rounded-lg text-xs self-end ${textLength < maxLength ? 'text-blue-800' : 'text-red-400'}`}>
-            {textLength} / {maxLength} length {connected ? 'Connected' : 'offline'}
+            {textLength} / {maxLength} length
           </p>
         </div>
       </div>
