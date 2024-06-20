@@ -1,4 +1,4 @@
-import { LoaderFunctionArgs } from '@remix-run/node';
+import { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node';
 import { Form, Link, useLoaderData, useNavigation, useOutletContext } from '@remix-run/react';
 
 import { useEffect } from 'react';
@@ -10,10 +10,14 @@ import PlusIcon from '~/svg/PlusIcon/PlusIcon';
 
 import { DashOutletContext } from '../dash/route';
 import { DescriptionPreview } from './components/DescriptionPreview';
-import { DashNovelIdLoader } from './services';
+import { DashNovelIdAction, DashNovelIdLoader } from './services';
 
 export function loader(request: LoaderFunctionArgs) {
   return DashNovelIdLoader(request);
+}
+
+export function action({ request }: ActionFunctionArgs) {
+  return DashNovelIdAction(request);
 }
 
 export default function DashNovelId() {
@@ -83,6 +87,7 @@ export default function DashNovelId() {
               <Form method="post" className={!page.members.some(member => member.id === user.id) ? 'flex' : 'hidden'}>
                 <button
                   value={page.id}
+                  name="selected_page"
                   disabled={isLoadingUpdate}
                   className="rounded-lg text-gray-100 font-semibold flex items-center justify-center h-[50px] w-[165px] bg-emerald-700 hover:bg-emerald-500">
                   Participate

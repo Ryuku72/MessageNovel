@@ -65,6 +65,7 @@ export default function DashPageId() {
               namespace={loaderData?.id}
               userData={userData}
               supabase={supabase}
+              owner={user.id === loaderData.owner}
             />
             <div className="w-full flex items-center gap-3 justify-end pt-3">
               <NavLink to={`/dash/novel/${loaderData?.novel_id}`} className="primaryButton py-2.5">

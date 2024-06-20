@@ -30,7 +30,8 @@ export function PageRichTextEditor({
   namespace,
   maxLength = 4200,
   userData,
-  supabase
+  supabase,
+  owner
 }: {
   namespace: string;
   maxLength?: number;
@@ -41,8 +42,9 @@ export function PageRichTextEditor({
     userId: string;
   };
   supabase: SupabaseClient;
+  owner: boolean;
 }) {
-  const initialConfig = InitialConfig(namespace, null);
+  const initialConfig = InitialConfig(namespace, null, owner);
   const [editorState, setEditorState] = useState('');
   const [textLength, setTextLength] = useState(0);
   const [activeUsers, setActiveUsers] = useState<ActiveUserProfile[]>([]);
