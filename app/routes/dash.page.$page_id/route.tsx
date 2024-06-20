@@ -3,39 +3,38 @@ import { Form, NavLink, useLoaderData, useNavigation, useOutletContext } from '@
 
 import { useEffect, useState } from 'react';
 
-import { NovelEntry } from '~/types';
-
 import LOCALES from '~/locales/language_en.json';
+import { Page } from '~/types';
 
 import TitleInput from '~/components/TitleInput';
+
 import LoadingSpinner from '~/svg/LoadingSpinner/LoadingSpinner';
 
 import { DashOutletContext } from '../dash/route';
-import { LexicalRichTextEditor } from './Lexical';
-import { DashNovelIdAction, DashNovelIdLoader } from './services';
+import { PageRichTextEditor } from './components/PageRichTextEditor';
+import { DashPageIdAction, DashPageIdLoader } from './services';
 
 export function loader(data: LoaderFunctionArgs) {
-  if (!data.params.draft_id) return null;
-  return DashNovelIdLoader(data);
+  return DashPageIdLoader(data);
 }
 
 export function action(data: ActionFunctionArgs) {
-  return DashNovelIdAction(data);
+  return DashPageIdAction(data);
 }
 
-export default function DashNovelId() {
-  const loaderData = useLoaderData<NovelEntry>();
+export default function DashPageId() {
+  const loaderData = useLoaderData<Page>();
   const { user, channel, supabase } = useOutletContext<DashOutletContext>();
   const navigationState = useNavigation();
   const isLoading = ['submitting'].includes(navigationState.state);
 
   const LocalStrings = LOCALES.dash.draft;
-  const [titleValue, setTitleValue] = useState(loaderData?.title);
+  const [titleValue, setTitleValue] = useState(loaderData?.reference_title);
 
   useEffect(() => {
     if (!channel || channel.state !== 'joined') return;
-    channel.track({ userId: user.id, room: loaderData?.title + ' DRAFT' });
-  }, [channel, loaderData?.title, user.id]);
+    channel.track({ userId: user.id, room: loaderData?.reference_title + ' DRAFT' });
+  }, [channel, loaderData?.reference_title, user.id]);
 
   const userData = {
     userId: user.id,
@@ -56,25 +55,24 @@ export default function DashNovelId() {
             method="post"
             className="w-full flex flex-col gap-3 text-mono relative bg-white bg-opacity-50 backdrop-blur-sm rounded-b-md rounded-t-md md:px-4 px-2 py-4 md:overflow-hidden">
             <TitleInput
-              title="Novel Title"
-              id="novel-title"
+              title="Page Reference Title"
+              id="page-title"
               value={titleValue}
-              placeholder={'Enter Novel Title'}
+              placeholder={'Enter Page Reference Title'}
               onChange={setTitleValue}
             />
-            <LexicalRichTextEditor
+            <PageRichTextEditor
               namespace={loaderData?.id}
               userData={userData}
               supabase={supabase}
-              collab={loaderData?.colab}
             />
             <div className="w-full flex items-center gap-3 justify-end pt-3">
-              <NavLink to="/dash" className="primaryButton py-2.5">
+              <NavLink to={`/dash/novel/${loaderData?.novel_id}`} className="primaryButton py-2.5">
                 {LocalStrings.secondary_button}
               </NavLink>
               <button
                 className={
-                  loaderData.owner === user.id ? `secondaryButton ${isLoading ? 'py-0.5' : 'py-2.5'}` : 'hidden'
+                  loaderData?.owner === user.id ? `secondaryButton ${isLoading ? 'py-0.5' : 'py-2.5'}` : 'hidden'
                 }
                 type="submit"
                 disabled={false}>

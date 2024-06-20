@@ -3,11 +3,11 @@ import { Component, PercentCrop, PixelCrop, centerCrop, makeAspectCrop } from 'r
 import 'react-image-crop/dist/ReactCrop.css';
 
 import DialogWrapper from '~/components/DialogWrapper';
+
+import Default_Avatar from '~/assets/default_avatar.jpeg';
 import CloseIcon from '~/svg/CloseIcon/CloseIcon';
 import LoadingClock from '~/svg/LoadingClock/LoadingClock';
 import PlusIcon from '~/svg/PlusIcon/PlusIcon';
-
-import Default_Avatar from '~/assets/default_avatar.jpeg';
 
 export type AvatarInputProps = {
   title: string;
@@ -148,7 +148,11 @@ export default function AvatarInput({ title, id, imageSrc, setImage }: AvatarInp
       <label
         htmlFor={id}
         className="flex flex-col items-center gap-2 font-mono font-medium text-sm text-gray-600 cursor-pointer hover:text-blue-500">
-        <img alt="create-img" className="w-32 h-32 rounded-full object-cover bg-gradient-to-b from-slate-500 to-fuchsia-600" src={viewImage} />
+        <img
+          alt="create-img"
+          className="w-32 h-32 rounded-full object-cover bg-gradient-to-b from-slate-500 to-fuchsia-600"
+          src={viewImage}
+        />
         {title}
         <input
           id={id}

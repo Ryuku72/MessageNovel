@@ -3,6 +3,7 @@ import { ActionFunctionArgs, json, redirect } from '@remix-run/node';
 import { isRouteErrorResponse } from '@remix-run/react';
 
 import { initAuthServer, initServer } from '~/services/API';
+
 import { AuthProfileEntry, UserDataEntry } from '~/types';
 
 export async function SettingsAction(request: ActionFunctionArgs['request']) {
@@ -34,7 +35,7 @@ export async function SettingsAction(request: ActionFunctionArgs['request']) {
     }
     return redirect('/', { headers });
   } else {
-    const { supabaseClient, headers } = await initServer(request);
+    const { supabaseClient, headers, env } = await initServer(request);
 
     try {
       const userDetails = await supabaseClient.auth.getUser();
@@ -70,15 +71,8 @@ export async function SettingsAction(request: ActionFunctionArgs['request']) {
 
       const user = response.data.user as AuthProfileEntry;
 
-      const fetchAvatar = async () => {
-        const avatarURL = user?.user_metadata?.avatar || '';
-        if (!avatarURL) return '';
-        const avatarImage = await supabaseClient.storage.from('avatars').getPublicUrl(avatarURL);
-        return avatarImage.data.publicUrl;
-      };
-
       const userData: UserDataEntry = {
-        avatar: await fetchAvatar(),
+        avatar: env.SUPABASE_IMG_STORAGE + 'public/avatars/' + user?.user_metadata?.avatar,
         id: user?.id || '',
         username: user?.user_metadata.username || 'Not Found',
         email: user?.email || 'Unknonwn',

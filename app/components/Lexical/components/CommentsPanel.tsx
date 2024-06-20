@@ -4,10 +4,10 @@ import { $isMarkNode, MarkNode } from '@lexical/mark';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { $getNodeByKey, NodeKey } from 'lexical';
 
+import { ConnectIcon, DisconnectIcon } from '~/svg';
 import CloseIcon from '~/svg/CloseIcon/CloseIcon';
 
 import { Comment, Comments, Thread } from '../helpers';
-import { ConnectIcon, DisconnectIcon } from '../svg';
 import { CommentThread, CommentsPanelList } from './CommentsPanelListComment';
 
 export default function CommentsPanel({

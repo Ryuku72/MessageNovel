@@ -15,14 +15,8 @@ export async function DashLoader(request: LoaderFunctionArgs['request']) {
     const avatarURL = user?.user_metadata?.avatar || '';
     if (!user) return redirect('/', { headers });
 
-    const fetchAvatar = async () => {
-      if (!avatarURL) return '';
-      const avatarImage = await supabaseClient.storage.from('avatars').getPublicUrl(avatarURL);
-      return avatarImage.data.publicUrl;
-    };
-
     const userData: UserDataEntry = {
-      avatar: await fetchAvatar(),
+      avatar: env.SUPABASE_IMG_STORAGE + 'public/avatars/' + avatarURL,
       id: user?.id || '',
       username: user?.user_metadata.username || 'Not Found',
       email: user?.email || 'Unknonwn',

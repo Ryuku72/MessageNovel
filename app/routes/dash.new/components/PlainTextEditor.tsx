@@ -3,9 +3,10 @@ import { ContentEditable } from '@lexical/react/LexicalContentEditable';
 import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
 import { PlainTextPlugin } from '@lexical/react/LexicalPlainTextPlugin';
 
-import { emptyContent } from '~/routes/dash.$draft_id/Lexical/helpers';
-import OnChangePlugin from '~/routes/dash.$draft_id/Lexical/plugins/OnChangePlugin';
-import { TextLengthPlugin } from '~/routes/dash.$draft_id/Lexical/plugins/TextLengthPlugin';
+import { emptyContent } from '~/components/Lexical/helpers';
+import OnChangePlugin from '~/components/Lexical/plugins/OnChangePlugin';
+import { TextLengthPlugin } from '~/components/Lexical/plugins/TextLengthPlugin';
+
 import { ClearEditorPlugin } from './ClearEditorPlugin';
 
 export type PlainTextEditorProps = {
@@ -54,9 +55,7 @@ export default function PlainTextEditor({
           <div data-id="CommentPlugin_CommentInputBox_EditorContainer" className="relative flex flex-auto">
             <PlainTextPlugin
               contentEditable={
-                <ContentEditable
-                  className="w-full text-base font-normal p-3 h-[400px] overflow-y-auto text-gray-500"
-                />
+                <ContentEditable className="w-full text-base font-normal p-3 h-[400px] overflow-y-auto text-gray-500" />
               }
               placeholder={
                 <div className="absolute top-3 left-1 z-0 px-2 pointer-events-none text-gray-400">{placeholder}</div>

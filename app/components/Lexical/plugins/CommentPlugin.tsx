@@ -60,13 +60,13 @@ export default function CommentPlugin({
   const [init, setInit] = useState(false);
 
   const [editor] = useLexicalComposerContext();
-  const collabContext = useCollaborationContext();
   const commentStore = useMemo(() => new CommentStore(editor), [editor]);
   const comments = useCommentStore(commentStore);
-  const author = useCollabAuthorName(userData);
   const markNodeMap = useMemo<Map<string, Set<NodeKey>>>(() => {
     return new Map();
   }, []);
+  const collabContext = useCollaborationContext();
+  const author = useCollabAuthorName(userData);
   const { yjsDocMap } = collabContext;
 
   useEffect(() => {
@@ -90,7 +90,7 @@ export default function CommentPlugin({
           if (elem !== null) {
             elem.classList.add('selected');
             changedElems.push(elem);
-            navigate(`/dash/${params.draft_id}?showComments=true`);
+            navigate(`/dash/page/${params.page_id}?showComments=true`);
           }
         }
       }
@@ -101,7 +101,7 @@ export default function CommentPlugin({
         changedElem.classList.remove('selected');
       }
     };
-  }, [activeIDs, editor, markNodeMap, navigate, params.draft_id]);
+  }, [activeIDs, editor, markNodeMap]);
 
   useEffect(() => {
     const markNodeKeysToIDs: Map<NodeKey, Array<string>> = new Map();

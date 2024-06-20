@@ -3,14 +3,14 @@ import { Form, NavLink, useLoaderData, useNavigation, useOutletContext, useSearc
 
 import { Fragment, useEffect, useState } from 'react';
 
-import { NovelinLibraryEntry } from '~/types';
-
 import LOCALES from '~/locales/language_en.json';
+import { Novel } from '~/types';
 
+import { emptyContent } from '~/components/Lexical/helpers';
 import TitleInput from '~/components/TitleInput';
+
 import LoadingSpinner from '~/svg/LoadingSpinner/LoadingSpinner';
 
-import { emptyContent } from '../dash.$draft_id/Lexical/helpers';
 import { DashOutletContext } from '../dash/route';
 import PlainTextEditor from './components/PlainTextEditor';
 import { DashNewAction, DashNewLoader } from './services';
@@ -24,7 +24,7 @@ export function action(data: ActionFunctionArgs) {
 }
 
 export default function DashNew() {
-  const library = useLoaderData<NovelinLibraryEntry>();
+  const library = useLoaderData<Novel>();
   const { user, channel } = useOutletContext<DashOutletContext>();
   const navigationState = useNavigation();
   const [searchParams] = useSearchParams();
@@ -57,16 +57,7 @@ export default function DashNew() {
         &nbsp;&nbsp;{searchNovelId ? 'Update Details' : LocalStrings.title}&nbsp;&nbsp;&nbsp;
       </h1>
       <div className="w-full max-w-[1250px] flex flex-wrap justify-between items-center bg-slate-50 backdrop-blur-sm bg-opacity-55 rounded-lg">
-        <Form
-          method="post"
-          className="flex w-full py-4 px-2 md:px-6"
-          onSubmit={e => {
-            if (textLength < 120) {
-              e.preventDefault();
-              window.alert('description less than 120 characters');
-              return false;
-            }
-          }}>
+        <Form method="post" className="flex w-full py-4 px-2 md:px-6">
           <fieldset className="flex w-full flex-col gap-5">
             <TitleInput
               title={LocalStrings.primary_input}

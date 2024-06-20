@@ -5,14 +5,14 @@ import { isRouteErrorResponse } from '@remix-run/react';
 import { initServer } from '~/services/API';
 
 export async function UserLoader(request: LoaderFunctionArgs['request']) {
-  const { supabaseClient, headers } = await initServer(request);
+  const { supabaseClient, headers, env } = await initServer(request);
   try {
     const response = await supabaseClient.from('profiles').select('*').order('updated_at', { ascending: false });
     if (response.error) throw response.error;
     await response.data.forEach(async user => {
       if (user.avatar) {
-        const avatarImage = await supabaseClient.storage.from('avatars').getPublicUrl(user.avatar);
-        user.avatar = avatarImage.data.publicUrl;
+
+        user.avatar = env.SUPABASE_IMG_STORAGE + 'public/avatars/' + user.avatar;
         return user;
       }
     });

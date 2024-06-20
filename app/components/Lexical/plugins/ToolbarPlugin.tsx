@@ -54,7 +54,7 @@ import {
   TypeItalicIcon,
   TypeStrikeThroughIcon,
   TypeUnderlineIcon
-} from '../svg';
+} from '~/svg';
 import { SPEECH_TO_TEXT_COMMAND } from './SpeechToTextPlugin';
 
 const LowPriority = 1;

@@ -1,5 +1,6 @@
 import DialogWrapper from '~/components/DialogWrapper';
 import CloseIcon from '~/svg/CloseIcon/CloseIcon';
+
 import { Comment, Thread } from '../helpers';
 
 export function DeletePopupModal({

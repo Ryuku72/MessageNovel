@@ -2,17 +2,15 @@ import { Form, NavLink, useNavigation } from '@remix-run/react';
 
 import { Fragment } from 'react/jsx-runtime';
 
+import LOCALES from '~/locales/language_en.json';
 import { UserDataEntry } from '~/types';
 
-import LOCALES from '~/locales/language_en.json';
-
+import Default_Avatar from '~/assets/default_avatar.jpeg';
 import DashIcon from '~/svg/DashIcon/DashIcon';
 import LoadingSpinner from '~/svg/LoadingSpinner/LoadingSpinner';
 import LogOutIcon from '~/svg/LogOutIcon/LogOutIcon';
-import PlusIcon from '~/svg/PlusIcon/PlusIcon';
-
-import Default_Avatar from '~/assets/default_avatar.jpeg';
 import NetworkIcon from '~/svg/NetworkIcon/NetworkIcon';
+import PlusIcon from '~/svg/PlusIcon/PlusIcon';
 
 export type DashNavBarProps = {
   user: UserDataEntry;
@@ -61,7 +59,7 @@ export default function DashNavBar({ user }: DashNavBarProps) {
           <div className="has-tooltip cursor-pointer relative">
             <NavLink
               className={({ isActive, isPending, isTransitioning }) =>
-                `rounded-lg text-gray-100 font-semibold flex items-center justify-center gap-2 w-[60px] h-[50px] ${isActive || isPending || isTransitioning ?  'bg-emerald-700 hover:bg-emerald-500' : 'bg-slate-700 hover:bg-slate-500'}`
+                `rounded-lg text-gray-100 font-semibold flex items-center justify-center gap-2 w-[60px] h-[50px] ${isActive || isPending || isTransitioning ? 'bg-emerald-700 hover:bg-emerald-500' : 'bg-slate-700 hover:bg-slate-500'}`
               }
               type="button"
               to="/dash/new">

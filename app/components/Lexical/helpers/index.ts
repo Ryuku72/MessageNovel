@@ -405,9 +405,8 @@ export const handleOnChange = (editorState: EditorState, _editor: LexicalEditor)
 
 export function useCommentStore(commentStore: CommentStore): Comments {
   const [comments, setComments] = useState<Comments>(commentStore.getComments());
-
   useEffect(() => {
-    return commentStore.registerOnChange(() => {
+    commentStore.registerOnChange(() => {
       setComments(commentStore.getComments());
     });
   }, [commentStore]);
@@ -422,14 +421,8 @@ export function useCollabAuthorName(userData: { username: string; color: string 
 }
 
 export function getDocFromMap(id: string, yjsDocMap: Map<string, Doc>): Doc {
-  let doc = yjsDocMap.get(id);
-
-  if (doc === undefined) {
-    doc = new Doc();
-    yjsDocMap.set(id, doc);
-  } else {
-    doc.load();
-  }
+  const doc = new Doc();
+  yjsDocMap.set(id, doc);
 
   return doc;
 }

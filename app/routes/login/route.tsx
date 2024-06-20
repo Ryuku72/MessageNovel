@@ -10,6 +10,7 @@ import LOCALES from '~/locales/language_en.json';
 import PasswordInput from '~/components/PasswordInput';
 import { PublicLayout } from '~/components/PublicLayout';
 import TitleInput from '~/components/TitleInput';
+
 import LoadingSpinner from '~/svg/LoadingSpinner/LoadingSpinner';
 
 import { LoginAction, LoginLoader } from './services';
@@ -87,10 +88,7 @@ export default function Login() {
               <Link to="/" className="primaryButton py-2.5">
                 {LocalStrings.primary_button}
               </Link>
-              <button
-                className={`${isLoading ? 'py-0.5 ' : 'py-2.5 '} secondaryButton`}
-                type="submit"
-                disabled={false}>
+              <button className={`${isLoading ? 'py-0.5 ' : 'py-2.5 '} secondaryButton`} type="submit" disabled={false}>
                 {isLoading ? (
                   <LoadingSpinner className="w-full h-10" svgColor="#fff" uniqueId="index-spinner" />
                 ) : (

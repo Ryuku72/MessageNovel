@@ -7,13 +7,14 @@ import { AuthResponse } from '@supabase/supabase-js';
 
 import LOCALES from '~/locales/language_en.json';
 
+import AvatarInput from '~/components/AvatarSelectInput';
+import ColorInput from '~/components/ColorInput';
 import PasswordInput from '~/components/PasswordInput';
 import { PublicLayout } from '~/components/PublicLayout';
 import TitleInput from '~/components/TitleInput';
+
 import LoadingSpinner from '~/svg/LoadingSpinner/LoadingSpinner';
 
-import AvatarInput from './components/AvatarSelectInput';
-import ColorInput from './components/ColorInput';
 import { CreateAction } from './services';
 
 export const meta: MetaFunction = () => {
@@ -78,12 +79,7 @@ export default function Create() {
             <fieldset className="w-full flex flex-col justify-center items-center gap-3" disabled={isLoading}>
               <div className="flex gap-6 flex-wrap justify-center items-center">
                 <AvatarInput title={LocalStrings.avatar} id="avatar" setImage={setImage} />
-                <ColorInput
-                  title={LocalStrings.color}
-                  id="color"
-                  value={colorSelect}
-                  onChange={setColorSelect}
-                />
+                <ColorInput title={LocalStrings.color} id="color" value={colorSelect} onChange={setColorSelect} />
               </div>
               <TitleInput
                 title={LocalStrings.username}
@@ -111,10 +107,7 @@ export default function Create() {
                 <Link to="/" className="primaryButton py-2.5">
                   {LocalStrings.primary_button}
                 </Link>
-                <button
-                  className={`secondaryButton ${isLoading ? 'py-0.5' : 'py-2.5'}`}
-                  type="submit"
-                  disabled={false}>
+                <button className={`secondaryButton ${isLoading ? 'py-0.5' : 'py-2.5'}`} type="submit" disabled={false}>
                   {isLoading ? (
                     <LoadingSpinner className="w-full h-10" svgColor="#fff" uniqueId="index-spinner" />
                   ) : (

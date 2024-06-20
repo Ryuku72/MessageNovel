@@ -13,6 +13,7 @@
     "typecheck": "tsc"
   },
   "dependencies": {
+    "@downwindcss/variant-units": "^0.0.1-alpha.0",
     "@lexical/list": "^0.16.0",
     "@lexical/react": "^0.16.0",
     "@lexical/rich-text": "^0.16.0",

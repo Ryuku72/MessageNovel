@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin';
@@ -14,23 +15,22 @@ import { Provider } from '@lexical/yjs';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { Doc } from 'yjs';
 
-import { InitialConfig } from './config';
-import { getDocFromMap } from './helpers';
-import SupabaseProvider from './helpers/provider';
-import CommentPlugin from './plugins/CommentPlugin';
-import { MaxLengthPlugin } from './plugins/MaxLengthPlugin';
-import OnChangePlugin from './plugins/OnChangePlugin';
-import SpeechToTextPlugin from './plugins/SpeechToTextPlugin';
-import ToolbarPlugin from './plugins/ToolbarPlugin';
+import { InitialConfig } from '~/components/Lexical/config';
+import { getDocFromMap } from '~/components/Lexical/helpers';
+import SupabaseProvider from '~/components/Lexical/helpers/provider';
+import CommentPlugin from '~/components/Lexical/plugins/CommentPlugin';
+import { MaxLengthPlugin } from '~/components/Lexical/plugins/MaxLengthPlugin';
+import OnChangePlugin from '~/components/Lexical/plugins/OnChangePlugin';
+import SpeechToTextPlugin from '~/components/Lexical/plugins/SpeechToTextPlugin';
+import ToolbarPlugin from '~/components/Lexical/plugins/ToolbarPlugin';
 
 export type ActiveUserProfile = { userId: string; username: string; color: string; avatar: string };
 
-export function LexicalRichTextEditor({
+export function PageRichTextEditor({
   namespace,
   maxLength = 4200,
   userData,
-  supabase,
-  collab
+  supabase
 }: {
   namespace: string;
   maxLength?: number;
@@ -41,7 +41,6 @@ export function LexicalRichTextEditor({
     userId: string;
   };
   supabase: SupabaseClient;
-  collab: number[];
 }) {
   const initialConfig = InitialConfig(namespace, null);
   const [editorState, setEditorState] = useState('');
@@ -51,7 +50,7 @@ export function LexicalRichTextEditor({
   const [yjsChatProvider, setYjsChatProvider] = useState<SupabaseProvider>();
   const [init, setInit] = useState(false);
   const [novelStatus, setNovelStatus] = useState('disconnected');
-  const [chatStatus, setChatStatus] = useState('disconnect');
+  const [chatStatus, setChatStatus] = useState('disconnected');
   const containerRef = useRef<HTMLDivElement | null>(null);
   const updateRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -97,13 +96,12 @@ export function LexicalRichTextEditor({
   const createProviderFactory = useCallback((id: string, yjsDocMap: Map<string, Doc>): Provider => {
     const doc = getDocFromMap(id, yjsDocMap);
     const provider = new SupabaseProvider(doc, supabase, {
-      tableName: 'draft_novel',
+      tableName: 'pages',
       id: namespace,
       channel: namespace + '_collab',
       columnName: 'collab',
       enableLogger: false,
       resyncInterval: 30000,
-      initialData: collab,
       userData
     });
 
@@ -121,12 +119,12 @@ export function LexicalRichTextEditor({
   const createChatProviderFactory = useCallback((id: string, yjsDocMap: Map<string, Doc>) => {
     const doc = getDocFromMap(id, yjsDocMap);
     const provider = new SupabaseProvider(doc, supabase, {
-      tableName: 'draft_novel',
+      tableName: 'pages',
       id: namespace,
       channel: namespace + '_comments',
       columnName: 'comments',
       enableLogger: false,
-      resyncInterval: 600000,
+      resyncInterval: 30000,
       userData
     });
 
@@ -166,7 +164,7 @@ export function LexicalRichTextEditor({
   return (
     <LexicalComposer initialConfig={initialConfig}>
       <div
-        className={`rounded-sm w-full text-gray-900 font-normal text-left flex flex-col flex-auto min-h-[500px] ${!editorState ? 'overflow-hidden max-h-[600px]' : 'overflow-visible'}`}>
+        className={`rounded-sm w-full text-gray-900 font-normal text-left flex flex-col flex-auto min-h-[500px] ${!editorState ? 'overflow-hidden max-h-[500px]' : 'overflow-visible'}`}>
         <p className="w-full text-sm font-medium text-gray-600 mb-2">Participants</p>
         <div className="flex gap-2 text-blue-800 items-center text-sm mb-3 max-w-[80%]">
           {activeUsers.map(user => (
@@ -181,7 +179,10 @@ export function LexicalRichTextEditor({
         <label htmlFor="lexical" className="w-full text-sm font-medium text-gray-600 mb-2">
           Body
         </label>
-        <ToolbarPlugin status={novelStatus} handleConnectionToggle={() => yjsProvider && handleConnectionToggle(yjsProvider, novelStatus)} />
+        <ToolbarPlugin
+          status={novelStatus}
+          handleConnectionToggle={() => yjsProvider && handleConnectionToggle(yjsProvider, novelStatus)}
+        />
         <div className="bg-white bg-opacity-65 flex flex-col flex-auto rounded-b-md md:overflow-hidden relative">
           <RichTextPlugin
             contentEditable={
@@ -214,7 +215,12 @@ export function LexicalRichTextEditor({
           <SpeechToTextPlugin />
           <ClearEditorPlugin />
           <MaxLengthPlugin maxLength={maxLength} setTextLength={setTextLength} />
-          <CommentPlugin userData={userData} providerFactory={createChatProviderFactory} status={chatStatus} handleConnectionToggle={() => yjsChatProvider && handleConnectionToggle(yjsChatProvider, chatStatus)}  />
+            <CommentPlugin
+              userData={userData}
+              providerFactory={createChatProviderFactory}
+              status={chatStatus}
+              handleConnectionToggle={() => yjsChatProvider && handleConnectionToggle(yjsChatProvider, chatStatus)}
+            />
           <p
             className={`sticky md:bottom-1 bottom-[90px] right-4 p-2 m-2 bg-slate-400 backdrop-blur-sm bg-opacity-50 rounded-lg text-xs self-end ${textLength < maxLength ? 'text-blue-800' : 'text-red-400'}`}>
             {textLength} / {maxLength} length

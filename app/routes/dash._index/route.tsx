@@ -3,10 +3,9 @@ import { Link, useLoaderData, useNavigation, useOutletContext } from '@remix-run
 
 import { Fragment, useEffect, useState } from 'react';
 
-import { NovelinLibraryEntry } from '~/types';
-
 import { CreateDate } from '~/helpers/DateHelper';
 import LOCALES from '~/locales/language_en.json';
+import { NovelWithUsers } from '~/types';
 
 import LoadingSpinner from '~/svg/LoadingSpinner/LoadingSpinner';
 import PlusIcon from '~/svg/PlusIcon/PlusIcon';
@@ -24,11 +23,11 @@ export function action({ request }: ActionFunctionArgs) {
 }
 
 export default function DashIndex() {
-  const library = useLoaderData<NovelinLibraryEntry[]>();
+  const library = useLoaderData<NovelWithUsers[]>();
   const { user, channel } = useOutletContext<DashOutletContext>();
   const navigationState = useNavigation();
 
-  const [selectedNovel, setSelectedNovel] = useState<NovelinLibraryEntry | null>(null);
+  const [selectedNovel, setSelectedNovel] = useState<NovelWithUsers| null>(null);
   const LocalStrings = LOCALES.dash;
   const isLoading = ['submitting'].includes(navigationState.state);
 
@@ -36,7 +35,6 @@ export default function DashIndex() {
     if (!channel || channel.state !== 'joined') return;
     channel.track({ userId: user.id, room: 'Dashboard' });
   }, [channel, user.id]);
-
   return (
     <div className="flex flex-col flex-auto md:flex-1 items-center w-full md:px-10 px-3 md:py-12 py-4 gap-6">
       <h1 className="text-red-700 text-4xl underline underline-offset-8 [text-shadow:_5px_3px_2px_rgb(225_225_225_/_50%)] font-miltonian">
@@ -50,19 +48,19 @@ export default function DashIndex() {
           <button
             type="button"
             key={insert.id}
-            className={`flex text-left bg-gray-400 bg-opacity-50 backdrop-blur-xl p-10 overflow-hidden relative rounded-[25px] font-mono flex-col gap-1 group transition-all duration-500 ease-linear ${selectedNovel && selectedNovel?.id === insert?.id ? 'text-gray-700' : 'md:text-white hover:text-gray-700 text-gray-700'}`}
+            className={`flex text-left bg-gray-400 bg-opacity-50 backdrop-blur-xl p-9 overflow-hidden relative rounded-[25px] font-mono flex-col gap-1 group transition-all duration-500 ease-linear ${selectedNovel && selectedNovel?.id === insert?.id ? 'text-gray-700' : 'md:text-white hover:text-gray-700 text-gray-700'}`}
             onClick={() => setSelectedNovel(insert)}>
             <div
               className={`absolute top-[-80px] right-[-80px] w-[100px] h-[100px] rounded-full transition-all duration-500 ease-linear group-[:nth-child(10n+1)]:bg-pastel-red group-[:nth-child(10n+2)]:bg-pastel-brown group-[:nth-child(10n+3)]:bg-pastel-orange group-[:nth-child(10n+4)]:bg-pastel-yellow group-[:nth-child(10n+5)]:bg-pastel-indigo group-[:nth-child(10n+6)]:bg-pastel-blue group-[:nth-child(10n+7)]:bg-pastel-green group-[:nth-child(10n+8)]:bg-pastel-emerald group-[:nth-child(10n+9)]:bg-pastel-purple group-[:nth-child(10n+0)]:bg-pastel-black ${selectedNovel && selectedNovel?.id === insert?.id ? 'scale-[16]' : 'group-hover:scale-[16] scale-[16] md:scale-0'}`}
             />
-            <h3 className="text-current text-left text-3xl font-semibold tracking-wide mb-2 relative z-10 truncate max-w-full overflow-hidden capitalize">
+            <h3 className="text-current text-left text-2xl font-semibold tracking-wide mb-1 relative z-10 truncate max-w-full overflow-hidden capitalize">
               {insert.title}
             </h3>
             <h4 className="text-current text-left text-lg md:mb-2 relative z-10 truncate max-w-full overflow-hidden">
               Author:{' '}
               <span
                 className={`${selectedNovel && selectedNovel?.id === insert?.id ? 'text-current' : ' md:text-yellow-400 group-hover:text-gray-700 text-current'} transition-all duration-500 ease-linear font-semibold tracking-wide`}>
-                {insert.owner_username}
+                {insert.owner.username}
               </span>
             </h4>
             <div className="flex flex-wrap md:flex-col md:gap-1 gap-3">
@@ -102,7 +100,7 @@ export default function DashIndex() {
       <DescriptionModel
         selectedNovel={selectedNovel}
         close={() => setSelectedNovel(null)}
-        ownerId={selectedNovel?.owner || ''}
+        ownerId={selectedNovel?.owner.id || ''}
         members={selectedNovel?.members || []}
         userId={user.id}
       />

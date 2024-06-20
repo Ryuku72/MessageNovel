@@ -11,7 +11,6 @@ export interface SupabaseProviderConfig {
   tableName: string;
   columnName: string;
   id: string | number;
-  initialData?: number[];
   awareness?: awarenessProtocol.Awareness;
   resyncInterval?: number | false;
   enableLogger?: boolean;
@@ -62,33 +61,65 @@ export default class SupabaseProvider extends EventEmitter {
   async save() {
     if (this.config.disableSave) return;
     const content = Array.from(Y.encodeStateAsUpdate(this.doc));
-    if (JSON.stringify([0, 0]) === JSON.stringify(content)) {
-      return;
-    }
+    if (JSON.stringify([0, 0]) === JSON.stringify(content)) return;
 
     const { error } = await this.supabase
       .from(this.config.tableName)
       .update({ [this.config.columnName]: content })
       .match({ id: this.config.id });
 
-    if (error) {
-      throw error;
-    }
-
+    if (error) throw error;
     this.emit('save', this.version);
   }
 
-  private initialConnectData() {
-    this.logger(`${this.channelName}: initializing inital connect`);
-    this.logger(`${this.channelName}: applying update to yjs`);
-    try {
-      this.applyUpdate(Uint8Array.from(this.config.initialData as number[]));
-      this.config.initialData = undefined;
-    } catch (error) {
-      this.logger(`${this.channelName}: error - `, error);
+  private async onConnect() {
+    this.logger(`${this.channelName}: ` + 'connected');
+    const { data, error, status } = await this.supabase
+      .from(this.config.tableName)
+      .select<string, { [key: string]: number[] }>(`${this.config.columnName}`)
+      .match({ id: this.config.id })
+      .single();
+    this.logger(`${this.channelName}: ` + 'retrieved data from supabase', status);
+    if (error) {
+      this.logger('error fetching data');
+      this.emit('error', error);
+    }
+    if (data && data[this.config.columnName]) {
+      this.logger(`${this.channelName}: ` + 'applying update to yjs');
+      try {
+        this.applyUpdate(Uint8Array.from(data[this.config.columnName]));
+      } catch (error) {
+        this.logger(`${this.channelName}: ` + 'error - ', error);
+      }
     }
 
+    this.logger(`${this.channelName}: setting connected flag to true`);
+    this.isOnline(true);
+    this.resync();
+
+    this.emit('status', { status: 'connected' });
+
+    if (this.awareness.getLocalState() !== null) {
+      const awarenessUpdate = awarenessProtocol.encodeAwarenessUpdate(this.awareness, [this.doc.clientID]);
+      this.emit('awareness', awarenessUpdate);
+    }
+  }
+
+  private applyUpdate(update: Uint8Array, origin?: SupabaseProvider) {
+    if (JSON.stringify([0, 0]) === JSON.stringify(update)) return;
+    this.version++;
+    Y.applyUpdate(this.doc, update, origin);
+  }
+
+  private disconnect() {
+    if (!this.channel) return;
+    this.supabase.removeChannel(this.channel);
+    this.channel = null;
+  }
+
+  public connect() {
     const channel = this.supabase.channel(this.config.channel);
+    if (!channel) return;
     channel
       .on(REALTIME_LISTEN_TYPES.BROADCAST, { event: 'message' }, ({ payload }) => {
         this.onMessage(Uint8Array.from(payload));
@@ -126,16 +157,7 @@ export default class SupabaseProvider extends EventEmitter {
       .subscribe((status, err) => {
         if (status === 'SUBSCRIBED') {
           channel.track({ data: this.config.userData });
-          this.logger(`${this.channelName}: setting connected flag to true`);
-          this.isOnline(true);
-          this.resync();
-
-          this.emit('status', { status: 'connected' });
-
-          if (this.awareness.getLocalState() !== null) {
-            const awarenessUpdate = awarenessProtocol.encodeAwarenessUpdate(this.awareness, [this.doc.clientID]);
-            this.emit('awareness', awarenessUpdate);
-          }
+          this.emit('connect', this);
         }
 
         if (status === 'CHANNEL_ERROR') {
@@ -152,115 +174,6 @@ export default class SupabaseProvider extends EventEmitter {
         }
       });
     this.channel = channel;
-  }
-
-  private async onConnect() {
-    this.logger(`${this.channelName}: ` + 'connected');
-    const { data, error, status } = await this.supabase
-      .from(this.config.tableName)
-      .select<string, { [key: string]: number[] }>(`${this.config.columnName}`)
-      .match({ id: this.config.id })
-      .single();
-
-    this.logger(`${this.channelName}: ` + 'retrieved data from supabase', status);
-    if (error) {
-      this.logger('error fetching data');
-      this.emit('error', error);
-    }
-    if (data && data[this.config.columnName]) {
-      this.logger(`${this.channelName}: ` + 'applying update to yjs');
-      try {
-        this.applyUpdate(Uint8Array.from(data[this.config.columnName]));
-      } catch (error) {
-        this.logger(`${this.channelName}: ` + 'error - ', error);
-      }
-    }
-
-    this.logger(`${this.channelName}: setting connected flag to true`);
-    this.isOnline(true);
-    this.resync();
-
-    this.emit('status', { status: 'connected' });
-
-    if (this.awareness.getLocalState() !== null) {
-      const awarenessUpdate = awarenessProtocol.encodeAwarenessUpdate(this.awareness, [this.doc.clientID]);
-      this.emit('awareness', awarenessUpdate);
-    }
-  }
-
-  private applyUpdate(update: Uint8Array, origin?: SupabaseProvider) {
-    this.version++;
-    if (JSON.stringify([0, 0]) === JSON.stringify(update)) {
-      return;
-    }
-    Y.applyUpdate(this.doc, update, origin);
-  }
-
-  private disconnect() {
-    if (this.channel) {
-      this.supabase.removeChannel(this.channel);
-      this.channel = null;
-    }
-  }
-
-  public connect() {
-    const channel = this.supabase.channel(this.config.channel);
-    if (channel) {
-      channel
-        .on(REALTIME_LISTEN_TYPES.BROADCAST, { event: 'message' }, ({ payload }) => {
-          this.onMessage(Uint8Array.from(payload));
-        })
-        .on(REALTIME_LISTEN_TYPES.BROADCAST, { event: 'awareness' }, ({ payload }) => {
-          this.onAwareness(Uint8Array.from(payload));
-        })
-        .on(REALTIME_LISTEN_TYPES.PRESENCE, { event: 'sync' }, () => {
-          /** Get the presence state from the channel, keyed by realtime identifier */
-          const presenceState = channel.presenceState();
-          /** transform the presence */
-          const users = Object.keys(presenceState)
-            .map(presenceId => {
-              const presences = presenceState[presenceId] as unknown as {
-                data: {
-                  userId: string;
-                  username: string;
-                  color: string;
-                  avatar: string;
-                };
-              }[];
-              return presences.map(presence => ({
-                [presence.data.userId]: {
-                  userId: presence.data.userId,
-                  username: presence.data.username,
-                  color: presence.data.color,
-                  avatar: presence.data.avatar
-                }
-              }));
-            })
-            .flat();
-          /** sort and set the users */
-          this.emit('online users', users);
-        })
-        .subscribe((status, err) => {
-          if (status === 'SUBSCRIBED') {
-            channel.track({ data: this.config.userData });
-            this.emit('connect', this);
-          }
-
-          if (status === 'CHANNEL_ERROR') {
-            this.logger(`${this.channelName}: ` + 'CHANNEL_ERROR', err);
-            this.emit('error', this);
-          }
-
-          if (status === 'TIMED_OUT') {
-            this.emit('disconnect', this);
-          }
-
-          if (status === 'CLOSED') {
-            this.emit('disconnect', this);
-          }
-        });
-      this.channel = channel;
-    }
   }
 
   private resync() {
@@ -295,7 +208,7 @@ export default class SupabaseProvider extends EventEmitter {
       };
       clearTimeout(timeout!);
       timeout = setTimeout(later, wait);
-      return new Promise((resolve) => {
+      return new Promise(resolve => {
         if (!timeout) {
           resolve(func(...args));
         }
@@ -334,7 +247,6 @@ export default class SupabaseProvider extends EventEmitter {
       this.save();
     }, 500);
 
-
     if (typeof window !== 'undefined') {
       window.addEventListener('beforeunload', this.removeSelfFromAwarenessOnUnload);
     } else if (typeof process !== 'undefined') {
@@ -357,8 +269,7 @@ export default class SupabaseProvider extends EventEmitter {
         });
     });
 
-    if (this.config?.initialData) this.initialConnectData();
-    else this.connect();
+    this.connect();
     this.doc.on('update', this.onDocumentUpdate.bind(this));
     this.awareness.on('update', this.onAwarenessUpdate.bind(this));
   }

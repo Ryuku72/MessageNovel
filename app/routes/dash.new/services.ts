@@ -20,44 +20,41 @@ export async function DashNewAction(data: ActionFunctionArgs) {
     if (title && description) {
       const userData = user.data.user;
       if (novel_id) {
-        const libraryUpdate = await supabaseClient
-          .from('library')
+        const novelUpdate = await supabaseClient
+          .from('novels')
           .update({
             title,
             description: descriptionParse,
-            updated_at: new Date(),
-            updated_by: userData?.id
+            updated_at: new Date()
           })
           .match({ id: novel_id })
           .select()
           .single();
 
-        if (libraryUpdate.error) {
-          console.error(libraryUpdate.error);
-          console.error('error in dash new - library insert');
-          return json({ error: { message: libraryUpdate.error.message } }, { headers });
+        if (novelUpdate.error) {
+          console.error(novelUpdate.error);
+          console.error('error in dash new - novel insert');
+          return json({ error: { message: novelUpdate.error.message } }, { headers });
         }
         return redirect('/dash', { headers });
       } else {
-        const libraryInsert = await supabaseClient
-          .from('library')
+        const novelInsert = await supabaseClient
+          .from('novels')
           .insert({
             owner: userData?.id,
-            owner_username: userData?.user_metadata.username,
             title,
-            description: descriptionParse,
-            members: [userData?.id]
+            description: descriptionParse
           })
           .select()
           .single();
 
-        if (libraryInsert.error) {
-          console.error(libraryInsert.error);
-          console.error('error in dash new - library insert');
-          return json({ error: { message: libraryInsert.error.message } }, { headers });
+        if (novelInsert.error) {
+          console.error(novelInsert.error);
+          console.error('error in dash new - novel insert');
+          return json({ error: { message: novelInsert.error.message } }, { headers });
         }
 
-        return redirect(`/dash/${libraryInsert.data?.draft_id}`, { headers });
+        return redirect(`/dash/novel/${novelInsert.data?.id}`, { headers });
       }
     } else return json({ error: 'Title and Description are requires' }, { headers });
   } catch (error) {
@@ -74,10 +71,10 @@ export async function DashNewLoader(data: LoaderFunctionArgs) {
   const { supabaseClient, headers } = await initServer(request);
   const url = new URL(request.url);
   const novel_id = url.searchParams.get('novel_id');
-
+  if (!novel_id) return json(null, { headers });
   try {
-    const response = await supabaseClient.from('library').select('*').match({ id: novel_id }).select().maybeSingle();
-
+    const response = await supabaseClient.from('novels').select('*').match({ id: novel_id }).select().maybeSingle();
+    if (response.error) throw response.error;
     return json(response?.data, { headers });
   } catch (error) {
     console.error(error);

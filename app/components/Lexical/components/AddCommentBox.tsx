@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef } from 'react';
 import { mergeRegister } from '@lexical/utils';
 import { $getSelection, COMMAND_PRIORITY_LOW, LexicalEditor, SELECTION_CHANGE_COMMAND } from 'lexical';
 
-import { StickyIcon } from '../svg';
+import { StickyIcon } from '~/svg';
 
 export default function AddCommentBox({
   editor,
@@ -108,7 +108,7 @@ export default function AddCommentBox({
 
     const floatingElemRect = floatingElem.getBoundingClientRect();
     const editorScrollerRect = scrollerElem.getBoundingClientRect();
-  
+
     if (document.body.clientWidth < 768) {
       const windowTop = window.pageYOffset || document.documentElement.scrollTop;
       const top = targetRect.top - floatingElemRect.height + windowTop;
@@ -121,9 +121,7 @@ export default function AddCommentBox({
       floatingElem.style.opacity = '1';
       floatingElem.style.left = `${left + 15}px`;
       floatingElem.style.top = `${top - 15}px`;
-
     } else {
-
       let top = targetRect.top - floatingElemRect.height;
       let left = targetRect.left;
 

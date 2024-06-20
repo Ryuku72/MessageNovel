@@ -3,7 +3,7 @@ import { useRef, useState } from 'react';
 import { CLEAR_EDITOR_COMMAND, EditorState, LexicalEditor } from 'lexical';
 
 import { Comment, Thread, createComment, handleOnChange } from '../helpers';
-import { SendIcon } from '../svg';
+import { SendIcon } from '~/svg';
 import BaseTextEditor from './BaseTextEditor';
 
 export default function CommentsComposer({

@@ -13,13 +13,13 @@ export const theme: EditorThemeClasses = {
   ltr: 'text-left',
   rtl: 'text-right',
   placeholder: 'text-gray-400',
-  paragraph: 'text-base',
+  paragraph: 'em:text-base',
   quote: 'editor-quote',
   blockCursor: 'editor-blockCursor',
   heading: {
-    h1: 'text-6xl',
-    h2: 'text-4xl',
-    h3: 'text-2xl'
+    h1: 'em:text-6xl',
+    h2: 'em:text-4xl',
+    h3: 'em:text-2xl'
   },
   hr: 'editor-hr',
   list: {
@@ -49,10 +49,11 @@ function onError(error: Error) {
   // eslint-disable-next-line no-console
   console.error(error);
 }
-export function InitialConfig(namespace: string, value: SerializedEditorState<SerializedLexicalNode> | null): InitialConfigType {
+export function InitialConfig(namespace: string, value: SerializedEditorState<SerializedLexicalNode> | null, editable = true): InitialConfigType {
   return {
     theme,
     onError,
+    editable,
     editorState: value ? JSON.stringify(value) : emptyContent,
     nodes: [HeadingNode, ListNode, ListItemNode, QuoteNode, OverflowNode, HorizontalRuleNode, MarkNode],
     namespace

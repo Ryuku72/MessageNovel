@@ -23,7 +23,8 @@ export async function LoginAction(request: ActionFunctionArgs['request']) {
   } catch (error) {
     console.error(error);
     console.error('process error in login');
-    if (isRouteErrorResponse(error)) return new Response(`${error.status} - ${error?.statusText || 'Error'}`, { status: error.status, headers });
+    if (isRouteErrorResponse(error))
+      return new Response(`${error.status} - ${error?.statusText || 'Error'}`, { status: error.status, headers });
     return json(null, { headers });
   }
 }

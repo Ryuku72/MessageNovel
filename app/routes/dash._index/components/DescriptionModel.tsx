@@ -3,22 +3,23 @@ import { Form, Link, useNavigation } from '@remix-run/react';
 import { useEffect, useState } from 'react';
 
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
-import { NovelinLibraryEntry } from '~/types';
 
 import { CreateDate } from '~/helpers/DateHelper';
 
 import DialogWrapper from '~/components/DialogWrapper';
-import { emptyContent } from '~/routes/dash.$draft_id/Lexical/helpers';
-import { TrashIcon } from '~/routes/dash.$draft_id/Lexical/svg';
+import { emptyContent } from '~/components/Lexical/helpers';
+
+import { TrashIcon } from '~/svg';
 import CloseIcon from '~/svg/CloseIcon/CloseIcon';
 import LoadingSpinner from '~/svg/LoadingSpinner/LoadingSpinner';
 
 import EditorTextPlugin from './EditorTextPlugin';
+import { BasicProfile, NovelWithUsers } from '~/types';
 
 type DescriptionModelProps = {
-  selectedNovel: NovelinLibraryEntry | null;
+  selectedNovel: NovelWithUsers | null;
   userId: string;
-  members: string[];
+  members: BasicProfile[];
   ownerId: string;
   close: () => void;
 };
@@ -30,7 +31,7 @@ export function DescriptionModel({ selectedNovel, close, userId, ownerId, member
   const finishedPost = 'loading' === navigationState.state && navigationState.formMethod === 'POST';
   const isLoading = 'submitting' === navigationState.state && navigationState.formMethod === 'DELETE';
   const isLoadingUpdate = 'submitting' === navigationState.state && navigationState.formMethod === 'POST';
-  const member = members.includes(userId);
+  const member = members.some(user => user.id === userId);
   const isOwner = userId === ownerId;
 
   useEffect(() => {
@@ -70,7 +71,11 @@ export function DescriptionModel({ selectedNovel, close, userId, ownerId, member
                 onClick={() => setOpenConfirm(true)}
                 value={selectedNovel?.id}
                 title="selected_novel"
-                className={isOwner ? 'hover:text-red-500 hover:border hover:border-current rounded text-current text-xs h-10 w-10 text-left flexCenter' : 'hidden'}>
+                className={
+                  isOwner
+                    ? 'hover:text-red-500 hover:border hover:border-current rounded text-current text-xs h-10 w-10 text-left flexCenter'
+                    : 'hidden'
+                }>
                 <TrashIcon className="w-5 h-auto" uniqueId="descript-delete" />
               </button>
               &nbsp;{selectedNovel?.title}&nbsp;&nbsp;&nbsp;
@@ -120,13 +125,13 @@ export function DescriptionModel({ selectedNovel, close, userId, ownerId, member
               Back
             </button>
             <Link
-              to={`/dash/${selectedNovel?.draft_id}`}
+              to={`/dash/novel/${selectedNovel?.id}`}
               className={
                 member
                   ? 'rounded-lg text-gray-100 font-semibold flex items-center justify-center h-[50px] w-[165px] bg-emerald-700 hover:bg-emerald-500'
                   : 'hidden'
               }>
-              {member && !isOwner ? 'Leave a Comment' : 'Write Novel'}
+              Select Page
             </Link>
             <Form method="post">
               <fieldset disabled={isLoadingUpdate}>
@@ -140,7 +145,6 @@ export function DescriptionModel({ selectedNovel, close, userId, ownerId, member
                   }>
                   Participate?
                 </button>
-                <input value={members.concat(userId)} className="hidden" name="members" readOnly={true} />
               </fieldset>
             </Form>
           </div>

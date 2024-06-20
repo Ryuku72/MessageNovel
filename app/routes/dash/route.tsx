@@ -27,6 +27,7 @@ export type DashOutletContext = {
   supabase: SupabaseClient;
   channel: RealtimeChannel;
   onlineUsers: { id: string; room: string }[];
+  img_url: string;
 };
 
 export default function Dash() {
@@ -81,7 +82,7 @@ export default function Dash() {
       className={`w-full md:h-full flex flex-row relative ${showComments ? 'md:overflow-visible overflow-hidden' : 'overflow-visible'}`}
       id="dash-default">
       <DashNavBar user={user} />
-      <Outlet context={{ user, supabase, channel, onlineUsers }} />
+      <Outlet context={{ user, supabase, channel, onlineUsers, img_url: env.SUPABASE_IMG_STORAGE }} />
     </div>
   );
 }

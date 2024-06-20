@@ -1,20 +1,20 @@
 import { ActionFunctionArgs, MetaFunction } from '@remix-run/node';
-import { Form, useActionData, useNavigate, useNavigation, useOutletContext, useSubmit } from '@remix-run/react';
+import { Form, Link, useActionData, useNavigation, useOutletContext, useSubmit } from '@remix-run/react';
 
 import { useEffect, useState } from 'react';
 
+import LOCALES from '~/locales/language_en.json';
 import { UserDataEntry } from '~/types';
 
-import LOCALES from '~/locales/language_en.json';
-
+import AvatarInput from '~/components/AvatarSelectInput';
+import ColorInput from '~/components/ColorInput';
 import DialogWrapper from '~/components/DialogWrapper';
 import TitleInput from '~/components/TitleInput';
+
+import { TrashIcon } from '~/svg';
 import CloseIcon from '~/svg/CloseIcon/CloseIcon';
 import LoadingSpinner from '~/svg/LoadingSpinner/LoadingSpinner';
 
-import AvatarInput from '../create/components/AvatarSelectInput';
-import ColorInput from '../create/components/ColorInput';
-import { TrashIcon } from '../dash.$draft_id/Lexical/svg';
 import { DashOutletContext } from '../dash/route';
 import { SettingsAction } from './services';
 
@@ -31,7 +31,6 @@ export default function DashSettings() {
   const navigationState = useNavigation();
   const actionData = useActionData<UserDataEntry>();
   const isLoading = 'submitting' === navigationState.state;
-  const navigate = useNavigate();
   const submit = useSubmit();
 
   const [colorSelect, setColorSelect] = useState(user.color);
@@ -53,11 +52,6 @@ export default function DashSettings() {
     if (!channel || channel.state !== 'joined') return;
     channel.track({ userId: user.id, room: 'Settings' });
   }, [channel, user.id]);
-
-  const handleReturn = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    navigate('/dash');
-  };
 
   const disabled = username === user.username && !imageFile && user.color === colorSelect;
   const formDisabled = ['submitting', 'loading'].includes(navigationState.state);
@@ -95,9 +89,9 @@ export default function DashSettings() {
             <ColorInput title={LocalStrings.color} id="color" value={colorSelect} onChange={setColorSelect} />
           </div>
           <div className="flex flex-wrap gap-3 w-full justify-center">
-            <button className="primaryButton py-2.5" type="button" onClick={handleReturn}>
+            <Link to="/dash" className="primaryButton py-2.5" type="button">
               Back
-            </button>
+            </Link>
             <button
               className={`secondaryButton ${isLoading ? 'py-0.5' : 'py-2.5'} disabled:bg-gray-300`}
               type="submit"

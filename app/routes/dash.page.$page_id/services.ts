@@ -4,17 +4,18 @@ import { isRouteErrorResponse } from '@remix-run/react';
 
 import { initServer } from '~/services/API';
 
-export async function DashNovelIdLoader({ request, params }: LoaderFunctionArgs) {
+export async function DashPageIdLoader({ request, params }: LoaderFunctionArgs) {
   const { supabaseClient, headers } = await initServer(request);
 
   try {
     const response = await supabaseClient
-      .from('draft_novel')
+      .from('pages')
       .select('*')
-      .match({ id: params.draft_id as string })
+      .match({ id: params.page_id as string })
       .single();
 
     if (response.error) throw response.error;
+    console.dir(response);
     return json(response.data, { headers });
   } catch (error) {
     console.error(error);
@@ -25,28 +26,26 @@ export async function DashNovelIdLoader({ request, params }: LoaderFunctionArgs)
   }
 }
 
-export async function DashNovelIdAction({ request, params}: ActionFunctionArgs) {
+export async function DashPageIdAction({ request, params}: ActionFunctionArgs) {
   const formData = await request.formData();
   const body = formData.get('lexical') as string;
-  const title = formData.get('novel-title');
+  const reference_title = formData.get('page-title');
 
   const { supabaseClient, headers } = await initServer(request);
   const user = await supabaseClient.auth.getUser();
   const userData = user.data?.user;
   if (!userData?.id) return null;
   const response = await supabaseClient
-    .from('draft_novel')
+    .from('pages')
     .update({
       body: JSON.parse(body),
-      title,
+      reference_title,
       updated_at: new Date(),
       updated_by: userData?.id
     })
-    .match({ id: params.draft_id })
+    .match({ id: params.page_id })
     .select()
     .single();
-
-  await supabaseClient.from('library').update({ title, updated_at: new Date() }).match({ draft_id: params.draft_id });
 
   return json(response?.data, { headers });
 }

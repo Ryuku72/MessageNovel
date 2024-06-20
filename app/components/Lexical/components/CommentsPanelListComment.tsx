@@ -1,7 +1,8 @@
 import { useState } from 'react';
 
+import { StickyIcon, TrashIcon } from '~/svg';
+
 import { Comment, Thread } from '../helpers';
-import { StickyIcon, TrashIcon } from '../svg';
 import CommentsComposer from './CommentComposer';
 import { DeletePopupModal } from './DeletePopUpModal';
 

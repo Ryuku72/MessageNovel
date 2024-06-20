@@ -73,7 +73,7 @@
   }
 
   .editor-quote {
-    @apply mt-0 mr-0 mb-2 ml-4 pl-4 text-base text-gray-700 border-l-slate-300 border-l-4 border-solid;
+    @apply mt-0 mr-0 mb-2 ml-4 pl-4 em:text-base text-gray-700 border-l-slate-300 border-l-4 border-solid;
   }
 
   .editor-listItemChecked,
@@ -86,7 +86,7 @@
   }
 
   .editor-listItemChecked {
-    @apply line-through before:border before:border-solid before:border-green-800 before:bg-green-500 before:rounded-sm before:text-white before:font-semibold before:text-xs before:text-center before:content-['\2713'];
+    @apply line-through before:border before:border-solid before:border-green-800 before:bg-green-500 before:rounded-sm before:text-white before:font-semibold before:em:text-xs before:text-center before:content-['\2713'];
   }
 
   .editor-mark {
