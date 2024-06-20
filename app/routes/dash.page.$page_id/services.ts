@@ -15,7 +15,6 @@ export async function DashPageIdLoader({ request, params }: LoaderFunctionArgs) 
       .single();
 
     if (response.error) throw response.error;
-    console.dir(response);
     return json(response.data, { headers });
   } catch (error) {
     console.error(error);
