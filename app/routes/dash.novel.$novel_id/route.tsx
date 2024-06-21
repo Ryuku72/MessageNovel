@@ -6,6 +6,7 @@ import { useEffect } from 'react';
 import { CreateDate } from '~/helpers/DateHelper';
 import { NovelWithUsers, PageWithUsers } from '~/types';
 
+import Default_Avatar from '~/assets/default_avatar.jpeg';
 import PlusIcon from '~/svg/PlusIcon/PlusIcon';
 
 import { DashOutletContext } from '../dash/route';
@@ -67,9 +68,14 @@ export default function DashNovelId() {
                     key={user.id}
                     className={`text-grey-700 text-sm ${user.color} pl-1 pr-2 py-1 rounded flex gap-1 flex-wrap items-center text-gray-700`}>
                     <img
-                      src={img_url + 'public/avatars/' + user.avatar}
+                      src={user.avatar ? img_url + 'public/avatars/' + user.avatar : Default_Avatar}
                       className="rounded-full w-4 h-4"
                       alt="user-avatar"
+                      onError={e => {
+                        e.currentTarget.src = Default_Avatar;
+                        e.currentTarget.onerror = null;
+                        return e;
+                      }}
                     />
                     {user.username}
                   </div>
@@ -115,14 +121,15 @@ export default function DashNovelId() {
             </div>
           </div>
         ))}
-        <Form onSubmit={e => {
-           e.preventDefault();
-          const formData = new FormData();
-          formData.append('page_index', (pages?.length + 1).toString() || '0');
-          formData.append('novel_owner', novel.owner.id);
-          formData.append('updated_at', new Date().toISOString());
-          submit(formData, { method: 'put' });
-        }}>
+        <Form
+          onSubmit={e => {
+            e.preventDefault();
+            const formData = new FormData();
+            formData.append('page_index', (pages?.length + 1).toString() || '0');
+            formData.append('novel_owner', novel.owner.id);
+            formData.append('updated_at', new Date().toISOString());
+            submit(formData, { method: 'put' });
+          }}>
           <button
             type="submit"
             name="add_page"

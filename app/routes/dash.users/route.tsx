@@ -5,6 +5,8 @@ import { useEffect, useRef, useState } from 'react';
 
 import { UserDataEntry } from '~/types';
 
+import Default_Avatar from '~/assets/default_avatar.jpeg';
+
 import { DashOutletContext } from '../dash/route';
 import { UserLoader } from './services';
 
@@ -55,7 +57,12 @@ export default function DashUsers() {
               <img
                 alt="create-img"
                 className="w-20 h-20 relative z-10 rounded-full object-cover bg-gradient-to-b from-slate-500 to-fuchsia-600"
-                src={profile.avatar}
+                src={profile?.avatar || Default_Avatar}
+                onError={e => {
+                  e.currentTarget.src = Default_Avatar;
+                  e.currentTarget.onerror = null;
+                  return e;
+                }}
               />
               <div className="relative flex flex-col z-10 text-center">
                 <h3 className="text-current text-2xl font-semibold tracking-wide truncate max-w-full overflow-hidden capitalize">

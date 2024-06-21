@@ -16,7 +16,7 @@ export async function DashLoader(request: LoaderFunctionArgs['request']) {
     if (!user) return redirect('/', { headers });
 
     const userData: UserDataEntry = {
-      avatar: env.SUPABASE_IMG_STORAGE + 'public/avatars/' + avatarURL,
+      avatar: avatarURL ? env.SUPABASE_IMG_STORAGE + 'public/avatars/' + avatarURL : null,
       id: user?.id || '',
       username: user?.user_metadata.username || 'Not Found',
       email: user?.email || 'Unknonwn',

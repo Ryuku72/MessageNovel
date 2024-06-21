@@ -40,7 +40,7 @@ export default function DashPageId() {
     userId: user.id,
     username: user.username,
     color: user.color,
-    avatar: user.avatar
+    avatar: user?.avatar || null
   };
 
   return (

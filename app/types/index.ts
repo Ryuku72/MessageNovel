@@ -6,7 +6,7 @@ export type ProfileEntry = {
   email: string;
   username: string;
   color: string;
-  avatar: string;
+  avatar: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -46,7 +46,7 @@ export type PageWithUsers = Omit<Page, 'owner'> & { owner: BasicProfile; members
 
 export type AuthProfileEntry = User & {
   user_metadata: {
-    avatar: string;
+    avatar?: string;
     color: string;
     username: string;
   };

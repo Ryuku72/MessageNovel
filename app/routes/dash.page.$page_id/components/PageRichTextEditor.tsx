@@ -22,8 +22,10 @@ import CommentPlugin from '~/components/Lexical/plugins/CommentPlugin';
 import { MaxLengthPlugin } from '~/components/Lexical/plugins/MaxLengthPlugin';
 import OnChangePlugin from '~/components/Lexical/plugins/OnChangePlugin';
 import SpeechToTextPlugin from '~/components/Lexical/plugins/SpeechToTextPlugin';
-import ToolbarPlugin from '~/components/Lexical/plugins/ToolbarPlugin';
 import ToggleEditState from '~/components/Lexical/plugins/ToggleEditState';
+import ToolbarPlugin from '~/components/Lexical/plugins/ToolbarPlugin';
+
+import Default_Avatar from '~/assets/default_avatar.jpeg';
 
 export type ActiveUserProfile = { userId: string; username: string; color: string; avatar: string };
 
@@ -176,7 +178,11 @@ export function PageRichTextEditor({
             <div
               key={user.userId}
               className={`text-grey-700 text-sm ${user.color} px-2 py-1 rounded-lg flex gap-1 flex-wrap items-center text-gray-700`}>
-              <img src={user.avatar} className="rounded-full w-4 h-4" alt="user-avatar" />
+              <img src={user?.avatar || Default_Avatar} className="rounded-full w-4 h-4" alt="user-avatar" onError={e => {
+                e.currentTarget.src = Default_Avatar;
+                e.currentTarget.onerror = null;
+                return e;
+              }} />
               {user.username}
             </div>
           ))}
@@ -223,12 +229,12 @@ export function PageRichTextEditor({
           <ClearEditorPlugin />
           <ToggleEditState enable_edit={enableCollab} />
           <MaxLengthPlugin maxLength={maxLength} setTextLength={setTextLength} />
-            <CommentPlugin
-              userData={userData}
-              providerFactory={createChatProviderFactory}
-              status={chatStatus}
-              handleConnectionToggle={() => yjsChatProvider && handleConnectionToggle(yjsChatProvider, chatStatus)}
-            />
+          <CommentPlugin
+            userData={userData}
+            providerFactory={createChatProviderFactory}
+            status={chatStatus}
+            handleConnectionToggle={() => yjsChatProvider && handleConnectionToggle(yjsChatProvider, chatStatus)}
+          />
           <p
             className={`sticky md:bottom-1 bottom-[90px] right-4 p-2 m-2 bg-slate-400 backdrop-blur-sm bg-opacity-50 rounded-lg text-xs self-end ${textLength < maxLength ? 'text-blue-800' : 'text-red-400'}`}>
             {textLength} / {maxLength} length

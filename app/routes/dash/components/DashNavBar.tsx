@@ -31,6 +31,11 @@ export default function DashNavBar({ user }: DashNavBarProps) {
                 alt="create-img"
                 className="w-full h-full rounded object-cover bg-gradient-to-b from-slate-500 to-fuchsia-600"
                 src={user?.avatar || Default_Avatar}
+                onError={e => {
+                  e.currentTarget.src = Default_Avatar;
+                  e.currentTarget.onerror = null;
+                  return e;
+                }}
               />
             </NavLink>
             <div

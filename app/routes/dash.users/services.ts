@@ -11,7 +11,6 @@ export async function UserLoader(request: LoaderFunctionArgs['request']) {
     if (response.error) throw response.error;
     await response.data.forEach(async user => {
       if (user.avatar) {
-
         user.avatar = env.SUPABASE_IMG_STORAGE + 'public/avatars/' + user.avatar;
         return user;
       }
