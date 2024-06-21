@@ -7,10 +7,9 @@ To try out the website please visit [Message Novel](https://messagenovel.vercel.
 
 ## Supabase Database Setup
 
-To set up tables and storage in Supabase please copy and paste the following commands into the SQL Editor.
+To set up tables and storage in Supabase please copy and paste the following commands into the SQL Editor. Please do it in order due to how dropping tables for updates work.
 
 ### Public Profile
-
 ```sh
 DROP TABLE IF EXISTS public.profiles cascade;
 
@@ -21,28 +20,38 @@ CREATE TABLE
     username text,
     color text,
     avatar text,
-    created_at timestamp DEFAULT current_timestamp,
-    updated_at timestamp DEFAULT current_timestamp,
+    created_at timestamp DEFAULT now(),
+    updated_at timestamp DEFAULT now(),
     PRIMARY KEY (id)
   );
 
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Can only view own profile data." ON public.profiles
-for SELECT
-to authenticated
-using (
-  true
-);
+CREATE POLICY "Allow select for all profiles" ON public.profiles FOR
+SELECT
+  USING (true);
 
-CREATE POLICY "Can only update own profile data." ON public.profiles
+CREATE POLICY "Can only update own user data." ON public.profiles
 FOR UPDATE
   USING (auth.uid () = id);
 
-CREATE POLICY "Can only delete own profile data." ON public.profiles FOR DELETE USING (auth.uid () = id);
+CREATE POLICY "Can only delete own user data." ON public.profiles FOR DELETE USING (auth.uid () = id);
+
+CREATE OR REPLACE FUNCTION handle_updated_at()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at = NOW();
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER set_updated_at
+BEFORE UPDATE ON public.profiles
+FOR EACH ROW
+EXECUTE FUNCTION handle_updated_at();
 
 CREATE
-OR REPLACE FUNCTION public.create_profile () RETURNS TRIGGER AS $$ BEGIN INSERT INTO public.profiles (id, email, username, color, avatar) 
+OR REPLACE FUNCTION public.create_user () RETURNS TRIGGER AS $$ BEGIN INSERT INTO public.profiles (id, email, username, color, avatar) 
 VALUES 
   (
     NEW.id,
@@ -56,12 +65,12 @@ END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 CREATE
-OR REPLACE TRIGGER create_profile_trigger
+OR REPLACE TRIGGER create_user_trigger
 AFTER INSERT ON auth.users FOR EACH ROW WHEN (NEW.raw_user_meta_data IS NOT NULL)
-EXECUTE FUNCTION public.create_profile ();
+EXECUTE FUNCTION public.create_user ();
 
 CREATE
-OR REPLACE FUNCTION public.update_profiles_from_auth () RETURNS TRIGGER AS $$
+OR REPLACE FUNCTION public.update_users_from_auth () RETURNS TRIGGER AS $$
 BEGIN
   UPDATE public.profiles 
   SET (updated_at, username, color, avatar) = (
@@ -78,81 +87,217 @@ BEGIN
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 CREATE
-OR REPLACE TRIGGER update_profile_trigger
+OR REPLACE TRIGGER update_user_trigger
 AFTER
 UPDATE ON auth.users FOR EACH ROW WHEN (
   NEW.raw_user_meta_data IS DISTINCT FROM OLD.raw_user_meta_data
 )
-EXECUTE FUNCTION public.update_profiles_from_auth ();
+EXECUTE FUNCTION public.update_users_from_auth ();
+```
 
-CREATE
-OR REPLACE FUNCTION public.create_first_library_entry () RETURNS TRIGGER AS $$ 
-BEGIN 
- -- Indicate that the special condition should apply
-INSERT INTO public.special_condition (user_id) VALUES (NEW.id);
-INSERT INTO public.library (members, title, owner, description, owner_username, updated_by) 
+### Special Conditions
+
+```sh
+drop table if exists public.special_condition cascade;
+
+create table
+  public.special_condition (
+    id uuid default uuid_generate_v4 () unique,
+    created_at timestamp default current_timestamp,
+    user_id uuid default gen_random_uuid(),
+    primary key (id)
+  );
+
+```
+
+### Public Novels
+
+```sh
+drop table if exists public.novels cascade;
+
+create table
+  public.novels (
+    id uuid NOT NULL DEFAULT uuid_generate_v4 () unique,
+    created_at timestamp default now(),
+    updated_at timestamp default now(),
+    owner uuid REFERENCES public.profiles (id) ON DELETE CASCADE,
+    title text,
+    description jsonb,
+    primary key (id)
+  );
+
+alter table public.novels enable row level security;
+
+CREATE POLICY "Allow select for all novels" ON public.novels FOR
+SELECT
+  USING (true);
+
+create policy "Can only insert if authenticated." on public.novels for insert to authenticated
+with
+  check (true);
+
+create policy "Can only update if owner" on public.novels
+for update
+  to authenticated using (owner = auth.uid ());
+
+create policy "Can only delete if owner" on public.novels for delete using (auth.uid () = owner);
+
+CREATE OR REPLACE FUNCTION handle_updated_at()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at = NOW();
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER set_updated_at
+BEFORE UPDATE ON public.novels
+FOR EACH ROW
+EXECUTE FUNCTION handle_updated_at();
+
+create
+or replace function public.create_first_novel_entry () returns trigger as $$
+begin
+insert into public.special_condition (user_id) VALUES (new.id);
+insert into public.novels (owner, title, description) 
 VALUES 
   (
-    ARRAY[NEW.id],
-    'Example Novel',
-    NEW.id,
-    '{"root":{"children":[{"children":[{"detail":0,"format":0,"mode":"normal","style":"","text":"This is an example entry for your library. If you would like to update the description or title then please click the \"Edit Description\" button below. If you would to use this entry to try write a novel then click the \"Write Novel\" button. Lastly, if you would like to delete this entry then please click the red text below marked \"Delete Novel\". I hope you have a whimsical time. ","type":"text","version":1},{"type":"linebreak","version":1},{"type":"linebreak","version":1},{"detail":0,"format":0,"mode":"normal","style":"","text":"- Your friend Josh ","type":"text","version":1}],"direction":"ltr","format":"","indent":0,"type":"paragraph","version":1,"textFormat":0}],"direction":"ltr","format":"","indent":0,"type":"root","version":1}}',
-    NEW.username,
-    NEW.id
+    new.id,
+    'Example Novel for ' || new.username,
+    '{"root":{"children":[{"children":[{"detail":0,"format":0,"mode":"normal","style":"","text":"This is an example entry for your library. If you would like to update the description or title then please click the \"Edit Description\" button below. If you would to use this entry to try write a novel then click the \"Write Novel\" button. Lastly, if you would like to delete this entry then please click the red text below marked \"Delete Novel\". I hope you have a whimsical time. ","type":"text","version":1},{"type":"linebreak","version":1},{"type":"linebreak","version":1},{"detail":0,"format":0,"mode":"normal","style":"","text":"- Your friend Josh ","type":"text","version":1}],"direction":"ltr","format":"","indent":0,"type":"paragraph","version":1,"textFormat":0}],"direction":"ltr","format":"","indent":0,"type":"root","version":1}}'
   );
 RETURN NEW;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 CREATE
-OR REPLACE TRIGGER create_profile_library_entry_trigger
-AFTER INSERT ON public.profiles FOR EACH ROW WHEN (NEW.id IS NOT NULL)
-EXECUTE FUNCTION public.create_first_library_entry ();
+OR REPLACE TRIGGER create_user_novel_entry_trigger
+AFTER INSERT ON public.profiles FOR EACH ROW WHEN (new.id IS NOT NULL)
+EXECUTE FUNCTION public.create_first_novel_entry ();
 
 ```
 
-### Public Library
+### Public Novel Members
 
 ```sh
-drop table if exists public.library cascade;
+DROP TABLE IF EXISTS public.novel_members cascade;
 
-create table
-  public.library (
-    id uuid DEFAULT uuid_generate_v4 () unique,
-    created_at timestamp default current_timestamp,
-    updated_at timestamp default current_timestamp,
-    members uuid[],
-    title text,
-    owner uuid REFERENCES auth.users (id) ON DELETE CASCADE,
-    description jsonb,
-    updated_by text DEFAULT auth.uid (),
-    draft_id uuid DEFAULT uuid_generate_v4 () REFERENCES public.draft_novel (id) ON DELETE CASCADE unique,
-    published_id uuid REFERENCES public.published_novel (id) unique,
-    owner_username text,
-    primary key (id)
+CREATE TABLE
+  public.novel_members (
+    user_id uuid REFERENCES public.profiles (id) ON DELETE CASCADE,
+    novel_id uuid REFERENCES public.novels (id) ON DELETE CASCADE,
+    PRIMARY KEY (novel_id, user_id)
   );
 
-alter table public.library enable row level security;
+ALTER TABLE public.novel_members ENABLE ROW LEVEL SECURITY;
 
-create policy "Can only view if authenticated." on public.library for
+create policy "Can only select if authenticated." on public.novel_members for
 select
-  to authenticated using (true);
+  using (true);
 
-create policy "Can only insert if authenticated." on public.library for insert to authenticated
+create policy "Can only insert if authenticated." on public.novel_members for insert to authenticated
 with
   check (true);
 
-create policy "Can only update if authenticated" on public.library
-for update
-to authenticated
-  using (
-    true
-  );
+create policy "Can only delete if authenticated" on public.novel_members for DELETE to authenticated using (true);
 
-create policy "Can only delete if owner" on public.library for delete using (auth.uid () = owner);
+create policy "Can only update if authenticated" on public.novel_members
+for update
+  to authenticated using (true);
+
+create
+or replace function public.create_first_novel_member () returns trigger as $$
+begin
+insert into public.novel_members (novel_id, user_id) 
+VALUES 
+  (
+    new.id,
+    new.owner
+  );
+RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
 CREATE
-OR REPLACE FUNCTION public.create_draft_novel () RETURNS TRIGGER AS $$ 
+OR REPLACE TRIGGER create_user_novel_member_trigger
+AFTER INSERT ON public.novels FOR EACH ROW WHEN (
+  new.id IS NOT NULL
+  and new.owner is not null
+)
+EXECUTE FUNCTION public.create_first_novel_member ();
+
+```
+
+### Public Pages
+
+```sh
+drop table if exists public.pages cascade;
+
+create table
+  public.pages (
+    id uuid NOT NULL default uuid_generate_v4 () unique,
+    created_at timestamp default now(),
+    updated_at timestamp default now(),
+    novel_id uuid references public.novels (id) on delete cascade,
+    owner uuid references public.profiles (id) on delete cascade,
+    reference_title text,
+    published jsonb,
+    enable_collab boolean default true,
+    collab numeric[] DEFAULT '{}'::numeric[] NOT NULL,
+    comments numeric[] DEFAULT '{}'::numeric[] NOT NULL,
+    chat numeric[] DEFAULT '{}'::numeric[] NOT NULL,
+    primary key (id)
+  );
+
+alter table public.pages enable row level security;
+
+CREATE POLICY "Allow select for all" ON public.pages FOR
+SELECT
+  USING (true);
+
+create policy "Can only insert if authenticated." on public.pages for insert to authenticated
+with
+  check (true);
+
+CREATE POLICY "Can only update if owner." ON public.pages
+FOR UPDATE
+  USING (
+    auth.role () = 'authenticated'
+    AND owner = auth.uid ()
+  );
+
+CREATE POLICY "Can only update if page member." ON public.pages
+FOR UPDATE
+  USING (
+    auth.role () = 'authenticated'
+    AND EXISTS (
+      SELECT
+        1
+      FROM
+        public.page_members
+      WHERE
+        page_members.page_id = pages.id
+        AND page_members.user_id = auth.uid ()
+    )
+  );
+
+CREATE POLICY "Owner can delete pages" ON public.pages FOR DELETE USING (auth.uid () = owner);
+
+CREATE OR REPLACE FUNCTION handle_updated_at()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at = NOW();
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER set_updated_at
+BEFORE UPDATE ON public.pages
+FOR EACH ROW
+EXECUTE FUNCTION handle_updated_at();
+
+CREATE
+OR REPLACE FUNCTION public.create_first_page () RETURNS TRIGGER AS $$ 
 DECLARE
     is_special_condition BOOLEAN;
 BEGIN
@@ -161,27 +306,25 @@ BEGIN
   INTO is_special_condition;
   
   IF is_special_condition THEN
-    INSERT INTO public.draft_novel (id, title, owner, members, updated_by, body, collab) 
+    INSERT INTO public.pages (novel_id, owner, reference_title, published, collab) 
     VALUES (
-      NEW.draft_id,
-      NEW.title,
+      NEW.id,
       NEW.owner,
-      NEW.members,
-      NEW.owner,
+      'Page 1: Lorem Ipsum',
  '{"root":{"children":[{"children":[{"detail":0,"format":0,"mode":"normal","style":"","text":"What is Lorem Ipsum?","type":"text","version":1}],"direction":"ltr","format":"left","indent":0,"type":"heading","version":1,"tag":"h3"},{"children":[{"detail":0,"format":1,"mode":"normal","style":"","text":"Lorem Ipsum","type":"text","version":1},{"detail":0,"format":0,"mode":"normal","style":"","text":" is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.","type":"text","version":1}],"direction":"ltr","format":"left","indent":0,"type":"paragraph","version":1,"textFormat":1},{"children":[],"direction":"ltr","format":"left","indent":0,"type":"paragraph","version":1,"textFormat":0},{"children":[{"detail":0,"format":0,"mode":"normal","style":"","text":"Why do we use it?","type":"text","version":1}],"direction":"ltr","format":"left","indent":0,"type":"heading","version":1,"tag":"h3"},{"children":[{"detail":0,"format":0,"mode":"normal","style":"","text":"It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using Content here, content here, making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for lorem ipsum will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).","type":"text","version":1}],"direction":"ltr","format":"left","indent":0,"type":"paragraph","version":1,"textFormat":0},{"children":[],"direction":"ltr","format":"","indent":0,"type":"paragraph","version":1,"textFormat":0},{"children":[{"detail":0,"format":0,"mode":"normal","style":"","text":"Where does it come from?","type":"text","version":1}],"direction":"ltr","format":"left","indent":0,"type":"heading","version":1,"tag":"h3"},{"children":[{"detail":0,"format":0,"mode":"normal","style":"","text":"Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of \"de Finibus Bonorum et Malorum\" (The Extremes of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renaissance. The first line of Lorem Ipsum, \"Lorem ipsum dolor sit amet..\", comes from a line in section 1.10.32.","type":"text","version":1}],"direction":"ltr","format":"left","indent":0,"type":"paragraph","version":1,"textFormat":0},{"children":[{"detail":0,"format":0,"mode":"normal","style":"","text":"The standard chunk of Lorem Ipsum used since the 1500s is reproduced below for those interested. Sections 1.10.32 and 1.10.33 from \"de Finibus Bonorum et Malorum\" by Cicero are also reproduced in their exact original form, accompanied by English versions from the 1914 translation by H. Rackham.","type":"text","version":1}],"direction":"ltr","format":"left","indent":0,"type":"paragraph","version":1,"textFormat":0},{"children":[],"direction":"ltr","format":"left","indent":0,"type":"paragraph","version":1,"textFormat":0},{"children":[{"detail":0,"format":0,"mode":"normal","style":"","text":"Where can I get some?","type":"text","version":1}],"direction":"ltr","format":"left","indent":0,"type":"heading","version":1,"tag":"h3"},{"children":[{"detail":0,"format":0,"mode":"normal","style":"","text":"There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which dont look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isnt anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet. It uses a dictionary of over 200 Latin words, combined with a handful of model sentence structures, to generate Lorem Ipsum which looks reasonable. The generated Lorem Ipsum is therefore always free from repetition, injected humour, or non-characteristic words etc.","type":"text","version":1}],"direction":"ltr","format":"left","indent":0,"type":"paragraph","version":1,"textFormat":0},{"children":[],"direction":null,"format":"left","indent":0,"type":"paragraph","version":1,"textFormat":0},{"children":[{"detail":0,"format":0,"mode":"normal","style":"","text":"The rest is up to you...","type":"text","version":1}],"direction":"ltr","format":"left","indent":0,"type":"paragraph","version":1,"textFormat":0}],"direction":"ltr","format":"","indent":0,"type":"root","version":1}}',
  ARRAY[6,86,215,237,141,228,15,0,7,1,4,114,111,111,116,6,33,0,215,237,141,228,15,0,6,95,95,116,121,112,101,1,33,0,215,237,141,228,15,0,8,95,95,102,111,114,109,97,116,1,33,0,215,237,141,228,15,0,8,95,95,105,110,100,101,110,116,1,33,0,215,237,141,228,15,0,5,95,95,100,105,114,1,33,0,215,237,141,228,15,0,12,95,95,116,101,120,116,70,111,114,109,97,116,1,1,0,215,237,141,228,15,0,1,0,5,129,215,237,141,228,15,6,12,129,215,237,141,228,15,0,1,0,5,161,215,237,141,228,15,4,1,129,215,237,141,228,15,23,1,0,5,129,215,237,141,228,15,31,12,0,1,129,215,237,141,228,15,24,1,0,5,161,215,237,141,228,15,30,1,129,215,237,141,228,15,48,1,0,5,129,215,237,141,228,15,57,12,0,1,129,215,237,141,228,15,74,1,0,5,129,215,237,141,228,15,76,12,0,44,129,215,237,141,228,15,93,1,0,5,129,215,237,141,228,15,138,1,12,0,44,129,215,237,141,228,15,155,1,1,0,5,129,215,237,141,228,15,200,1,12,0,42,161,140,169,150,148,11,0,1,161,215,237,141,228,15,56,1,168,215,237,141,228,15,132,2,1,119,3,108,116,114,161,215,237,141,228,15,1,1,161,215,237,141,228,15,2,1,161,215,237,141,228,15,3,1,161,215,237,141,228,15,133,2,1,161,215,237,141,228,15,5,1,129,215,237,141,228,15,217,1,1,0,5,129,215,237,141,228,15,140,2,1,161,215,237,141,228,15,135,2,1,161,215,237,141,228,15,136,2,1,161,215,237,141,228,15,137,2,1,161,215,237,141,228,15,138,2,1,161,215,237,141,228,15,139,2,1,129,215,237,141,228,15,146,2,1,0,5,129,215,237,141,228,15,152,2,2,161,215,237,141,228,15,147,2,1,161,215,237,141,228,15,148,2,1,161,215,237,141,228,15,149,2,1,161,215,237,141,228,15,150,2,1,161,215,237,141,228,15,151,2,1,129,215,237,141,228,15,159,2,1,0,5,129,215,237,141,228,15,165,2,3,161,215,237,141,228,15,160,2,1,161,215,237,141,228,15,161,2,1,161,215,237,141,228,15,162,2,1,161,215,237,141,228,15,163,2,1,161,215,237,141,228,15,164,2,1,129,215,237,141,228,15,173,2,1,0,5,129,215,237,141,228,15,179,2,4,161,215,237,141,228,15,174,2,1,161,215,237,141,228,15,175,2,1,161,215,237,141,228,15,176,2,1,161,215,237,141,228,15,177,2,1,161,215,237,141,228,15,178,2,1,129,215,237,141,228,15,188,2,1,0,5,129,215,237,141,228,15,194,2,5,161,215,237,141,228,15,189,2,1,161,215,237,141,228,15,190,2,1,161,215,237,141,228,15,191,2,1,161,215,237,141,228,15,192,2,1,161,215,237,141,228,15,193,2,1,129,215,237,141,228,15,204,2,1,0,5,129,215,237,141,228,15,210,2,6,189,1,241,172,169,235,13,0,135,178,246,184,239,5,0,6,40,0,241,172,169,235,13,0,6,95,95,116,121,112,101,1,119,9,112,97,114,97,103,114,97,112,104,40,0,241,172,169,235,13,0,8,95,95,102,111,114,109,97,116,1,125,0,40,0,241,172,169,235,13,0,8,95,95,105,110,100,101,110,116,1,125,0,40,0,241,172,169,235,13,0,5,95,95,100,105,114,1,119,3,108,116,114,40,0,241,172,169,235,13,0,12,95,95,116,101,120,116,70,111,114,109,97,116,1,125,0,7,0,241,172,169,235,13,0,1,40,0,241,172,169,235,13,6,6,95,95,116,121,112,101,1,119,4,116,101,120,116,40,0,241,172,169,235,13,6,8,95,95,102,111,114,109,97,116,1,125,1,40,0,241,172,169,235,13,6,7,95,95,115,116,121,108,101,1,119,0,40,0,241,172,169,235,13,6,6,95,95,109,111,100,101,1,125,0,40,0,241,172,169,235,13,6,8,95,95,100,101,116,97,105,108,1,125,0,132,241,172,169,235,13,6,20,87,104,97,116,32,105,115,32,76,111,114,101,109,32,73,112,115,117,109,63,135,241,172,169,235,13,0,6,40,0,241,172,169,235,13,32,6,95,95,116,121,112,101,1,119,9,112,97,114,97,103,114,97,112,104,40,0,241,172,169,235,13,32,8,95,95,102,111,114,109,97,116,1,125,0,40,0,241,172,169,235,13,32,8,95,95,105,110,100,101,110,116,1,125,0,40,0,241,172,169,235,13,32,5,95,95,100,105,114,1,119,3,108,116,114,40,0,241,172,169,235,13,32,12,95,95,116,101,120,116,70,111,114,109,97,116,1,125,0,7,0,241,172,169,235,13,32,1,40,0,241,172,169,235,13,38,6,95,95,116,121,112,101,1,119,4,116,101,120,116,40,0,241,172,169,235,13,38,8,95,95,102,111,114,109,97,116,1,125,1,40,0,241,172,169,235,13,38,7,95,95,115,116,121,108,101,1,119,0,40,0,241,172,169,235,13,38,6,95,95,109,111,100,101,1,125,0,40,0,241,172,169,235,13,38,8,95,95,100,101,116,97,105,108,1,125,0,132,241,172,169,235,13,38,11,76,111,114,101,109,32,73,112,115,117,109,135,241,172,169,235,13,54,1,40,0,241,172,169,235,13,55,6,95,95,116,121,112,101,1,119,4,116,101,120,116,40,0,241,172,169,235,13,55,8,95,95,102,111,114,109,97,116,1,125,0,40,0,241,172,169,235,13,55,7,95,95,115,116,121,108,101,1,119,0,40,0,241,172,169,235,13,55,6,95,95,109,111,100,101,1,125,0,40,0,241,172,169,235,13,55,8,95,95,100,101,116,97,105,108,1,125,0,132,241,172,169,235,13,55,178,4,32,105,115,32,115,105,109,112,108,121,32,100,117,109,109,121,32,116,101,120,116,32,111,102,32,116,104,101,32,112,114,105,110,116,105,110,103,32,97,110,100,32,116,121,112,101,115,101,116,116,105,110,103,32,105,110,100,117,115,116,114,121,46,32,76,111,114,101,109,32,73,112,115,117,109,32,104,97,115,32,98,101,101,110,32,116,104,101,32,105,110,100,117,115,116,114,121,115,32,115,116,97,110,100,97,114,100,32,100,117,109,109,121,32,116,101,120,116,32,101,118,101,114,32,115,105,110,99,101,32,116,104,101,32,49,53,48,48,115,44,32,119,104,101,110,32,97,110,32,117,110,107,110,111,119,110,32,112,114,105,110,116,101,114,32,116,111,111,107,32,97,32,103,97,108,108,101,121,32,111,102,32,116,121,112,101,32,97,110,100,32,115,99,114,97,109,98,108,101,100,32,105,116,32,116,111,32,109,97,107,101,32,97,32,116,121,112,101,32,115,112,101,99,105,109,101,110,32,98,111,111,107,46,32,73,116,32,104,97,115,32,115,117,114,118,105,118,101,100,32,110,111,116,32,111,110,108,121,32,102,105,118,101,32,99,101,110,116,117,114,105,101,115,44,32,98,117,116,32,97,108,115,111,32,116,104,101,32,108,101,97,112,32,105,110,116,111,32,101,108,101,99,116,114,111,110,105,99,32,116,121,112,101,115,101,116,116,105,110,103,44,32,114,101,109,97,105,110,105,110,103,32,101,115,115,101,110,116,105,97,108,108,121,32,117,110,99,104,97,110,103,101,100,46,32,73,116,32,119,97,115,32,112,111,112,117,108,97,114,105,115,101,100,32,105,110,32,116,104,101,32,49,57,54,48,115,32,119,105,116,104,32,116,104,101,32,114,101,108,101,97,115,101,32,111,102,32,76,101,116,114,97,115,101,116,32,115,104,101,101,116,115,32,99,111,110,116,97,105,110,105,110,103,32,76,111,114,101,109,32,73,112,115,117,109,32,112,97,115,115,97,103,101,115,44,32,97,110,100,32,109,111,114,101,32,114,101,99,101,110,116,108,121,32,119,105,116,104,32,100,101,115,107,116,111,112,32,112,117,98,108,105,115,104,105,110,103,32,115,111,102,116,119,97,114,101,32,108,105,107,101,32,65,108,100,117,115,32,80,97,103,101,77,97,107,101,114,32,105,110,99,108,117,100,105,110,103,32,118,101,114,115,105,111,110,115,32,111,102,32,76,111,114,101,109,32,73,112,115,117,109,46,135,241,172,169,235,13,32,6,40,0,241,172,169,235,13,239,4,6,95,95,116,121,112,101,1,119,9,112,97,114,97,103,114,97,112,104,40,0,241,172,169,235,13,239,4,8,95,95,102,111,114,109,97,116,1,125,0,40,0,241,172,169,235,13,239,4,8,95,95,105,110,100,101,110,116,1,125,0,40,0,241,172,169,235,13,239,4,5,95,95,100,105,114,1,126,40,0,241,172,169,235,13,239,4,12,95,95,116,101,120,116,70,111,114,109,97,116,1,125,0,7,0,241,172,169,235,13,239,4,1,40,0,241,172,169,235,13,245,4,6,95,95,116,121,112,101,1,119,4,116,101,120,116,40,0,241,172,169,235,13,245,4,8,95,95,102,111,114,109,97,116,1,125,0,40,0,241,172,169,235,13,245,4,7,95,95,115,116,121,108,101,1,119,0,40,0,241,172,169,235,13,245,4,6,95,95,109,111,100,101,1,125,0,40,0,241,172,169,235,13,245,4,8,95,95,100,101,116,97,105,108,1,125,0,132,241,172,169,235,13,245,4,2,194,160,135,241,172,169,235,13,239,4,6,40,0,241,172,169,235,13,252,4,6,95,95,116,121,112,101,1,119,9,112,97,114,97,103,114,97,112,104,40,0,241,172,169,235,13,252,4,8,95,95,102,111,114,109,97,116,1,125,0,40,0,241,172,169,235,13,252,4,8,95,95,105,110,100,101,110,116,1,125,0,40,0,241,172,169,235,13,252,4,5,95,95,100,105,114,1,119,3,108,116,114,40,0,241,172,169,235,13,252,4,12,95,95,116,101,120,116,70,111,114,109,97,116,1,125,0,7,0,241,172,169,235,13,252,4,1,40,0,241,172,169,235,13,130,5,6,95,95,116,121,112,101,1,119,4,116,101,120,116,40,0,241,172,169,235,13,130,5,8,95,95,102,111,114,109,97,116,1,125,1,40,0,241,172,169,235,13,130,5,7,95,95,115,116,121,108,101,1,119,0,40,0,241,172,169,235,13,130,5,6,95,95,109,111,100,101,1,125,0,40,0,241,172,169,235,13,130,5,8,95,95,100,101,116,97,105,108,1,125,0,132,241,172,169,235,13,130,5,17,87,104,121,32,100,111,32,119,101,32,117,115,101,32,105,116,63,135,241,172,169,235,13,252,4,6,40,0,241,172,169,235,13,153,5,6,95,95,116,121,112,101,1,119,9,112,97,114,97,103,114,97,112,104,40,0,241,172,169,235,13,153,5,8,95,95,102,111,114,109,97,116,1,125,0,40,0,241,172,169,235,13,153,5,8,95,95,105,110,100,101,110,116,1,125,0,40,0,241,172,169,235,13,153,5,5,95,95,100,105,114,1,119,3,108,116,114,40,0,241,172,169,235,13,153,5,12,95,95,116,101,120,116,70,111,114,109,97,116,1,125,0,7,0,241,172,169,235,13,153,5,1,40,0,241,172,169,235,13,159,5,6,95,95,116,121,112,101,1,119,4,116,101,120,116,40,0,241,172,169,235,13,159,5,8,95,95,102,111,114,109,97,116,1,125,0,40,0,241,172,169,235,13,159,5,7,95,95,115,116,121,108,101,1,119,0,40,0,241,172,169,235,13,159,5,6,95,95,109,111,100,101,1,125,0,40,0,241,172,169,235,13,159,5,8,95,95,100,101,116,97,105,108,1,125,0,132,241,172,169,235,13,159,5,225,4,73,116,32,105,115,32,97,32,108,111,110,103,32,101,115,116,97,98,108,105,115,104,101,100,32,102,97,99,116,32,116,104,97,116,32,97,32,114,101,97,100,101,114,32,119,105,108,108,32,98,101,32,100,105,115,116,114,97,99,116,101,100,32,98,121,32,116,104,101,32,114,101,97,100,97,98,108,101,32,99,111,110,116,101,110,116,32,111,102,32,97,32,112,97,103,101,32,119,104,101,110,32,108,111,111,107,105,110,103,32,97,116,32,105,116,115,32,108,97,121,111,117,116,46,32,84,104,101,32,112,111,105,110,116,32,111,102,32,117,115,105,110,103,32,76,111,114,101,109,32,73,112,115,117,109,32,105,115,32,116,104,97,116,32,105,116,32,104,97,115,32,97,32,109,111,114,101,45,111,114,45,108,101,115,115,32,110,111,114,109,97,108,32,100,105,115,116,114,105,98,117,116,105,111,110,32,111,102,32,108,101,116,116,101,114,115,44,32,97,115,32,111,112,112,111,115,101,100,32,116,111,32,117,115,105,110,103,32,67,111,110,116,101,110,116,32,104,101,114,101,44,32,99,111,110,116,101,110,116,32,104,101,114,101,44,32,109,97,107,105,110,103,32,105,116,32,108,111,111,107,32,108,105,107,101,32,114,101,97,100,97,98,108,101,32,69,110,103,108,105,115,104,46,32,77,97,110,121,32,100,101,115,107,116,111,112,32,112,117,98,108,105,115,104,105,110,103,32,112,97,99,107,97,103,101,115,32,97,110,100,32,119,101,98,32,112,97,103,101,32,101,100,105,116,111,114,115,32,110,111,119,32,117,115,101,32,76,111,114,101,109,32,73,112,115,117,109,32,97,115,32,116,104,101,105,114,32,100,101,102,97,117,108,116,32,109,111,100,101,108,32,116,101,120,116,44,32,97,110,100,32,97,32,115,101,97,114,99,104,32,102,111,114,32,108,111,114,101,109,32,105,112,115,117,109,32,119,105,108,108,32,117,110,99,111,118,101,114,32,109,97,110,121,32,119,101,98,32,115,105,116,101,115,32,115,116,105,108,108,32,105,110,32,116,104,101,105,114,32,105,110,102,97,110,99,121,46,32,86,97,114,105,111,117,115,32,118,101,114,115,105,111,110,115,32,104,97,118,101,32,101,118,111,108,118,101,100,32,111,118,101,114,32,116,104,101,32,121,101,97,114,115,44,32,115,111,109,101,116,105,109,101,115,32,98,121,32,97,99,99,105,100,101,110,116,44,32,115,111,109,101,116,105,109,101,115,32,111,110,32,112,117,114,112,111,115,101,32,40,105,110,106,101,99,116,101,100,32,104,117,109,111,117,114,32,97,110,100,32,116,104,101,32,108,105,107,101,41,46,135,241,172,169,235,13,153,5,6,40,0,241,172,169,235,13,134,10,6,95,95,116,121,112,101,1,119,9,112,97,114,97,103,114,97,112,104,40,0,241,172,169,235,13,134,10,8,95,95,102,111,114,109,97,116,1,125,0,40,0,241,172,169,235,13,134,10,8,95,95,105,110,100,101,110,116,1,125,0,40,0,241,172,169,235,13,134,10,5,95,95,100,105,114,1,126,40,0,241,172,169,235,13,134,10,12,95,95,116,101,120,116,70,111,114,109,97,116,1,125,0,7,0,241,172,169,235,13,134,10,1,40,0,241,172,169,235,13,140,10,6,95,95,116,121,112,101,1,119,4,116,101,120,116,40,0,241,172,169,235,13,140,10,8,95,95,102,111,114,109,97,116,1,125,0,40,0,241,172,169,235,13,140,10,7,95,95,115,116,121,108,101,1,119,0,40,0,241,172,169,235,13,140,10,6,95,95,109,111,100,101,1,125,0,40,0,241,172,169,235,13,140,10,8,95,95,100,101,116,97,105,108,1,125,0,132,241,172,169,235,13,140,10,2,194,160,135,241,172,169,235,13,134,10,6,40,0,241,172,169,235,13,147,10,6,95,95,116,121,112,101,1,119,9,112,97,114,97,103,114,97,112,104,40,0,241,172,169,235,13,147,10,8,95,95,102,111,114,109,97,116,1,125,0,40,0,241,172,169,235,13,147,10,8,95,95,105,110,100,101,110,116,1,125,0,40,0,241,172,169,235,13,147,10,5,95,95,100,105,114,1,119,3,108,116,114,40,0,241,172,169,235,13,147,10,12,95,95,116,101,120,116,70,111,114,109,97,116,1,125,0,7,0,241,172,169,235,13,147,10,1,40,0,241,172,169,235,13,153,10,6,95,95,116,121,112,101,1,119,4,116,101,120,116,40,0,241,172,169,235,13,153,10,8,95,95,102,111,114,109,97,116,1,125,1,40,0,241,172,169,235,13,153,10,7,95,95,115,116,121,108,101,1,119,0,40,0,241,172,169,235,13,153,10,6,95,95,109,111,100,101,1,125,0,40,0,241,172,169,235,13,153,10,8,95,95,100,101,116,97,105,108,1,125,0,132,241,172,169,235,13,153,10,24,87,104,101,114,101,32,100,111,101,115,32,105,116,32,99,111,109,101,32,102,114,111,109,63,135,241,172,169,235,13,147,10,6,40,0,241,172,169,235,13,183,10,6,95,95,116,121,112,101,1,119,9,112,97,114,97,103,114,97,112,104,40,0,241,172,169,235,13,183,10,8,95,95,102,111,114,109,97,116,1,125,0,40,0,241,172,169,235,13,183,10,8,95,95,105,110,100,101,110,116,1,125,0,40,0,241,172,169,235,13,183,10,5,95,95,100,105,114,1,119,3,108,116,114,40,0,241,172,169,235,13,183,10,12,95,95,116,101,120,116,70,111,114,109,97,116,1,125,0,7,0,241,172,169,235,13,183,10,1,40,0,241,172,169,235,13,189,10,6,95,95,116,121,112,101,1,119,4,116,101,120,116,40,0,241,172,169,235,13,189,10,8,95,95,102,111,114,109,97,116,1,125,0,40,0,241,172,169,235,13,189,10,7,95,95,115,116,121,108,101,1,119,0,40,0,241,172,169,235,13,189,10,6,95,95,109,111,100,101,1,125,0,40,0,241,172,169,235,13,189,10,8,95,95,100,101,116,97,105,108,1,125,0,132,241,172,169,235,13,189,10,251,5,67,111,110,116,114,97,114,121,32,116,111,32,112,111,112,117,108,97,114,32,98,101,108,105,101,102,44,32,76,111,114,101,109,32,73,112,115,117,109,32,105,115,32,110,111,116,32,115,105,109,112,108,121,32,114,97,110,100,111,109,32,116,101,120,116,46,32,73,116,32,104,97,115,32,114,111,111,116,115,32,105,110,32,97,32,112,105,101,99,101,32,111,102,32,99,108,97,115,115,105,99,97,108,32,76,97,116,105,110,32,108,105,116,101,114,97,116,117,114,101,32,102,114,111,109,32,52,53,32,66,67,44,32,109,97,107,105,110,103,32,105,116,32,111,118,101,114,32,50,48,48,48,32,121,101,97,114,115,32,111,108,100,46,32,82,105,99,104,97,114,100,32,77,99,67,108,105,110,116,111,99,107,44,32,97,32,76,97,116,105,110,32,112,114,111,102,101,115,115,111,114,32,97,116,32,72,97,109,112,100,101,110,45,83,121,100,110,101,121,32,67,111,108,108,101,103,101,32,105,110,32,86,105,114,103,105,110,105,97,44,32,108,111,111,107,101,100,32,117,112,32,111,110,101,32,111,102,32,116,104,101,32,109,111,114,101,32,111,98,115,99,117,114,101,32,76,97,116,105,110,32,119,111,114,100,115,44,32,99,111,110,115,101,99,116,101,116,117,114,44,32,102,114,111,109,32,97,32,76,111,114,101,109,32,73,112,115,117,109,32,112,97,115,115,97,103,101,44,32,97,110,100,32,103,111,105,110,103,32,116,104,114,111,117,103,104,32,116,104,101,32,99,105,116,101,115,32,111,102,32,116,104,101,32,119,111,114,100,32,105,110,32,99,108,97,115,115,105,99,97,108,32,108,105,116,101,114,97,116,117,114,101,44,32,100,105,115,99,111,118,101,114,101,100,32,116,104,101,32,117,110,100,111,117,98,116,97,98,108,101,32,115,111,117,114,99,101,46,32,76,111,114,101,109,32,73,112,115,117,109,32,99,111,109,101,115,32,102,114,111,109,32,115,101,99,116,105,111,110,115,32,49,46,49,48,46,51,50,32,97,110,100,32,49,46,49,48,46,51,51,32,111,102,32,34,100,101,32,70,105,110,105,98,117,115,32,66,111,110,111,114,117,109,32,101,116,32,77,97,108,111,114,117,109,34,32,40,84,104,101,32,69,120,116,114,101,109,101,115,32,111,102,32,71,111,111,100,32,97,110,100,32,69,118,105,108,41,32,98,121,32,67,105,99,101,114,111,44,32,119,114,105,116,116,101,110,32,105,110,32,52,53,32,66,67,46,32,84,104,105,115,32,98,111,111,107,32,105,115,32,97,32,116,114,101,97,116,105,115,101,32,111,110,32,116,104,101,32,116,104,101,111,114,121,32,111,102,32,101,116,104,105,99,115,44,32,118,101,114,121,32,112,111,112,117,108,97,114,32,100,117,114,105,110,103,32,116,104,101,32,82,101,110,97,105,115,115,97,110,99,101,46,32,84,104,101,32,102,105,114,115,116,32,108,105,110,101,32,111,102,32,76,111,114,101,109,32,73,112,115,117,109,44,32,34,76,111,114,101,109,32,105,112,115,117,109,32,100,111,108,111,114,32,115,105,116,32,97,109,101,116,46,46,34,44,32,99,111,109,101,115,32,102,114,111,109,32,97,32,108,105,110,101,32,105,110,32,115,101,99,116,105,111,110,32,49,46,49,48,46,51,50,46,135,241,172,169,235,13,183,10,6,40,0,241,172,169,235,13,190,16,6,95,95,116,121,112,101,1,119,9,112,97,114,97,103,114,97,112,104,40,0,241,172,169,235,13,190,16,8,95,95,102,111,114,109,97,116,1,125,0,40,0,241,172,169,235,13,190,16,8,95,95,105,110,100,101,110,116,1,125,0,40,0,241,172,169,235,13,190,16,5,95,95,100,105,114,1,119,3,108,116,114,40,0,241,172,169,235,13,190,16,12,95,95,116,101,120,116,70,111,114,109,97,116,1,125,0,7,0,241,172,169,235,13,190,16,1,40,0,241,172,169,235,13,196,16,6,95,95,116,121,112,101,1,119,4,116,101,120,116,40,0,241,172,169,235,13,196,16,8,95,95,102,111,114,109,97,116,1,125,0,40,0,241,172,169,235,13,196,16,7,95,95,115,116,121,108,101,1,119,0,40,0,241,172,169,235,13,196,16,6,95,95,109,111,100,101,1,125,0,40,0,241,172,169,235,13,196,16,8,95,95,100,101,116,97,105,108,1,125,0,132,241,172,169,235,13,196,16,167,2,84,104,101,32,115,116,97,110,100,97,114,100,32,99,104,117,110,107,32,111,102,32,76,111,114,101,109,32,73,112,115,117,109,32,117,115,101,100,32,115,105,110,99,101,32,116,104,101,32,49,53,48,48,115,32,105,115,32,114,101,112,114,111,100,117,99,101,100,32,98,101,108,111,119,32,102,111,114,32,116,104,111,115,101,32,105,110,116,101,114,101,115,116,101,100,46,32,83,101,99,116,105,111,110,115,32,49,46,49,48,46,51,50,32,97,110,100,32,49,46,49,48,46,51,51,32,102,114,111,109,32,34,100,101,32,70,105,110,105,98,117,115,32,66,111,110,111,114,117,109,32,101,116,32,77,97,108,111,114,117,109,34,32,98,121,32,67,105,99,101,114,111,32,97,114,101,32,97,108,115,111,32,114,101,112,114,111,100,117,99,101,100,32,105,110,32,116,104,101,105,114,32,101,120,97,99,116,32,111,114,105,103,105,110,97,108,32,102,111,114,109,44,32,97,99,99,111,109,112,97,110,105,101,100,32,98,121,32,69,110,103,108,105,115,104,32,118,101,114,115,105,111,110,115,32,102,114,111,109,32,116,104,101,32,49,57,49,52,32,116,114,97,110,115,108,97,116,105,111,110,32,98,121,32,72,46,32,82,97,99,107,104,97,109,46,135,241,172,169,235,13,190,16,6,40,0,241,172,169,235,13,241,18,6,95,95,116,121,112,101,1,119,9,112,97,114,97,103,114,97,112,104,40,0,241,172,169,235,13,241,18,8,95,95,102,111,114,109,97,116,1,125,0,40,0,241,172,169,235,13,241,18,8,95,95,105,110,100,101,110,116,1,125,0,40,0,241,172,169,235,13,241,18,5,95,95,100,105,114,1,126,40,0,241,172,169,235,13,241,18,12,95,95,116,101,120,116,70,111,114,109,97,116,1,125,0,7,0,241,172,169,235,13,241,18,1,40,0,241,172,169,235,13,247,18,6,95,95,116,121,112,101,1,119,4,116,101,120,116,40,0,241,172,169,235,13,247,18,8,95,95,102,111,114,109,97,116,1,125,0,40,0,241,172,169,235,13,247,18,7,95,95,115,116,121,108,101,1,119,0,40,0,241,172,169,235,13,247,18,6,95,95,109,111,100,101,1,125,0,40,0,241,172,169,235,13,247,18,8,95,95,100,101,116,97,105,108,1,125,0,132,241,172,169,235,13,247,18,2,194,160,135,241,172,169,235,13,241,18,6,40,0,241,172,169,235,13,254,18,6,95,95,116,121,112,101,1,119,9,112,97,114,97,103,114,97,112,104,40,0,241,172,169,235,13,254,18,8,95,95,102,111,114,109,97,116,1,125,0,40,0,241,172,169,235,13,254,18,8,95,95,105,110,100,101,110,116,1,125,0,40,0,241,172,169,235,13,254,18,5,95,95,100,105,114,1,119,3,108,116,114,40,0,241,172,169,235,13,254,18,12,95,95,116,101,120,116,70,111,114,109,97,116,1,125,0,7,0,241,172,169,235,13,254,18,1,40,0,241,172,169,235,13,132,19,6,95,95,116,121,112,101,1,119,4,116,101,120,116,40,0,241,172,169,235,13,132,19,8,95,95,102,111,114,109,97,116,1,125,1,40,0,241,172,169,235,13,132,19,7,95,95,115,116,121,108,101,1,119,0,40,0,241,172,169,235,13,132,19,6,95,95,109,111,100,101,1,125,0,40,0,241,172,169,235,13,132,19,8,95,95,100,101,116,97,105,108,1,125,0,132,241,172,169,235,13,132,19,21,87,104,101,114,101,32,99,97,110,32,73,32,103,101,116,32,115,111,109,101,63,135,241,172,169,235,13,254,18,6,40,0,241,172,169,235,13,159,19,6,95,95,116,121,112,101,1,119,9,112,97,114,97,103,114,97,112,104,40,0,241,172,169,235,13,159,19,8,95,95,102,111,114,109,97,116,1,125,0,40,0,241,172,169,235,13,159,19,8,95,95,105,110,100,101,110,116,1,125,0,40,0,241,172,169,235,13,159,19,5,95,95,100,105,114,1,119,3,108,116,114,40,0,241,172,169,235,13,159,19,12,95,95,116,101,120,116,70,111,114,109,97,116,1,125,0,7,0,241,172,169,235,13,159,19,1,40,0,241,172,169,235,13,165,19,6,95,95,116,121,112,101,1,119,4,116,101,120,116,40,0,241,172,169,235,13,165,19,8,95,95,102,111,114,109,97,116,1,125,0,40,0,241,172,169,235,13,165,19,7,95,95,115,116,121,108,101,1,119,0,40,0,241,172,169,235,13,165,19,6,95,95,109,111,100,101,1,125,0,40,0,241,172,169,235,13,165,19,8,95,95,100,101,116,97,105,108,1,125,0,132,241,172,169,235,13,165,19,236,5,84,104,101,114,101,32,97,114,101,32,109,97,110,121,32,118,97,114,105,97,116,105,111,110,115,32,111,102,32,112,97,115,115,97,103,101,115,32,111,102,32,76,111,114,101,109,32,73,112,115,117,109,32,97,118,97,105,108,97,98,108,101,44,32,98,117,116,32,116,104,101,32,109,97,106,111,114,105,116,121,32,104,97,118,101,32,115,117,102,102,101,114,101,100,32,97,108,116,101,114,97,116,105,111,110,32,105,110,32,115,111,109,101,32,102,111,114,109,44,32,98,121,32,105,110,106,101,99,116,101,100,32,104,117,109,111,117,114,44,32,111,114,32,114,97,110,100,111,109,105,115,101,100,32,119,111,114,100,115,32,119,104,105,99,104,32,100,111,110,116,32,108,111,111,107,32,101,118,101,110,32,115,108,105,103,104,116,108,121,32,98,101,108,105,101,118,97,98,108,101,46,32,73,102,32,121,111,117,32,97,114,101,32,103,111,105,110,103,32,116,111,32,117,115,101,32,97,32,112,97,115,115,97,103,101,32,111,102,32,76,111,114,101,109,32,73,112,115,117,109,44,32,121,111,117,32,110,101,101,100,32,116,111,32,98,101,32,115,117,114,101,32,116,104,101,114,101,32,105,115,110,116,32,97,110,121,116,104,105,110,103,32,101,109,98,97,114,114,97,115,115,105,110,103,32,104,105,100,100,101,110,32,105,110,32,116,104,101,32,109,105,100,100,108,101,32,111,102,32,116,101,120,116,46,32,65,108,108,32,116,104,101,32,76,111,114,101,109,32,73,112,115,117,109,32,103,101,110,101,114,97,116,111,114,115,32,111,110,32,116,104,101,32,73,110,116,101,114,110,101,116,32,116,101,110,100,32,116,111,32,114,101,112,101,97,116,32,112,114,101,100,101,102,105,110,101,100,32,99,104,117,110,107,115,32,97,115,32,110,101,99,101,115,115,97,114,121,44,32,109,97,107,105,110,103,32,116,104,105,115,32,116,104,101,32,102,105,114,115,116,32,116,114,117,101,32,103,101,110,101,114,97,116,111,114,32,111,110,32,116,104,101,32,73,110,116,101,114,110,101,116,46,32,73,116,32,117,115,101,115,32,97,32,100,105,99,116,105,111,110,97,114,121,32,111,102,32,111,118,101,114,32,50,48,48,32,76,97,116,105,110,32,119,111,114,100,115,44,32,99,111,109,98,105,110,101,100,32,119,105,116,104,32,97,32,104,97,110,100,102,117,108,32,111,102,32,109,111,100,101,108,32,115,101,110,116,101,110,99,101,32,115,116,114,117,99,116,117,114,101,115,44,32,116,111,32,103,101,110,101,114,97,116,101,32,76,111,114,101,109,32,73,112,115,117,109,32,119,104,105,99,104,32,108,111,111,107,115,32,114,101,97,115,111,110,97,98,108,101,46,32,84,104,101,32,103,101,110,101,114,97,116,101,100,32,76,111,114,101,109,32,73,112,115,117,109,32,105,115,32,116,104,101,114,101,102,111,114,101,32,97,108,119,97,121,115,32,102,114,101,101,32,102,114,111,109,32,114,101,112,101,116,105,116,105,111,110,44,32,105,110,106,101,99,116,101,100,32,104,117,109,111,117,114,44,32,111,114,32,110,111,110,45,99,104,97,114,97,99,116,101,114,105,115,116,105,99,32,119,111,114,100,115,32,101,116,99,46,135,241,172,169,235,13,159,19,6,40,0,241,172,169,235,13,151,25,6,95,95,116,121,112,101,1,119,9,112,97,114,97,103,114,97,112,104,40,0,241,172,169,235,13,151,25,8,95,95,102,111,114,109,97,116,1,125,0,40,0,241,172,169,235,13,151,25,8,95,95,105,110,100,101,110,116,1,125,0,40,0,241,172,169,235,13,151,25,5,95,95,100,105,114,1,126,40,0,241,172,169,235,13,151,25,12,95,95,116,101,120,116,70,111,114,109,97,116,1,125,0,7,0,241,172,169,235,13,151,25,1,40,0,241,172,169,235,13,157,25,6,95,95,116,121,112,101,1,119,4,116,101,120,116,40,0,241,172,169,235,13,157,25,8,95,95,102,111,114,109,97,116,1,125,0,40,0,241,172,169,235,13,157,25,7,95,95,115,116,121,108,101,1,119,0,40,0,241,172,169,235,13,157,25,6,95,95,109,111,100,101,1,125,0,40,0,241,172,169,235,13,157,25,8,95,95,100,101,116,97,105,108,1,125,0,132,241,172,169,235,13,157,25,2,194,160,135,241,172,169,235,13,151,25,6,40,0,241,172,169,235,13,164,25,6,95,95,116,121,112,101,1,119,9,112,97,114,97,103,114,97,112,104,40,0,241,172,169,235,13,164,25,8,95,95,102,111,114,109,97,116,1,125,0,40,0,241,172,169,235,13,164,25,8,95,95,105,110,100,101,110,116,1,125,0,40,0,241,172,169,235,13,164,25,5,95,95,100,105,114,1,119,3,108,116,114,40,0,241,172,169,235,13,164,25,12,95,95,116,101,120,116,70,111,114,109,97,116,1,125,0,7,0,241,172,169,235,13,164,25,1,40,0,241,172,169,235,13,170,25,6,95,95,116,121,112,101,1,119,4,116,101,120,116,40,0,241,172,169,235,13,170,25,8,95,95,102,111,114,109,97,116,1,125,0,40,0,241,172,169,235,13,170,25,7,95,95,115,116,121,108,101,1,119,0,40,0,241,172,169,235,13,170,25,6,95,95,109,111,100,101,1,125,0,40,0,241,172,169,235,13,170,25,8,95,95,100,101,116,97,105,108,1,125,0,132,241,172,169,235,13,170,25,24,84,104,101,32,114,101,115,116,32,105,115,32,117,112,32,116,111,32,121,111,117,46,46,46,1,194,139,194,249,11,0,0,3,1,140,169,150,148,11,0,33,1,4,114,111,111,116,5,95,95,100,105,114,1,1,238,148,170,233,10,0,129,215,237,141,228,15,221,2,31,4,178,246,184,239,5,0,129,215,237,141,228,15,50,1,0,18,129,238,148,170,233,10,30,1,0,39,5,215,237,141,228,15,2,0,134,2,135,2,87,194,139,194,249,11,1,0,3,140,169,150,148,11,1,0,1,238,148,170,233,10,1,0,31,178,246,184,239,5,1,0,59]
     );
     -- Remove the special condition
     DELETE FROM public.special_condition WHERE user_id = NEW.owner;
   ELSE
-INSERT INTO public.draft_novel (id, title, owner, members, updated_by) 
+INSERT INTO public.pages (novel_id, owner, reference_title, published, collab) 
 VALUES 
   (
-    NEW.draft_id,
-    NEW.title,
+    NEW.id,
     NEW.owner,
-    NEW.members,
-    NEW.owner 
+    'Page one',
+    null,
+    Array[]
   );
  END IF;
 RETURN NEW;
@@ -189,192 +332,64 @@ END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 CREATE
-OR REPLACE TRIGGER create_draft_novel_trigger
-AFTER INSERT ON public.library FOR EACH ROW WHEN (NEW.title IS NOT NULL)
-EXECUTE FUNCTION public.create_draft_novel ();
-
-CREATE
-OR REPLACE FUNCTION public.update_draft_novel () RETURNS TRIGGER AS $$
-BEGIN
-  UPDATE public.draft_novel 
-  SET (updated_by, updated_at, title, members) = (
-    NEW.updated_by,
-    NEW.updated_at,
-    NEW.title,
-    NEW.members
-  )
-  WHERE (
-    public.draft_novel.id = NEW.draft_id
-  );
-  RETURN NEW;
-END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
-
-CREATE
-OR REPLACE TRIGGER update_draft_trigger
-AFTER
-UPDATE ON public.library FOR EACH ROW WHEN (NEW.title IS DISTINCT FROM OLD.title)
-EXECUTE FUNCTION public.update_draft_novel ();
-
-CREATE
-OR REPLACE FUNCTION public.update_library_owner () RETURNS TRIGGER AS $$
-BEGIN
-  UPDATE public.library
-  SET (updated_at, updated_by, owner_username) = (
-    NEW.updated_at,
-    NEW.raw_user_meta_data ->> 'username',
-    NEW.raw_user_meta_data ->> 'username'
-  )
-  WHERE (
-    public.library.owner = NEW.id
-    AND public.library.owner_username <> NEW.raw_user_meta_data ->> 'username'
-  );
-  RETURN NEW;
-  END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
-
-CREATE
-OR REPLACE TRIGGER update_profile_trigger
-AFTER
-UPDATE ON auth.users FOR EACH ROW WHEN (
-  NEW.raw_user_meta_data IS DISTINCT FROM OLD.raw_user_meta_data
-  AND OLD.raw_user_meta_data ->> 'username' IS DISTINCT FROM NEW.raw_user_meta_data ->> 'username'
-)
-EXECUTE FUNCTION public.update_library_owner ();
+OR REPLACE TRIGGER create_first_novel_page_trigger
+AFTER INSERT ON public.novels FOR EACH ROW WHEN (NEW.title IS NOT NULL)
+EXECUTE FUNCTION public.create_first_page ();
 
 ```
 
-### Draft Novel
+### Public Page Members
 
 ```sh
-
-DROP TABLE IF EXISTS public.draft_novel cascade;
-
-CREATE TABLE public.draft_novel (
-    id uuid NOT NULL REFERENCES public.library(draft_id) ON DELETE CASCADE UNIQUE,
-    created_at TIMESTAMP DEFAULT current_timestamp,
-    updated_at TIMESTAMP DEFAULT current_timestamp,
-    members uuid[],
-    title TEXT,
-    owner UUID REFERENCES auth.users(id) ON DELETE CASCADE,
-    updated_by TEXT,
-    body jsonb,
-    collab numeric[] DEFAULT ARRAY[],
-    comments numeric[] DEFAULT ARRAY[],
-    PRIMARY KEY (id)
-);
-
-ALTER TABLE public.draft_novel ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY "Can only view draft novel data if member or owner"
-  ON public.draft_novel
-  FOR SELECT
-  TO authenticated
-  USING ( auth.uid() = owner OR auth.uid() = ANY(members) );
-
-CREATE POLICY "Can insert into draft novel if authenticated"
-  ON public.draft_novel
-  FOR INSERT
-  TO authenticated
-  WITH CHECK ( true );
-
-CREATE POLICY "Can delete draft novel if owner"
-  ON public.draft_novel
-  FOR DELETE
-  USING ( auth.uid() = owner );
-
-CREATE POLICY "Can update draft novel if member or owner"
-  ON public.draft_novel
-  FOR UPDATE
-  TO authenticated
-  USING ( auth.uid() = owner OR auth.uid() = ANY(members));
-
-CREATE OR REPLACE FUNCTION public.update_library_novel() 
-RETURNS TRIGGER AS $$
-BEGIN
-  UPDATE public.library 
-  SET (updated_by, updated_at, title, members) = (
-    NEW.updated_by,
-    NEW.updated_at,
-    NEW.title,
-    NEW.members
-  )
-  WHERE (
-    public.library.draft_id = NEW.id
-  );
-  RETURN NEW;
-END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
-
-CREATE OR REPLACE TRIGGER update_library_trigger
-AFTER UPDATE ON public.draft_novel FOR EACH ROW WHEN (
-  NEW.title IS DISTINCT FROM OLD.title
-) EXECUTE FUNCTION public.update_library_novel();
-
-CREATE
-OR REPLACE FUNCTION public.update_draft_members () RETURNS TRIGGER AS $$
-BEGIN
-  UPDATE public.draft_novel
-  SET members = NEW.members
-  WHERE public.draft_novel.id = NEW.draft_id;
-  RETURN NEW;
-  END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
-
-CREATE
-OR REPLACE TRIGGER update_draft_members_trigger
-AFTER
-UPDATE ON public.library FOR EACH ROW WHEN (
-  NEW.members IS DISTINCT FROM OLD.members
-)
-EXECUTE FUNCTION public.update_draft_members();
-
-```
-
-### Published Novel
-
-```sh
-
-DROP TABLE IF EXISTS public.published_novel cascade;
+DROP TABLE IF EXISTS public.page_members cascade;
 
 CREATE TABLE
-  public.published_novel (
-    id uuid DEFAULT gen_random_uuid() REFERENCES public.library (published_id) UNIQUE,
-    created_at TIMESTAMP DEFAULT current_timestamp,
-    updated_at TIMESTAMP DEFAULT current_timestamp,
-    members uuid[],
-    title TEXT,
-    owner UUID REFERENCES auth.users,
-    updated_by TEXT,
-    body jsonb,
-    PRIMARY KEY (id)
+  public.page_members (
+    user_id uuid REFERENCES public.profiles (id) ON DELETE CASCADE,
+    page_id uuid REFERENCES public.pages (id) ON DELETE CASCADE,
+    PRIMARY KEY (page_id, user_id)
   );
 
-ALTER TABLE public.published_novel ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.page_members ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Can only view published novel data if member or owner" ON public.published_novel FOR
-SELECT
-  TO authenticated USING (
-    auth.uid () = owner
-    OR auth.uid () = ANY (members)
+create
+or replace function public.create_first_page_member () returns trigger as $$
+begin
+insert into public.page_members (page_id, user_id) 
+VALUES 
+  (
+    new.id,
+    new.owner
   );
+RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
-CREATE POLICY "Can insert into published novel if authenticated" ON public.published_novel FOR INSERT TO authenticated
-WITH
-  CHECK (true);
+create policy "Can only select if authenticated." on public.page_members for
+select
+  using (true);
 
-CREATE POLICY "Can delete published novel if owner" ON public.published_novel FOR DELETE USING (auth.uid () = owner);
+create policy "Can only insert if authenticated." on public.page_members for insert to authenticated
+with
+  check (true);
 
-CREATE POLICY "Can update published novel if member or owner" ON public.published_novel
-FOR UPDATE
-  TO authenticated USING (
-    auth.uid () = owner
-    OR auth.uid () = ANY (members)
-  );
+create policy "Can only delete if authenticated" on public.page_members for DELETE to authenticated using (true);
+
+create policy "Can only update if authenticated" on public.page_members
+for update
+  to authenticated using (true);
+
+CREATE
+OR REPLACE TRIGGER create_user_page_member_trigger
+AFTER INSERT ON public.pages FOR EACH ROW WHEN (
+  new.id IS NOT NULL
+  and new.owner is not null
+)
+EXECUTE FUNCTION public.create_first_page_member ();
 
 ```
 
-### Avatar Storage bucket
+### Storage policies
 
 ```sh
 insert into
