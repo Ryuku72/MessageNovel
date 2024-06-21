@@ -26,8 +26,9 @@ import ToggleEditState from '~/components/Lexical/plugins/ToggleEditState';
 import ToolbarPlugin from '~/components/Lexical/plugins/ToolbarPlugin';
 
 import Default_Avatar from '~/assets/default_avatar.jpeg';
+import { BasicProfile } from '~/types';
 
-export type ActiveUserProfile = { userId: string; username: string; color: string; avatar: string };
+export type ActiveUserProfile = Omit<BasicProfile, 'id'> & { userId: string; };
 
 export function PageRichTextEditor({
   namespace,
@@ -40,12 +41,7 @@ export function PageRichTextEditor({
   namespace: string;
   maxLength?: number;
   enableCollab: boolean;
-  userData: {
-    username: string;
-    color: string;
-    avatar: string;
-    userId: string;
-  };
+  userData: ActiveUserProfile;
   supabase: SupabaseClient;
   owner: boolean;
 }) {
@@ -74,7 +70,7 @@ export function PageRichTextEditor({
     if (!yjsProvider) return;
 
     const handleOnlineUsers = (
-      users: { [key: string]: { userId: string; username: string; color: string; avatar: string } }[]
+      users: { [key: string]: ActiveUserProfile }[]
     ) => {
       if (updateRef.current) clearTimeout(updateRef.current);
       if (!users) return;

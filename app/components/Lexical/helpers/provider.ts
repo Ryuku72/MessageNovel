@@ -5,6 +5,7 @@ import debug from 'debug';
 import EventEmitter from 'events';
 import * as awarenessProtocol from 'y-protocols/awareness';
 import * as Y from 'yjs';
+import { ActiveUserProfile } from '~/routes/dash.page.$page_id/components/PageRichTextEditor';
 
 export interface SupabaseProviderConfig {
   channel: string;
@@ -15,12 +16,7 @@ export interface SupabaseProviderConfig {
   resyncInterval?: number | false;
   enableLogger?: boolean;
   disableSave?: boolean;
-  userData: {
-    userId: string;
-    username: string;
-    color: string;
-    avatar: string;
-  };
+  userData: ActiveUserProfile;
 }
 
 export default class SupabaseProvider extends EventEmitter {
@@ -134,12 +130,7 @@ export default class SupabaseProvider extends EventEmitter {
         const users = Object.keys(presenceState)
           .map(presenceId => {
             const presences = presenceState[presenceId] as unknown as {
-              data: {
-                userId: string;
-                username: string;
-                color: string;
-                avatar: string;
-              };
+              data: ActiveUserProfile;
             }[];
             return presences.map(presence => ({
               [presence.data.userId]: {

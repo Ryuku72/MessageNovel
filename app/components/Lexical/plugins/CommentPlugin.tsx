@@ -30,6 +30,7 @@ import AddCommentBox from '../components/AddCommentBox';
 import CommentInputModal from '../components/CommentInputModal';
 import CommentsPanel from '../components/CommentsPanel';
 import { Comment, CommentStore, Thread, useCollabAuthorName, useCommentStore } from '../helpers';
+import { ActiveUserProfile } from '~/routes/dash.page.$page_id/components/PageRichTextEditor';
 
 export const INSERT_INLINE_COMMAND: LexicalCommand<void> = createCommand('INSERT_INLINE_COMMAND');
 
@@ -39,12 +40,7 @@ export default function CommentPlugin({
   status,
   handleConnectionToggle
 }: {
-  userData: {
-    username: string;
-    color: string;
-    avatar: string;
-    userId: string;
-  };
+  userData: ActiveUserProfile;
   providerFactory?: (id: string, yjsDocMap: Map<string, Doc>) => Provider;
   status: string;
   handleConnectionToggle: () => void;
