@@ -83,13 +83,13 @@ export default function About() {
             ))}
           </div>
         </div>
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-3 w-full bg-white rounded py-10 px-4 bg-opacity-35 backdrop-blur-md">
           <h2 className="text-red-700 text-4xl m-0 font-mono text-center font-miltonian [text-shadow:_5px_3px_2px_rgb(225_225_225_/_50%)]">
             {LocalStrings.background.title}
           </h2>
-          <p>{LocalStrings.background.name}</p>
-          <p>{LocalStrings.background.source}</p>
-          <p>{LocalStrings.background.author}</p>
+          <p className="text-2xl text-gray-600">{LocalStrings.background.name}</p>
+          <p className="text-xl text-gray-600" >{LocalStrings.background.source}</p>
+          <p className="text-xl text-gray-600">{LocalStrings.background.author}</p>
         </div>
         <Link to="/" className="primaryButton py-2.5">
           {LocalStrings.primary_button}
