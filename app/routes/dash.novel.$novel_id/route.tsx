@@ -1,5 +1,5 @@
 import { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node';
-import { Form, Link, useLoaderData, useNavigation, useOutletContext } from '@remix-run/react';
+import { Form, Link, useLoaderData, useNavigation, useOutletContext, useSubmit } from '@remix-run/react';
 
 import { useEffect } from 'react';
 
@@ -16,8 +16,8 @@ export function loader(request: LoaderFunctionArgs) {
   return DashNovelIdLoader(request);
 }
 
-export function action({ request }: ActionFunctionArgs) {
-  return DashNovelIdAction(request);
+export function action(data: ActionFunctionArgs) {
+  return DashNovelIdAction(data);
 }
 
 export default function DashNovelId() {
@@ -25,6 +25,7 @@ export default function DashNovelId() {
   const { user, channel, img_url } = useOutletContext<DashOutletContext>();
   const navigationState = useNavigation();
   const isLoadingUpdate = 'submitting' === navigationState.state;
+  const submit = useSubmit();
 
   useEffect(() => {
     if (!channel || channel.state !== 'joined') return;
@@ -37,7 +38,7 @@ export default function DashNovelId() {
         &nbsp;&nbsp;{novel.title}&nbsp;&nbsp;&nbsp;
       </h1>
       <div className="grid grid-cols-1 gap-4 w-full max-w-wide">
-        {pages.map((page, index) => (
+        {pages.map(page => (
           <div
             className="w-full max-w-wide rounded-lg flex flex-col gap-1 bg-white bg-opacity-35 backdrop-blur-lg p-8 text-gray-700 drop-shadow-lg"
             key={page.id}>
@@ -79,11 +80,11 @@ export default function DashNovelId() {
               <DescriptionPreview editorState={page.published} />
             </div>
             <div className="w-full flex gap-3 flex-wrap mt-2 justify-end">
-              <Link
+              {/* <Link
                 to={`/novels/${novel.id}#${index}`}
                 className="rounded-lg text-gray-100 font-semibold flex items-center justify-center h-[50px] w-[165px] bg-slate-700 hover:bg-slate-500">
                 Read Novel
-              </Link>
+              </Link> */}
               <Form method="post" className={!page.members.some(member => member.id === user.id) ? 'flex' : 'hidden'}>
                 <button
                   value={page.id}
@@ -114,14 +115,24 @@ export default function DashNovelId() {
             </div>
           </div>
         ))}
-        <button
-          type="button"
-          className="w-full max-w-wide h-[180px] rounded-lg bg-slate-400 bg-opacity-25 backdrop-blur-lg items-center drop-shadow-lg">
-          <div className="truncate max-w-full p-8 overflow-hidden flex flex-wrap gap-3 text-gray-700">
-            <PlusIcon uniqueId="add_another_page" svgColor="currentColor" className="w-5 h-auto " />{' '}
-            <p className="text-xl font-semibold">Add Another Page</p>
-          </div>
-        </button>
+        <Form onSubmit={e => {
+           e.preventDefault();
+          const formData = new FormData();
+          formData.append('page_index', (pages?.length + 1).toString() || '0');
+          formData.append('novel_owner', novel.owner.id);
+          formData.append('updated_at', new Date().toISOString());
+          submit(formData, { method: 'put' });
+        }}>
+          <button
+            type="submit"
+            name="add_page"
+            className="w-full max-w-wide h-[180px] rounded-lg bg-slate-400 bg-opacity-25 backdrop-blur-lg items-center drop-shadow-lg">
+            <div className="truncate max-w-full p-8 overflow-hidden flex flex-wrap gap-3 text-gray-700">
+              <PlusIcon uniqueId="add_another_page" svgColor="currentColor" className="w-5 h-auto " />{' '}
+              <p className="text-xl font-semibold">Add Another Page</p>
+            </div>
+          </button>
+        </Form>
       </div>
       <div className="flex w-full max-w-wide justify-center sticky bottom-0">
         <Link to="/dash" className="primaryButton py-2.5" type="button">

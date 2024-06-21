@@ -39,6 +39,7 @@ export type Page = {
   collab: number[];
   comments: number[];
   chat: number[];
+  enable_collab: boolean;
 };
 
 export type PageWithUsers = Omit<Page, 'owner'> & { owner: BasicProfile; members: BasicProfile[] };

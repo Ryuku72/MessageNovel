@@ -1,22 +1,9 @@
 export function CreateDate(date: string | undefined, time?: boolean) {
   if (!date) return '';
-  const day = new Date(date).getDate().toLocaleString('en-US', {
-    minimumIntegerDigits: 2,
-    useGrouping: false
-  });
-  const month = new Date(date).getMonth().toLocaleString('en-US', {
-    minimumIntegerDigits: 2,
-    useGrouping: false
-  });
-  const year = new Date(date).getFullYear();
-  const hours = new Date(date).getUTCHours().toLocaleString('en-US', {
-    minimumIntegerDigits: 2,
-    useGrouping: false
-  });
-  const mins = new Date(date).getUTCMinutes().toLocaleString('en-US', {
-    minimumIntegerDigits: 2,
-    useGrouping: false
-  });
-  if (time) return `${day}/${month}/${year} at ${hours}:${mins} `;
-  return `${day}/${month}/${year}`;
+  const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const newDate = new Date(date);
+  const year = new Intl.DateTimeFormat('en-au', { day: '2-digit', month: '2-digit', year:'numeric', timeZone }).format(newDate);
+  const hours = new Intl.DateTimeFormat('en-au', { minute: '2-digit', hour: '2-digit', timeZone }).format(newDate);
+  if (time) return `${year} at ${hours} `;
+  return `${year}`;
 }

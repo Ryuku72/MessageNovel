@@ -478,3 +478,41 @@ export function ConnectIcon({ className = '', svgColor = 'currentColor', uniqueI
     </svg>
   );
 }
+
+export function PrivateNovelIcon({ className = '', svgColor = 'currentColor', uniqueId }: SVG_Component_props) {
+  return (
+    <svg
+      className={className}
+      id={uniqueId}
+      fill="none"
+      stroke={svgColor}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
+      viewBox="0 0 24 24"
+      xmlns="http://www.w3.org/2000/svg">
+      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+      <circle cx="12" cy="7" r="4" />
+    </svg>
+  );
+}
+
+export function PublicNovelIcon({ className = '', svgColor = 'currentColor', uniqueId }: SVG_Component_props) {
+  return (
+    <svg
+      className={className}
+      id={uniqueId}
+      fill="none"
+      stroke={svgColor}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
+      viewBox="0 0 24 24"
+      xmlns="http://www.w3.org/2000/svg">
+      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+      <circle cx="9" cy="7" r="4" />
+      <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+    </svg>
+  );
+}

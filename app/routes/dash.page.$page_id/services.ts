@@ -21,30 +21,42 @@ export async function DashPageIdLoader({ request, params }: LoaderFunctionArgs) 
     console.error('process error in dash novel id');
     if (isRouteErrorResponse(error))
       return new Response(`${error.status} - ${error?.statusText || 'Error'}`, { status: error.status, headers });
-    return  redirect('/dash', { headers });
+    return redirect('/dash', { headers });
   }
 }
 
-export async function DashPageIdAction({ request, params}: ActionFunctionArgs) {
+export async function DashPageIdAction({ request, params }: ActionFunctionArgs) {
   const formData = await request.formData();
   const body = formData.get('lexical') as string;
   const reference_title = formData.get('page-title');
+  const enable_collab = formData.get('enableCollab');
 
   const { supabaseClient, headers } = await initServer(request);
   const user = await supabaseClient.auth.getUser();
   const userData = user.data?.user;
   if (!userData?.id) return null;
-  const response = await supabaseClient
-    .from('pages')
-    .update({
-      body: JSON.parse(body),
-      reference_title,
-      updated_at: new Date(),
-      updated_by: userData?.id
-    })
-    .match({ id: params.page_id })
-    .select()
-    .single();
+  if (enable_collab) {
+    const response = await supabaseClient
+      .from('pages')
+      .update({
+        enable_collab
+      })
+      .match({ id: params.page_id })
+      .select()
+      .single();
 
-  return json(response?.data, { headers });
+    return json(response?.data, { headers });
+  } else {
+    const response = await supabaseClient
+      .from('pages')
+      .update({
+        body: JSON.parse(body),
+        reference_title
+      })
+      .match({ id: params.page_id })
+      .select()
+      .single();
+
+    return json(response?.data, { headers });
+  }
 }

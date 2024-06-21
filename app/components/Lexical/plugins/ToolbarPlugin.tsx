@@ -1,4 +1,4 @@
-import { useSearchParams } from '@remix-run/react';
+import { useSearchParams, useSubmit } from '@remix-run/react';
 
 import { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 
@@ -42,6 +42,8 @@ import {
   ListOLIcon,
   ListULIcon,
   MicIcon,
+  PrivateNovelIcon,
+  PublicNovelIcon,
   QuoteIcon,
   TextCenterIcon,
   TextH1Icon,
@@ -55,6 +57,7 @@ import {
   TypeStrikeThroughIcon,
   TypeUnderlineIcon
 } from '~/svg';
+
 import { SPEECH_TO_TEXT_COMMAND } from './SpeechToTextPlugin';
 
 const LowPriority = 1;
@@ -75,8 +78,9 @@ const blockTypeToBlockName = {
   paragraph: 'Normal',
   quote: 'Quote'
 };
+export type ToolbarPluginProps = { handleConnectionToggle: () => void; status: string; enableCollab: boolean, owner: boolean };
 
-export default function ToolbarPlugin({ handleConnectionToggle, status }: { handleConnectionToggle: () => void; status: string }) {
+export default function ToolbarPlugin({ handleConnectionToggle, status, enableCollab, owner }: ToolbarPluginProps) {
   const [editor] = useLexicalComposerContext();
   const toolbarRef = useRef(null);
   const [canUndo, setCanUndo] = useState(false);
@@ -92,6 +96,7 @@ export default function ToolbarPlugin({ handleConnectionToggle, status }: { hand
 
   const [searchParams, setSearchParams] = useSearchParams();
   const showComments = searchParams.get('showComments');
+  const submit = useSubmit();
 
   const $updateToolbar = useCallback(() => {
     const selection = $getSelection();
@@ -500,16 +505,42 @@ export default function ToolbarPlugin({ handleConnectionToggle, status }: { hand
       <Divider />
       <button
         type="button"
-        className={`flex gap-3 rounded cursor-pointer h-[40px] items-center justify-center px-2 ${showComments ? 'bg-gray-200 text-gray-600' : 'text-gray-500'}`}
+        className={`flex gap-3 rounded cursor-pointer h-[40px] items-center justify-center px-2 bg-opacity-25 backdrop-blur-sm ${showComments ? 'bg-gray-400 text-gray-600' : 'text-gray-500'}`}
         data-id="CommentPlugin_ShowCommentsButton"
         onClick={() => handleShowComments()}
         title={showComments ? 'Hide Comments' : 'Show Comments'}>
-        <ChatIcon uniqueId="commentPlugin-icon" className="w-5 h-auto -scale-x-100" />Comments
+        <ChatIcon uniqueId="commentPlugin-icon" className="w-5 h-auto -scale-x-100" />
+        Comments
       </button>
       <Divider />
-      <button type="button"  title={`Novel YJS ${status}`} className={`flex gap-2 rounded cursor-pointer h-[40px] items-center justify-center pl-2 pr-3 capitalize text-gray-500 ${status === 'disconnected' ? 'bg-red-300' : 'bg-green-300'} rounded bg-opacity-25 backdrop-blur-sm`} onClick={handleConnectionToggle}>
-        {status === 'disconnected' ? <DisconnectIcon  uniqueId="lexical-disconnect" className="w-5 h-auto" /> : <ConnectIcon uniqueId="lexical-connect" className="w-5 h-auto" />}
+      <button
+        type="button"
+        title={`Novel YJS ${status}`}
+        className={`flex gap-2 rounded cursor-pointer h-[40px] items-center justify-center pl-2 pr-3 capitalize text-gray-500 ${status === 'disconnected' ? 'bg-red-300' : 'bg-green-300'} bg-opacity-25 backdrop-blur-sm`}
+        onClick={handleConnectionToggle}>
+        {status === 'disconnected' ? (
+          <DisconnectIcon uniqueId="lexical-disconnect" className="w-5 h-auto" />
+        ) : (
+          <ConnectIcon uniqueId="lexical-connect" className="w-5 h-auto" />
+        )}
         {status}
+      </button>
+      <div className={owner ? 'w-[1px] bg-gray-300 mx-2' : 'hidden'} />
+      <button
+        type="button"
+        className={owner ? `flex gap-2 rounded cursor-pointer h-[40px] items-center justify-center pl-2 pr-3 capitalize ${!enableCollab ? 'bg-gray-400 text-gray-600' : 'bg-green-300 text-gray-500'} bg-opacity-25 backdrop-blur-sm` : 'hidden'}
+        onClick={e => {
+          e.preventDefault();
+          const formData = new FormData();
+          formData.append('enableCollab', (!enableCollab).toString());
+          submit(formData, { method: 'put' });
+        }}>
+        {enableCollab ? (
+          <PublicNovelIcon uniqueId="public-novel-icon" className="w-5 h-auto -scale-x-100" />
+        ) : (
+          <PrivateNovelIcon uniqueId="public-novel-icon" className="w-5 h-auto -scale-x-100" />
+        )}
+        {enableCollab ? 'Collab enabled' : 'Collab disabled'}
       </button>
     </div>
   );

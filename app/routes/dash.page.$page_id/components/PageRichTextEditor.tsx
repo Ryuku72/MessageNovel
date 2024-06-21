@@ -23,6 +23,7 @@ import { MaxLengthPlugin } from '~/components/Lexical/plugins/MaxLengthPlugin';
 import OnChangePlugin from '~/components/Lexical/plugins/OnChangePlugin';
 import SpeechToTextPlugin from '~/components/Lexical/plugins/SpeechToTextPlugin';
 import ToolbarPlugin from '~/components/Lexical/plugins/ToolbarPlugin';
+import ToggleEditState from '~/components/Lexical/plugins/ToggleEditState';
 
 export type ActiveUserProfile = { userId: string; username: string; color: string; avatar: string };
 
@@ -31,10 +32,12 @@ export function PageRichTextEditor({
   maxLength = 4200,
   userData,
   supabase,
+  enableCollab,
   owner
 }: {
   namespace: string;
   maxLength?: number;
+  enableCollab: boolean;
   userData: {
     username: string;
     color: string;
@@ -44,7 +47,7 @@ export function PageRichTextEditor({
   supabase: SupabaseClient;
   owner: boolean;
 }) {
-  const initialConfig = InitialConfig(namespace, null, owner);
+  const initialConfig = InitialConfig(namespace, null, enableCollab);
   const [editorState, setEditorState] = useState('');
   const [textLength, setTextLength] = useState(0);
   const [activeUsers, setActiveUsers] = useState<ActiveUserProfile[]>([]);
@@ -102,8 +105,8 @@ export function PageRichTextEditor({
       id: namespace,
       channel: namespace + '_collab',
       columnName: 'collab',
-      enableLogger: false,
-      resyncInterval: 30000,
+      enableLogger: true,
+      resyncInterval: 5000,
       userData
     });
 
@@ -182,7 +185,9 @@ export function PageRichTextEditor({
           Body
         </label>
         <ToolbarPlugin
+          enableCollab={enableCollab}
           status={novelStatus}
+          owner={owner}
           handleConnectionToggle={() => yjsProvider && handleConnectionToggle(yjsProvider, novelStatus)}
         />
         <div className="bg-white bg-opacity-65 flex flex-col flex-auto rounded-b-md md:overflow-hidden relative">
@@ -216,6 +221,7 @@ export function PageRichTextEditor({
           <HorizontalRulePlugin />
           <SpeechToTextPlugin />
           <ClearEditorPlugin />
+          <ToggleEditState enable_edit={enableCollab} />
           <MaxLengthPlugin maxLength={maxLength} setTextLength={setTextLength} />
             <CommentPlugin
               userData={userData}

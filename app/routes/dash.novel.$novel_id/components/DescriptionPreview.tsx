@@ -16,7 +16,7 @@ export function DescriptionPreview({ editorState }: { editorState: SerializedEdi
           <ContentEditable className="flex flex-col flex-auto py-2 text-gray-600 em:text-base" id="lexical" />
         }
         placeholder={
-          <div className="absolute top-2 z-0 px-4 pointer-events-none text-gray-400">Enter some text...</div>
+          <div className="absolute top-2 z-0 pointer-events-none text-base text-gray-600">Current nothing has been published by the owner...</div>
         }
         ErrorBoundary={LexicalErrorBoundary}
       />
