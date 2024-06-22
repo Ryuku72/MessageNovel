@@ -1,4 +1,4 @@
-export function CreateDate(date: string | undefined, time?: boolean) {
+export function CreateDate(date: string | number | undefined, time?: boolean) {
   if (!date) return '';
   const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   const newDate = new Date(date);

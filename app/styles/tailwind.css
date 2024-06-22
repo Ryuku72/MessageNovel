@@ -21,7 +21,9 @@
 
   kbd {
     @apply bg-white rounded-sm border-[#b4b4b4] inline-block text-[0.85em] font-bold px-2 py-0.5 whitespace-nowrap text-gray-800;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2), 1px 2px 0 0 rgba(255, 255, 255, 0.7) inset;
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.2),
+      1px 2px 0 0 rgba(255, 255, 255, 0.7) inset;
   }
 }
 
@@ -91,8 +93,9 @@
 
   .editor-mark {
     /* bg-[rgba(255,_212,_0,_00.141)] */
-    @apply bg-opacity-30 border-b-2 border-opacity-60 bg-[color:rgba(var(--userColor),var(--tw-bg-opacity))] border-b-[color:rgba(var(--userColor),var(--tw-border-opacity))];
+    @apply bg-opacity-30 border-b-2 border-opacity-60;
   }
+
   .editor-mark.selected {
     @apply bg-opacity-70 border-b-2 border-opacity-100;
   }
@@ -147,3 +150,52 @@
   }
 }
 
+.mark-bg-pastel-yellow {
+  background-color: rgba(255, 255, 51, var(--tw-bg-opacity));
+  border-bottom-color: rgba(255, 255, 51, var(--tw-border-opacity));
+}
+
+.mark-bg-pastel-black {
+  background-color: rgba(192, 192, 192, var(--tw-bg-opacity));
+  border-bottom-color: rgba(192, 192, 192, var(--tw-border-opacity));
+}
+
+.mark-bg-pastel-red {
+  background-color: rgba(255, 153, 153, var(--tw-bg-opacity));
+  border-bottom-color: rgba(255, 153, 153, var(--tw-border-opacity));
+}
+
+.mark-bg-pastel-brown {
+  background-color: rgba(255, 204, 204, var(--tw-bg-opacity));
+  border-bottom-color: rgba(255, 204, 204, var(--tw-border-opacity));
+}
+
+.mark-bg-pastel-orange {
+  background-color: rgba(255, 218, 185, var(--tw-bg-opacity));
+  border-bottom-color: rgba(255, 218, 185, var(--tw-border-opacity));
+}
+
+.mark-bg-pastel-indigo {
+  background-color: rgba(153, 204, 255, var(--tw-bg-opacity));
+  border-bottom-color: rgba(153, 204, 255, var(--tw-border-opacity));
+}
+
+.mark-bg-pastel-blue {
+  background-color: rgba(218, 240, 247, var(--tw-bg-opacity));
+  border-bottom-color: rgba(218, 240, 247, var(--tw-border-opacity));
+}
+
+.mark-bg-pastel-green {
+  background-color: rgba(178, 223, 219, var(--tw-bg-opacity));
+  border-bottom-color: rgba(178, 223, 219, var(--tw-border-opacity));
+}
+
+.mark-bg-pastel-emerald {
+  background-color: rgba(204, 255, 204, var(--tw-bg-opacity));
+  border-bottom-color: rgba(204, 255, 204, var(--tw-border-opacity));
+}
+
+.mark-bg-pastel-purple {
+  background-color: rgba(204, 204, 255, var(--tw-bg-opacity));
+  border-bottom-color: rgba(204, 204, 255, var(--tw-border-opacity));
+}

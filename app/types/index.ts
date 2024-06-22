@@ -1,5 +1,5 @@
+import { InitialEditorStateType } from '@lexical/react/LexicalComposer';
 import { User } from '@supabase/supabase-js';
-import { SerializedEditorState, SerializedLexicalNode } from 'lexical';
 
 export type ProfileEntry = {
   id: string;
@@ -19,7 +19,7 @@ export type Novel = {
   updated_at: string;
   owner: string;
   title: string;
-  description: SerializedEditorState<SerializedLexicalNode>;
+  description: InitialEditorStateType;
   members: string[];
   pages: string[];
 };
@@ -35,14 +35,14 @@ export type Page = {
   members: string[];
   reference_title: string;
   index: number;
-  published: SerializedEditorState<SerializedLexicalNode> | null;
+  published: InitialEditorStateType;
   collab: number[];
   comments: number[];
   chat: number[];
   enable_collab: boolean;
 };
 
-export type PageWithUsers = Omit<Page, 'owner'> & { owner: BasicProfile; members: BasicProfile[] };
+export type PageWithUsers = Omit<Page, 'owner' | 'members'> & { owner: BasicProfile; members: BasicProfile[] };
 
 export type AuthProfileEntry = User & {
   user_metadata: {

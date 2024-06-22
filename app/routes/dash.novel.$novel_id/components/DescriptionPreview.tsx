@@ -1,13 +1,12 @@
-import { LexicalComposer } from '@lexical/react/LexicalComposer';
+import { InitialEditorStateType, LexicalComposer } from '@lexical/react/LexicalComposer';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
 import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
-import { SerializedEditorState, SerializedLexicalNode } from 'lexical';
 
 import { InitialConfig } from '~/components/Lexical/config';
 
-export function DescriptionPreview({ editorState }: { editorState: SerializedEditorState<SerializedLexicalNode> | null }) {
-  const initialConfig = InitialConfig('description-preview', editorState, false);
+export function DescriptionPreview({ editorState }: { editorState: InitialEditorStateType }) {
+  const initialConfig = InitialConfig({ namespace: 'description-preview', editorState, editable: false });
 
   return (
     <LexicalComposer initialConfig={initialConfig}>

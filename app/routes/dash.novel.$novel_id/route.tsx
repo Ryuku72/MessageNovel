@@ -22,7 +22,7 @@ export function action(data: ActionFunctionArgs) {
 }
 
 export default function DashNovelId() {
-  const { novel, pages } = useLoaderData<{ pages: PageWithUsers[]; novel: NovelWithUsers }>();
+  const { novel, pages } = useLoaderData() as { pages: PageWithUsers[]; novel: NovelWithUsers };
   const { user, channel, img_url } = useOutletContext<DashOutletContext>();
   const navigationState = useNavigation();
   const isLoadingUpdate = 'submitting' === navigationState.state;

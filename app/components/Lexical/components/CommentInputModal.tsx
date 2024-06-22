@@ -11,12 +11,12 @@ export default function CommentInputModal({
   cancelAddComment,
   submitAddComment,
   open,
-  author
+  authorDetails
 }: {
   cancelAddComment: () => void;
   editor: LexicalEditor;
   open: boolean;
-  author: string;
+  authorDetails: { name: string; color: string };
   submitAddComment: (
     commentOrThread: Comment | Thread,
     isInlineComment: boolean,
@@ -34,6 +34,31 @@ export default function CommentInputModal({
   const updateLocation = useCallback(() => {
     editor.getEditorState().read(() => {
       const selection = $getSelection();
+
+      const userColor = (color: string) => {
+        switch (color) {
+          case 'bg-pastel-black':
+            return '211, 211, 211';
+          case 'bg-pastel-red':
+            return '255, 153, 153';
+          case 'bg-pastel-brown':
+            return '255, 204, 204';
+          case 'bg-pastel-orange':
+            return '255, 218, 185';
+          case 'bg-pastel-indigo':
+            return '153, 204, 255';
+          case 'bg-pastel-blue':
+            return '218, 240, 247';
+          case 'bg-pastel-green':
+            return '178, 223, 219';
+          case 'bg-pastel-emerald':
+            return '204, 255, 204';
+          case 'bg-pastel-purple':
+            return '204, 204, 255';
+          default:
+            return '255, 255, 204';
+        }
+      };
 
       if ($isRangeSelection(selection)) {
         selectionRef.current = selection.clone();
@@ -67,7 +92,7 @@ export default function CommentInputModal({
               container.appendChild(elem);
             }
             const top = selectionRect.top + (window.pageYOffset || document.documentElement.scrollTop);
-            
+
             elem.style.position = 'absolute';
             elem.style.zIndex = '10';
             elem.style.pointerEvents = 'none';
@@ -75,7 +100,7 @@ export default function CommentInputModal({
             elem.style.left = `${selectionRect.left}px`;
             elem.style.height = `${selectionRect.height}px`;
             elem.style.width = `${selectionRect.width}px`;
-            elem.style.backgroundColor = 'rgba(var(--userColor), 0.3)';
+            elem.style.backgroundColor = `rgba(${userColor(authorDetails.color)}, 0.3)`;
           }
           for (let i = elementsLength - 1; i >= selectionRectsLength; i--) {
             const elem = elements[i];
@@ -122,7 +147,17 @@ export default function CommentInputModal({
     if (quote.length > 100) {
       quote = quote.slice(0, 99) + '…';
     }
-    submitAddComment(createThread(quote, [createComment(userText, author)]), true, undefined, selectionRef.current);
+    submitAddComment(
+      createThread(
+        quote,
+        [createComment(userText, authorDetails.name, authorDetails.color)],
+        undefined,
+        authorDetails.color
+      ),
+      true,
+      undefined,
+      selectionRef.current
+    );
     selectionRef.current = null;
   };
 

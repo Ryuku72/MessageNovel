@@ -10,10 +10,10 @@ export default function CommentsComposer({
   submitAddComment,
   thread,
   placeholder,
-  author
+  authorDetails
 }: {
   placeholder?: string;
-  author: string;
+  authorDetails: { name: string; color: string }
   submitAddComment: (
     commentOrThread: Comment,
     isInlineComment: boolean,
@@ -33,7 +33,7 @@ export default function CommentsComposer({
   };
 
   const handleSubmit = (editor: LexicalEditor, userText: string) => {
-    submitAddComment(createComment(userText, author), false, thread);
+    submitAddComment(createComment(userText, authorDetails.name, authorDetails.color), false, thread);
     if (editor !== null) {
       editor.dispatchCommand(CLEAR_EDITOR_COMMAND, undefined);
     }

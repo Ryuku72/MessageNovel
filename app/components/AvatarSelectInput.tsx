@@ -13,7 +13,7 @@ export type AvatarInputProps = {
   title: string;
   id: string;
   setImage: (image: File) => void;
-  imageSrc?: string;
+  imageSrc?: string | null;
 };
 
 export default function AvatarInput({ title, id, imageSrc, setImage }: AvatarInputProps) {

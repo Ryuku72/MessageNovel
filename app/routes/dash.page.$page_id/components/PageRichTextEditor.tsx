@@ -12,12 +12,14 @@ import { HorizontalRulePlugin } from '@lexical/react/LexicalHorizontalRulePlugin
 import { ListPlugin } from '@lexical/react/LexicalListPlugin';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { Provider } from '@lexical/yjs';
-import { SupabaseClient } from '@supabase/supabase-js';
+import { useOthers, useRoom, useSelf, useStatus } from '@liveblocks/react';
+import { LiveblocksYjsProvider } from '@liveblocks/yjs';
+import { $createParagraphNode, $createTextNode, $getRoot } from 'lexical';
 import { Doc } from 'yjs';
 
+import { BasicProfile } from '~/types';
+
 import { InitialConfig } from '~/components/Lexical/config';
-import { getDocFromMap } from '~/components/Lexical/helpers';
-import SupabaseProvider from '~/components/Lexical/helpers/provider';
 import CommentPlugin from '~/components/Lexical/plugins/CommentPlugin';
 import { MaxLengthPlugin } from '~/components/Lexical/plugins/MaxLengthPlugin';
 import OnChangePlugin from '~/components/Lexical/plugins/OnChangePlugin';
@@ -26,15 +28,21 @@ import ToggleEditState from '~/components/Lexical/plugins/ToggleEditState';
 import ToolbarPlugin from '~/components/Lexical/plugins/ToolbarPlugin';
 
 import Default_Avatar from '~/assets/default_avatar.jpeg';
-import { BasicProfile } from '~/types';
 
-export type ActiveUserProfile = Omit<BasicProfile, 'id'> & { userId: string; };
+export type ActiveUserProfile = Omit<BasicProfile, 'id'> & { userId: string };
+
+function initialEditorState(): void {
+  const root = $getRoot();
+  const paragraph = $createParagraphNode();
+  const text = $createTextNode();
+  paragraph.append(text);
+  root.append(paragraph);
+}
 
 export function PageRichTextEditor({
   namespace,
   maxLength = 4200,
   userData,
-  supabase,
   enableCollab,
   owner
 }: {
@@ -42,127 +50,39 @@ export function PageRichTextEditor({
   maxLength?: number;
   enableCollab: boolean;
   userData: ActiveUserProfile;
-  supabase: SupabaseClient;
   owner: boolean;
 }) {
-  const initialConfig = InitialConfig(namespace, null, enableCollab);
+  const initialConfig = InitialConfig({ namespace, editable: enableCollab });
   const [editorState, setEditorState] = useState('');
   const [textLength, setTextLength] = useState(0);
-  const [activeUsers, setActiveUsers] = useState<ActiveUserProfile[]>([]);
-  const [yjsProvider, setYjsProvider] = useState<SupabaseProvider>();
-  const [yjsChatProvider, setYjsChatProvider] = useState<SupabaseProvider>();
   const [init, setInit] = useState(false);
-  const [novelStatus, setNovelStatus] = useState('disconnected');
-  const [chatStatus, setChatStatus] = useState('disconnected');
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const updateRef = useRef<NodeJS.Timeout | null>(null);
+
+  const room = useRoom();
+  const status = useStatus();
+  const userInfo = useSelf(me => me.info) as { avatar: string; color: string; name: string } || [];
+  const othersInfo = useOthers();
+  const otherusers = othersInfo?.map(user => user.info) as { avatar: string; color: string; name: string }[];
+  const users = [userInfo].concat(otherusers);
 
   useEffect(() => {
     setInit(true);
-
-    return () => {
-      if (yjsProvider) (yjsProvider as unknown as SupabaseProvider).destroy();
-      if (updateRef.current) clearTimeout(updateRef.current);
-    };
   }, []);
 
-  useEffect(() => {
-    if (!yjsProvider) return;
-
-    const handleOnlineUsers = (
-      users: { [key: string]: ActiveUserProfile }[]
-    ) => {
-      if (updateRef.current) clearTimeout(updateRef.current);
-      if (!users) return;
-      const result = users.flatMap(group => Object.values(group).flat());
-      updateRef.current = setTimeout(() => setActiveUsers(result), 300);
-    };
-
-    (yjsProvider as unknown as SupabaseProvider).on('online users', handleOnlineUsers);
-
-    return () => {
-      (yjsProvider as unknown as SupabaseProvider).off('online users', handleOnlineUsers);
-    };
-  }, [yjsProvider]);
-
-  useEffect(() => {
-    if (userData.color && typeof document !== 'undefined') {
-      document.body.style.setProperty('--userColor', userColor(userData.color));
-    }
-  }, [userData.color]);
-
-  const handleConnectionToggle = (provider: SupabaseProvider, status: string) => {
-    if (status === 'connected') provider.onDisconnect();
-    else if (status === 'disconnected') provider.onConnecting();
-  };
-
   const createProviderFactory = useCallback((id: string, yjsDocMap: Map<string, Doc>): Provider => {
-    const doc = getDocFromMap(id, yjsDocMap);
-    const provider = new SupabaseProvider(doc, supabase, {
-      tableName: 'pages',
-      id: namespace,
-      channel: namespace + '_collab',
-      columnName: 'collab',
-      enableLogger: true,
-      resyncInterval: 5000,
-      userData
-    });
-
-    provider.on('status', (event: { status: string }) => {
-      if (event.status) setNovelStatus(event.status);
-    });
-
-    // This is a hack to get reference to provider with standard CollaborationPlugin.
-    // To be fixed in future versions of Lexical.
-    setTimeout(() => setYjsProvider(provider), 0);
-
-    return provider as unknown as Provider;
+    const doc = new Doc();
+    yjsDocMap.set(id, doc);
+    const yProvider = new LiveblocksYjsProvider(room, doc) as Provider;
+    return yProvider;
   }, []);
 
   const createChatProviderFactory = useCallback((id: string, yjsDocMap: Map<string, Doc>) => {
-    const doc = getDocFromMap(id, yjsDocMap);
-    const provider = new SupabaseProvider(doc, supabase, {
-      tableName: 'pages',
-      id: namespace,
-      channel: namespace + '_comments',
-      columnName: 'comments',
-      enableLogger: false,
-      resyncInterval: 30000,
-      userData
-    });
-
-    provider.on('status', (event: { status: string }) => {
-      if (event.status) setChatStatus(event.status);
-    });
-
-    setTimeout(() => setYjsChatProvider(provider), 0);
-    return provider as unknown as Provider;
+    const doc = new Doc();
+    yjsDocMap.set(id, doc);
+    const yProvider = new LiveblocksYjsProvider(room, doc) as Provider;
+    return yProvider;
   }, []);
 
-  const userColor = (color: string) => {
-    switch (color) {
-      case 'bg-pastel-black':
-        return '211, 211, 211';
-      case 'bg-pastel-red':
-        return '255, 153, 153';
-      case 'bg-pastel-brown':
-        return '255, 204, 204';
-      case 'bg-pastel-orange':
-        return '255, 218, 185';
-      case 'bg-pastel-indigo':
-        return '153, 204, 255';
-      case 'bg-pastel-blue':
-        return '218, 240, 247';
-      case 'bg-pastel-green':
-        return '178, 223, 219';
-      case 'bg-pastel-emerald':
-        return '204, 255, 204';
-      case 'bg-pastel-purple':
-        return '204, 204, 255';
-      default:
-        return '255, 255, 204';
-    }
-  };
 
   return (
     <LexicalComposer initialConfig={initialConfig}>
@@ -170,16 +90,21 @@ export function PageRichTextEditor({
         className={`rounded-sm w-full text-gray-900 font-normal text-left flex flex-col flex-auto min-h-[500px] ${!editorState ? 'overflow-hidden max-h-[500px]' : 'overflow-visible'}`}>
         <p className="w-full text-sm font-medium text-gray-600 mb-2">Participants</p>
         <div className="flex gap-2 text-blue-800 items-center text-sm mb-3 max-w-[80%]">
-          {activeUsers.map(user => (
+          {users.map((user, index) => (
             <div
-              key={user.userId}
-              className={`text-grey-700 text-sm ${user.color} px-2 py-1 rounded-lg flex gap-1 flex-wrap items-center text-gray-700`}>
-              <img src={user?.avatar || Default_Avatar} className="rounded-full w-4 h-4" alt="user-avatar" onError={e => {
-                e.currentTarget.src = Default_Avatar;
-                e.currentTarget.onerror = null;
-                return e;
-              }} />
-              {user.username}
+              key={user.name + '_' + index}
+              className="text-grey-700 text-sm px-2 py-1 rounded-lg flex gap-1 flex-wrap items-center text-gray-700" style={{ backgroundColor: user.color }}>
+              <img
+                src={user?.avatar || Default_Avatar}
+                className="rounded-full w-4 h-4"
+                alt="user-avatar"
+                onError={e => {
+                  e.currentTarget.src = Default_Avatar;
+                  e.currentTarget.onerror = null;
+                  return e;
+                }}
+              />
+              {user.name}
             </div>
           ))}
         </div>
@@ -188,9 +113,9 @@ export function PageRichTextEditor({
         </label>
         <ToolbarPlugin
           enableCollab={enableCollab}
-          status={novelStatus}
+          status={status}
           owner={owner}
-          handleConnectionToggle={() => yjsProvider && handleConnectionToggle(yjsProvider, novelStatus)}
+          handleConnectionToggle={() => status === 'connected' ? room.disconnect() : room.connect()}
         />
         <div className="bg-white bg-opacity-65 flex flex-col flex-auto rounded-b-md md:overflow-hidden relative">
           <RichTextPlugin
@@ -209,12 +134,13 @@ export function PageRichTextEditor({
           {/* Only using init because Collabration Plugin references document */}
           {init && (
             <CollaborationPlugin
-              id={namespace}
+              id={namespace + '_room'}
               providerFactory={createProviderFactory}
-              username={userData?.username}
-              cursorColor={`rgb(${userColor(userData?.color)})`}
+              cursorColor={userInfo?.color}
+              username={userInfo?.name}
               cursorsContainerRef={containerRef}
-              shouldBootstrap={false}
+              initialEditorState={initialEditorState}
+              shouldBootstrap={true}
             />
           )}
           <AutoFocusPlugin />
@@ -225,12 +151,11 @@ export function PageRichTextEditor({
           <ClearEditorPlugin />
           <ToggleEditState enable_edit={enableCollab} />
           <MaxLengthPlugin maxLength={maxLength} setTextLength={setTextLength} />
-          <CommentPlugin
-            userData={userData}
-            providerFactory={createChatProviderFactory}
-            status={chatStatus}
-            handleConnectionToggle={() => yjsChatProvider && handleConnectionToggle(yjsChatProvider, chatStatus)}
-          />
+            <CommentPlugin
+              namespace={namespace}
+              userData={userData}
+              providerFactory={createChatProviderFactory}
+            />
           <p
             className={`sticky md:bottom-1 bottom-[90px] right-4 p-2 m-2 bg-slate-400 backdrop-blur-sm bg-opacity-50 rounded-lg text-xs self-end ${textLength < maxLength ? 'text-blue-800' : 'text-red-400'}`}>
             {textLength} / {maxLength} length

@@ -1,12 +1,10 @@
 import { ListItemNode, ListNode } from '@lexical/list';
 import { MarkNode } from '@lexical/mark';
 import { OverflowNode } from '@lexical/overflow';
-import { InitialConfigType } from '@lexical/react/LexicalComposer';
+import { InitialConfigType, InitialEditorStateType } from '@lexical/react/LexicalComposer';
 import { HorizontalRuleNode } from '@lexical/react/LexicalHorizontalRuleNode';
 import { HeadingNode, QuoteNode } from '@lexical/rich-text';
-import { EditorThemeClasses, SerializedEditorState, SerializedLexicalNode } from 'lexical';
-
-import { emptyContent } from './helpers';
+import { EditorThemeClasses } from 'lexical';
 
 export const theme: EditorThemeClasses = {
   // Theme styling goes here
@@ -49,12 +47,13 @@ function onError(error: Error) {
   // eslint-disable-next-line no-console
   console.error(error);
 }
-export function InitialConfig(namespace: string, value: SerializedEditorState<SerializedLexicalNode> | null, editable = true): InitialConfigType {
+export function InitialConfig(props: { namespace: string; editorState?: InitialEditorStateType; editable?: boolean }): InitialConfigType {
+  const { namespace, editorState = null, editable = false } = props;
   return {
     theme,
     onError,
+    editorState: editorState ? JSON.stringify(editorState) : null,
     editable,
-    editorState: value ? JSON.stringify(value) : emptyContent,
     nodes: [HeadingNode, ListNode, ListItemNode, QuoteNode, OverflowNode, HorizontalRuleNode, MarkNode],
     namespace
   };

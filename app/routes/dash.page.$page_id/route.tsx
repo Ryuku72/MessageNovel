@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import LOCALES from '~/locales/language_en.json';
 import { Page } from '~/types';
 
+import { LiveBlocksRoom } from '~/components/LiveBlocksRoom';
 import TitleInput from '~/components/TitleInput';
 
 import LoadingSpinner from '~/svg/LoadingSpinner/LoadingSpinner';
@@ -24,7 +25,7 @@ export function action(data: ActionFunctionArgs) {
 
 export default function DashPageId() {
   const loaderData = useLoaderData<Page>();
-  const { user, channel, supabase } = useOutletContext<DashOutletContext>();
+  const { user, channel } = useOutletContext<DashOutletContext>();
   const navigationState = useNavigation();
   const isLoading = ['submitting'].includes(navigationState.state);
 
@@ -61,13 +62,14 @@ export default function DashPageId() {
               placeholder={'Enter Page Reference Title'}
               onChange={setTitleValue}
             />
-            <PageRichTextEditor
-              namespace={loaderData?.id}
-              userData={userData}
-              supabase={supabase}
-              enableCollab={loaderData.enable_collab}
-              owner={user.id === loaderData.owner}
-            />
+            <LiveBlocksRoom roomId={loaderData?.id} authEndpoint="/liveblocks">
+              <PageRichTextEditor
+                namespace={loaderData?.id}
+                userData={userData}
+                enableCollab={loaderData.enable_collab}
+                owner={user.id === loaderData.owner}
+              />
+            </LiveBlocksRoom>
             <div className="w-full flex items-center gap-3 justify-end pt-3">
               <NavLink to={`/dash/novel/${loaderData?.novel_id}`} className="primaryButton py-2.5">
                 {LocalStrings.secondary_button}

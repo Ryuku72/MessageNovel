@@ -1,5 +1,7 @@
 import { useState } from 'react';
 
+import { CreateDate } from '~/helpers/DateHelper';
+
 import { StickyIcon, TrashIcon } from '~/svg';
 
 import { Comment, Thread } from '../helpers';
@@ -21,9 +23,12 @@ export function CommentsPanelList({
   rtf: Intl.RelativeTimeFormat;
   thread?: Thread;
 }): JSX.Element {
-  const seconds = comment?.timeStamp ? Math.round((comment.timeStamp - performance.now()) / 1000) : 0;
+  const seconds = comment?.timeStamp ? Math.round((comment.timeStamp - Date.now()) / 1000) : 0;
   const minutes = Math.round(seconds / 60);
+  const hours = Math.round(minutes / 60);
+  const date = CreateDate(comment?.timeStamp);
   const [showModal, setShowModal] = useState(false);
+
 
   return (
     <li
@@ -34,7 +39,16 @@ export function CommentsPanelList({
           data-id="CommentPlugin_CommentsPanel_List_Details"
           className="text-gray-600 flex gap-1 text-sm w-full pr-[45px]">
           <span className="font-bold capitalize">{comment.author}</span>
-          <span className="text-gray-400">&#8226; {seconds > -10 ? 'Just now' : rtf.format(minutes, 'minute')}</span>
+          <span className="text-gray-400">
+            &#8226;{' '}
+            {seconds > -10
+              ? 'Just now'
+              : minutes > -60
+                ? rtf.format(minutes, 'minute')
+                : hours > -24
+                  ? rtf.format(hours, 'hours')
+                  : date}
+          </span>
         </p>
         <button
           type="button"
@@ -74,9 +88,9 @@ export function CommentThread({
   showModal,
   deleteCommentOrThread,
   submitAddComment,
-  author
+  authorDetails
 }: {
-  author: string;
+  authorDetails: { name: string; color: string };
   handleClickThread: () => void;
   commentOrThread: Thread;
   rtf: Intl.RelativeTimeFormat;
@@ -102,7 +116,7 @@ export function CommentThread({
             className="mx-3 text-gray-300 font-medium pr-[40px]">
             {'> '}
             <span
-              className={`text-gray-700 p-1 pl-0.5 font-bold bg-[color:rgba(var(--userColor),var(--tw-bg-opacity))] border-b-[color:rgba(var(--userColor),var(--tw-border-opacity))] ${activeIdExists ? 'bg-opacity-30 border-b-2 border-opacity-60' : 'bg-opacity-70 border-b-2 border-opacity-100'}`}>
+              className={`text-gray-700 p-1 pl-0.5 font-bold mark-${commentOrThread.color} ${activeIdExists ? 'bg-opacity-30 border-b-2 border-opacity-60' : 'bg-opacity-70 border-b-2 border-opacity-100'}`}>
               {commentOrThread.quote}
             </span>
           </blockquote>
@@ -139,7 +153,7 @@ export function CommentThread({
             submitAddComment={submitAddComment}
             thread={commentOrThread}
             placeholder="Reply to comment..."
-            author={author}
+            authorDetails={authorDetails}
           />
         </div>
       </div>

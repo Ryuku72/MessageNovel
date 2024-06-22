@@ -77,7 +77,7 @@ export default function DashSettings() {
         <fieldset className="w-full flex flex-col justify-center items-center gap-3" disabled={formDisabled}>
           <div
             className={`w-full flex justify-center items-center gap-3 flex-col rounded-lg shadow-xl px-12 py-8 ${user.color} bg-opacity-65 backdrop-blur-lg`}>
-            <AvatarInput title="Upload file" id="avatar" setImage={setImage} imageSrc={user.avatar} />
+            <AvatarInput title="Upload file" id="avatar" setImage={setImage} imageSrc={user?.avatar} />
             <TitleInput title={LocalStrings.email} id="email" value={user.email} disabled={true} />
             <TitleInput
               title={LocalStrings.username}

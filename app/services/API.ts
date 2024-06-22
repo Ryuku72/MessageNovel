@@ -8,6 +8,8 @@ export type EnvConfigEntry = {
   SUPABASE_ANON_KEY: string;
   SUPABASE_IMG_STORAGE: string;
   SUPABASE_SERVICE_KEY: string;
+  LIVEBLOCKS_PUBLIC_KEY: string;
+  LIVEBLOCKS_SECRET_KEY: string;
 };
 
 export const envConfig = (): EnvConfigEntry => {
@@ -15,7 +17,9 @@ export const envConfig = (): EnvConfigEntry => {
     SUPABASE_URL: process.env.SUPABASE_URL!,
     SUPABASE_ANON_KEY: process.env.SUPABASE_KEY!,
     SUPABASE_IMG_STORAGE: process.env.SUPABASE_IMG_STORAGE!,
-    SUPABASE_SERVICE_KEY: process.env.SUPABASE_SERVICE_KEY!
+    SUPABASE_SERVICE_KEY: process.env.SUPABASE_SERVICE_KEY!,
+    LIVEBLOCKS_PUBLIC_KEY: process.env.LIVEBLOCKS_PUBLIC_KEY!,
+    LIVEBLOCKS_SECRET_KEY: process.env.LIVEBLOCKS_SECRET_KEY!
   };
   return env;
 };

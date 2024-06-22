@@ -4,7 +4,6 @@ import { $isMarkNode, MarkNode } from '@lexical/mark';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { $getNodeByKey, NodeKey } from 'lexical';
 
-import { ConnectIcon, DisconnectIcon } from '~/svg';
 import CloseIcon from '~/svg/CloseIcon/CloseIcon';
 
 import { Comment, Comments, Thread } from '../helpers';
@@ -17,12 +16,10 @@ export default function CommentsPanel({
   submitAddComment,
   markNodeMap,
   close,
-  author,
-  show,
-  status,
-  handleConnectionToggle
+  authorDetails,
+  show
 }: {
-  author: string;
+  authorDetails: { name: string; color: string }
   activeIDs: string[];
   comments: Comments;
   deleteCommentOrThread: (commentOrThread: Comment | Thread, thread?: Thread) => void;
@@ -30,8 +27,6 @@ export default function CommentsPanel({
   submitAddComment: (commentOrThread: Comment | Thread, isInlineComment: boolean, thread?: Thread) => void;
   close: () => void;
   show: boolean;
-  status: string;
-  handleConnectionToggle: () => void;
 }): JSX.Element {
   const listRef = useRef<HTMLUListElement>(null);
   const isEmpty = comments.length === 0;
@@ -95,20 +90,11 @@ export default function CommentsPanel({
       className={`fixed flex flex-col flex-auto gap-1 right-0 md:w-[400px] w-full md:h-[calc(100%_-_80px)] h-full md:top-10 top-0 z-40 transition-transform ease-out duration-500 ${show ? 'translate-x-0' : 'md:translate-x-[400px] translate-x-[767px]'}`}>
       <div className="w-full flex flex-col flex-auto gap-1 overflow-hidden rounded-l-md bg-white bg-opacity-50 backdrop-blur-sm shadow-[0_0_10px_rgba(0,_0,_0,_0.1)] ">
         <div className="w-full flex-shrink-0 pt-4 px-6 pb-2 flex flex-wrap rounded-t-[inherit] justify-between items-center bg-white bg-opacity-80 backdrop-blur-sm">
-          <button type="button" className="flex gap-3 items-center" onClick={handleConnectionToggle}>
-            <div
-              title={`Comments YJS ${status}`}
-              className={`flex gap-2 rounded cursor-pointer h-[40px] items-center justify-center pl-2 pr-3 capitalize text-gray-500 ${status === 'disconnected' ? 'bg-red-300' : 'bg-green-300'} rounded bg-opacity-25 backdrop-blur-sm`}>
-              {status === 'disconnected' ? (
-                <DisconnectIcon uniqueId="lexical-chat-disconnect" className="w-5 h-auto" />
-              ) : (
-                <ConnectIcon uniqueId="lexical-chat-connect" className="w-5 h-auto" />
-              )}
-            </div>
+          <div className="flex gap-3 items-center">
             <h3 className="font-medium text-xl text-gray-600 underline underline-offset-4 capitalize">
               &#8197;Comments&nbsp;&nbsp;&nbsp;
             </h3>
-          </button>
+          </div>
           <button
             className="w-10 h-10 flex items-center justify-center text-slate-500 hover:text-red-500 hover:border hover:border-red-500 rounded"
             type="button"
@@ -135,7 +121,7 @@ export default function CommentsPanel({
               return (
                 <CommentThread
                   key={id}
-                  author={author}
+                  authorDetails={authorDetails}
                   commentOrThread={commentOrThread}
                   handleClickThread={() => handleClickThread(id)}
                   rtf={rtf}

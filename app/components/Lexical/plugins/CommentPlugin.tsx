@@ -35,15 +35,13 @@ import { ActiveUserProfile } from '~/routes/dash.page.$page_id/components/PageRi
 export const INSERT_INLINE_COMMAND: LexicalCommand<void> = createCommand('INSERT_INLINE_COMMAND');
 
 export default function CommentPlugin({
+  namespace,
   userData,
-  providerFactory,
-  status,
-  handleConnectionToggle
+  providerFactory
 }: {
+  namespace: string;
   userData: ActiveUserProfile;
   providerFactory?: (id: string, yjsDocMap: Map<string, Doc>) => Provider;
-  status: string;
-  handleConnectionToggle: () => void;
 }): JSX.Element {
   const params = useParams();
   const navigate = useNavigate();
@@ -62,15 +60,17 @@ export default function CommentPlugin({
     return new Map();
   }, []);
   const collabContext = useCollaborationContext();
-  const author = useCollabAuthorName(userData);
+  const authorDetails= useCollabAuthorName(namespace, userData);
   const { yjsDocMap } = collabContext;
+  const mapKeys = Array.from(markNodeMap, ([name]) => name);
 
   useEffect(() => {
     if (providerFactory) {
-      const provider = providerFactory('comments', yjsDocMap);
-      return commentStore.registerCollaboration(provider);
+      const provider = providerFactory(namespace + '_comments', yjsDocMap);
+      return commentStore.registerCollaboration(provider, namespace);
     }
-  }, [commentStore, providerFactory, yjsDocMap]);
+  }, [commentStore, providerFactory, yjsDocMap, namespace]);
+
 
   useEffect(() => {
     setInit(true);
@@ -86,7 +86,6 @@ export default function CommentPlugin({
           if (elem !== null) {
             elem.classList.add('selected');
             changedElems.push(elem);
-            navigate(`/dash/page/${params.page_id}?showComments=true`);
           }
         }
       }
@@ -98,6 +97,35 @@ export default function CommentPlugin({
       }
     };
   }, [activeIDs, editor, markNodeMap]);
+
+  useEffect(() => {
+    const changedElems: Array<HTMLElement> = [];
+    function onClick(){
+      if (showComments) navigate(`/dash/page/${params.page_id}`);
+      else navigate(`/dash/page/${params.page_id}?showComments=true`);
+     }
+    mapKeys.map(id => {
+      const dataInfo = comments.find(comment => comment.id === id);
+      const keys = markNodeMap.get(id);
+      if (keys !== undefined) {
+        for (const key of keys) {
+          const elem = editor.getElementByKey(key);
+          if (elem !== null) {
+            elem.id = id;
+            if (dataInfo && 'color' in dataInfo) elem.classList.add('mark-' + dataInfo.color);
+            elem.onclick = onClick;
+            changedElems.push(elem);
+          }
+        }
+      }
+    });
+    return () => {
+      for (let i = 0; i < changedElems.length; i++) {
+        const changedElem = changedElems[i];
+        changedElem.removeEventListener('click', onClick, false);
+      }
+    };
+  }, [mapKeys]);
 
   useEffect(() => {
     const markNodeKeysToIDs: Map<NodeKey, Array<string>> = new Map();
@@ -223,7 +251,7 @@ export default function CommentPlugin({
       thread?: Thread,
       selection?: RangeSelection | null
     ) => {
-      commentStore.addComment(commentOrThread, thread);
+      commentStore.addComment(namespace, commentOrThread, thread);
       if (isInlineComment) {
         editor.update(() => {
           if ($isRangeSelection(selection)) {
@@ -243,14 +271,14 @@ export default function CommentPlugin({
   const deleteCommentOrThread = useCallback(
     (comment: Comment | Thread, thread?: Thread) => {
       if (comment.type === 'comment') {
-        const deletionInfo = commentStore.deleteCommentOrThread(comment, thread);
+        const deletionInfo = commentStore.deleteCommentOrThread(namespace, comment, thread);
         if (!deletionInfo) {
           return;
         }
         const { markedComment, index } = deletionInfo;
-        commentStore.addComment(markedComment, thread, index);
+        commentStore.addComment(namespace, markedComment, thread, index);
       } else {
-        commentStore.deleteCommentOrThread(comment);
+        commentStore.deleteCommentOrThread(namespace, comment);
         // Remove ids from associated marks
         const id = thread !== undefined ? thread.id : comment.id;
         const markNodeKeys = markNodeMap.get(id);
@@ -303,10 +331,8 @@ export default function CommentPlugin({
           activeIDs={activeIDs}
           markNodeMap={markNodeMap}
           close={() => handleShowComments()}
-          author={author}
+          authorDetails={authorDetails}
           show={Boolean(showComments)}
-          status={status}
-          handleConnectionToggle={handleConnectionToggle}
         />
       </CreatePortalEl>
       <CreatePortalEl condition={showCommentInput}>
@@ -315,7 +341,7 @@ export default function CommentPlugin({
           cancelAddComment={cancelAddComment}
           submitAddComment={submitAddComment}
           open={showCommentInput}
-          author={author}
+          authorDetails={authorDetails}
         />
       </CreatePortalEl>
       <CreatePortalEl condition={openCommentBox && init}>

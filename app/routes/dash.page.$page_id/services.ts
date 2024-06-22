@@ -27,14 +27,14 @@ export async function DashPageIdLoader({ request, params }: LoaderFunctionArgs) 
 
 export async function DashPageIdAction({ request, params }: ActionFunctionArgs) {
   const formData = await request.formData();
-  const body = formData.get('lexical') as string;
+  const publishedData = formData.get('lexical') as string;
   const reference_title = formData.get('page-title');
   const enable_collab = formData.get('enableCollab');
 
   const { supabaseClient, headers } = await initServer(request);
-  const user = await supabaseClient.auth.getUser();
-  const userData = user.data?.user;
-  if (!userData?.id) return null;
+  const userData = await supabaseClient.auth.getUser();
+  const user = userData.data?.user;
+  if (!user?.id) return null;
   if (enable_collab) {
     const response = await supabaseClient
       .from('pages')
@@ -46,11 +46,11 @@ export async function DashPageIdAction({ request, params }: ActionFunctionArgs) 
       .single();
 
     return json(response?.data, { headers });
-  } else {
+  } else if (publishedData) {
     const response = await supabaseClient
       .from('pages')
       .update({
-        body: JSON.parse(body),
+        body: JSON.parse(publishedData),
         reference_title
       })
       .match({ id: params.page_id })
@@ -58,5 +58,5 @@ export async function DashPageIdAction({ request, params }: ActionFunctionArgs) 
       .single();
 
     return json(response?.data, { headers });
-  }
+  } else return json(null, { headers });
 }

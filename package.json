@@ -19,6 +19,12 @@
     "@lexical/rich-text": "^0.16.0",
     "@lexical/selection": "^0.16.0",
     "@lexical/yjs": "^0.16.0",
+    "@liveblocks/client": "^2.0.5",
+    "@liveblocks/node": "^2.0.5",
+    "@liveblocks/react": "^2.0.5",
+    "@liveblocks/react-lexical": "^2.0.5",
+    "@liveblocks/react-ui": "^2.0.5",
+    "@liveblocks/yjs": "^2.0.5",
     "@remix-run/node": "^2.9.1",
     "@remix-run/react": "^2.9.1",
     "@remix-run/serve": "^2.9.1",
@@ -35,7 +41,7 @@
     "react-image-crop": "^11.0.5",
     "supabase": "^1.172.2",
     "three": "^0.164.1",
-    "yjs": "^13.6.16"
+    "yjs": "^13.6.18"
   },
   "devDependencies": {
     "@eslint/js": "^9.2.0",
