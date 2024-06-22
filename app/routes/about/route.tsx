@@ -60,8 +60,8 @@ export default function About() {
         <h1 className="text-red-700 text-6xl m-0 font-mono text-center font-miltonian [text-shadow:_5px_3px_2px_rgb(225_225_225_/_50%)]">
           {LocalStrings.title}
         </h1>
-        <div className="flex flex-col gap-3">
-          <h2 className="text-red-700 text-4xl m-0 font-mono text-center font-miltonian [text-shadow:_5px_3px_2px_rgb(225_225_225_/_50%)]">
+        <div className="flex flex-col gap-3 bg-slate-400 p-6 rounded-xl bg-opacity-25 backdrop-blur-sm shadow-sm">
+          <h2 className="text-4xl m-0 font-mono text-center font-semibold text-gray-800 tracking-wide">
             {LocalStrings.technology.title}
           </h2>
           <div className="w-full flex flex-wrap justify-center md:gap-16 gap-6">
@@ -83,13 +83,13 @@ export default function About() {
             ))}
           </div>
         </div>
-        <div className="flex flex-col gap-3 w-full bg-white rounded py-10 px-4 bg-opacity-35 backdrop-blur-md">
-          <h2 className="text-red-700 text-4xl m-0 font-mono text-center font-miltonian [text-shadow:_5px_3px_2px_rgb(225_225_225_/_50%)]">
+        <div className="flex flex-col gap-3 w-full bg-slate-400 p-10 rounded-xl bg-opacity-25 backdrop-blur-sm shadow-sm">
+          <h2 className="text-4xl m-0 font-mono text-center font-semibold text-gray-800 tracking-wide">
             {LocalStrings.background.title}
           </h2>
-          <p className="text-2xl text-gray-600">{LocalStrings.background.name}</p>
-          <p className="text-xl text-gray-600" >{LocalStrings.background.source}</p>
-          <p className="text-xl text-gray-600">{LocalStrings.background.author}</p>
+          <p className="text-2xl text-gray-800 font-semibold">{LocalStrings.background.name}</p>
+          <p className="text-xl text-gray-100" ><span className="font-semibold text-gray-800">Source:</span> {LocalStrings.background.source}</p>
+          <p className="text-xl text-gray-100"><span className="font-semibold text-gray-800">Author: </span>{LocalStrings.background.author}</p>
         </div>
         <Link to="/" className="primaryButton py-2.5">
           {LocalStrings.primary_button}
