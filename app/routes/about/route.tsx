@@ -88,8 +88,9 @@ export default function About() {
             {LocalStrings.background.title}
           </h2>
           <p className="text-2xl text-gray-800 font-semibold">{LocalStrings.background.name}</p>
-          <p className="text-xl text-gray-100" ><span className="font-semibold text-gray-800">Source:</span> {LocalStrings.background.source}</p>
           <p className="text-xl text-gray-100"><span className="font-semibold text-gray-800">Author: </span>{LocalStrings.background.author}</p>
+          <a href={LocalStrings.background.source} className="text-xl text-gray-100 break-all max-w-full" ><span className="font-semibold text-gray-800">Source:</span> {LocalStrings.background.source}</a>
+         
         </div>
         <Link to="/" className="primaryButton py-2.5">
           {LocalStrings.primary_button}
