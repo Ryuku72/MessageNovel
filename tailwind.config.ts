@@ -41,7 +41,7 @@ export default {
         'c-600': '600px',
         'c-800': '800px',
         button: '145px',
-        wide: '1850px'
+        wide: 'min(100%, 1850px)'
       },
       colors: {
         'pastel-black': '#D3D3D3',

@@ -47,13 +47,13 @@ export default function DashUsers() {
       <h1 className="text-red-700 text-4xl underline underline-offset-8 [text-shadow:_5px_3px_2px_rgb(225_225_225_/_50%)] font-miltonian">
         &nbsp;&nbsp;Participants&nbsp;&nbsp;&nbsp;
       </h1>
-      <div className="flex flex-wrap gap-4 w-full max-w-wide">
+      <div className="grid grid-cols-[repeat(auto-fill,365px)] w-auto gap-4 max-w-wide">
         {userProfiles?.map(profile => {
           const online = onlineUsers?.find(user => user.id === profile?.id);
           return (
             <div
               key={profile.id}
-              className={`flex flex-wrap md:w-[400px] w-full px-10 py-6 overflow-hidden relative rounded-lg font-mono flex-col gap-1 text-white items-center ${online ? profile.color : 'bg-gray-400'} bg-opacity-65 backdrop-blur-lg`}>
+              className={`flex flex-wrap w-full px-10 py-6 overflow-hidden relative rounded-lg font-mono flex-col gap-1 text-white items-center ${online ? profile.color : 'bg-gray-400'} bg-opacity-65 backdrop-blur-lg`}>
               <img
                 alt="create-img"
                 className="w-20 h-20 relative z-10 rounded-full object-cover bg-gradient-to-b from-slate-500 to-fuchsia-600"
