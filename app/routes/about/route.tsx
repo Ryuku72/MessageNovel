@@ -39,7 +39,7 @@ export default function About() {
         <h1 className="text-red-700 text-6xl m-0 font-mono text-center font-miltonian [text-shadow:_5px_3px_2px_rgb(225_225_225_/_50%)]">
           {LocalStrings.title}
         </h1>
-        <div className="flex flex-col gap-2 bg-gray-100 p-6 rounded-xl bg-opacity-35 backdrop-blur-sm shadow-sm text-gray-800 leading-10">
+        <div className="flex flex-col gap-2 bg-gray-100 p-6 rounded-xl bg-opacity-35 backdrop-blur-sm shadow-sm text-gray-800 leading-10 max-w-full">
           <p className="text-xl leading-10">
             <strong className="text-3xl pl-4 pr-1">_Message Novel</strong> is a full stack open source project created by <strong className="text-2xl">Joshua K Bader</strong>. 
           </p>
@@ -47,12 +47,12 @@ export default function About() {
           <p className="text-xl leading-10">
           Collaborate with fellow <strong className="text-xl italic">Authors</strong> and friends to create an online novel. <strong className="text-xl italic">Write, comment and promote your stories </strong> with the power of <strong className="text-xl italic">Lexical, Liveblocks and Supabase</strong>.
           </p>
-          <div className="text-xl">
-            Source Code: <a className="font-semibold text-xl" href="https://github.com/Ryuku72/MessageNovel">https://github.com/Ryuku72/MessageNovel</a>
+          <div className="text-xl break-all">
+            Source Code: <a className="font-semibold text-xl break-all" href="https://github.com/Ryuku72/MessageNovel">https://github.com/Ryuku72/MessageNovel</a>
           </div>
         </div>
 
-        <div className="flex flex-col gap-10 bg-gray-100 p-6 rounded-xl bg-opacity-35 backdrop-blur-sm shadow-sm break-all">
+        <div className="flex flex-col gap-10 bg-gray-100 p-6 rounded-xl bg-opacity-35 backdrop-blur-sm shadow-sm">
           <h2 className="text-4xl m-0 font-mono text-center font-semibold text-gray-800 tracking-wide underline">
             Technology Stack
           </h2>
@@ -75,8 +75,8 @@ export default function About() {
             {LocalStrings.background.title}
           </h2>
           <p className="text-2xl text-gray-800 font-semibold">{LocalStrings.background.name}</p>
-          <p className="text-xl text-gray-800">
-            <strong className="font-semibold break-all">Author: </strong>
+          <p className="text-xl text-gray-800 break-all">
+            <strong className="font-semibold">Author: </strong>
             {LocalStrings.background.author}
           </p>
           <a href={LocalStrings.background.source} className="text-xl text-gray-800 break-all max-w-full">
