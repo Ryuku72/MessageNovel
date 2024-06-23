@@ -45,16 +45,16 @@ export default function About() {
           </h2>
           <div className="w-full flex flex-wrap justify-center items-center md:gap-16 gap-6">
             <ReactLogo svgColor="#00d8ff" uniqueId="credit-React" className="w-auto max-w-full h-28 p-2" />
-            <RemixLogo uniqueId="credit-remix" className="w-auto max-w-full h-28 p-2" />
-            <ViteLogo uniqueId="credit-Vite" className="w-auto max-w-full h-28 p-2" />
-            <LiveblocksLogo uniqueId="liveblocks-logo" className="w-auto max-w-full h-14" />
-            <LexicalLogo uniqueId="lexical-logo" className="w-auto max-w-full h-14" />
-            <ThreeLogo uniqueId="credit-ThreeJs" className="w-auto max-w-full h-28 p-2" />
-            <GsapLogo uniqueId="credit-gsap" className="w-auto max-w-full h-20 p-2" />
-            <TailwindLogo uniqueId="credit-twcss" className="w-auto max-w-full h-28 p-2" />
-            <VercelLogo uniqueId="credit-vercel" className="w-auto max-w-full h-20 p-2" />
+            <RemixLogo uniqueId="credit-remix" svgColor="none" className="w-auto max-w-full h-20 p-2" />
             <SupabaseLogo uniqueId="credit-supabase" className="w-auto max-w-full h-28 p-2" />
+            <LexicalLogo uniqueId="lexical-logo" className="w-auto max-w-full h-14" />
+            <TailwindLogo uniqueId="credit-twcss" className="w-auto max-w-full h-24 p-2" />
+            <ViteLogo uniqueId="credit-Vite" className="w-auto max-w-full h-28 p-2" />
+            <LiveblocksLogo uniqueId="liveblocks-logo" className="w-auto max-w-full h-16" />
             <BunLogo uniqueId="credit-bun" className="w-auto max-w-full h-28 p-2" />
+            <GsapLogo uniqueId="credit-gsap" className="w-auto max-w-full h-20 p-2" />
+            <ThreeLogo uniqueId="credit-ThreeJs" className="w-auto max-w-full h-28 p-2" />
+            <VercelLogo uniqueId="credit-vercel" className="w-auto max-w-full h-16 p-2" />
           </div>
         </div>
         <div className="flex flex-col gap-3 w-full bg-slate-400 p-10 rounded-xl bg-opacity-25 backdrop-blur-sm shadow-sm">
