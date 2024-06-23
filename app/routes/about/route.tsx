@@ -52,7 +52,7 @@ export default function About() {
           </div>
         </div>
 
-        <div className="flex flex-col gap-10 bg-gray-100 p-6 rounded-xl bg-opacity-35 backdrop-blur-sm shadow-sm">
+        <div className="flex flex-col gap-10 bg-gray-100 p-6 rounded-xl bg-opacity-35 backdrop-blur-sm shadow-sm break-all">
           <h2 className="text-4xl m-0 font-mono text-center font-semibold text-gray-800 tracking-wide underline">
             Technology Stack
           </h2>
