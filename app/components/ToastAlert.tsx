@@ -38,7 +38,7 @@ export function ToastAlert() {
     <div className="w-full fixed bottom-0 flex justify-center">
       <button
         className={`absolute ease-in bg-black bg-opacity-35 rounded-lg backdrop-blur-m min-w-28 text-center transition-all bottom-10 cursor-pointer ${
-          showAlert ? 'px-6 py-2 opacity-100 bottom-10' : 'opacity-0 bottom-8'
+          showAlert ? 'px-6 py-2 opacity-100 bottom-10 pointer-events-auto' : 'opacity-0 -bottom-8 pointer-events-none'
         }`}
         type="button"
         onClick={handleClick}>
