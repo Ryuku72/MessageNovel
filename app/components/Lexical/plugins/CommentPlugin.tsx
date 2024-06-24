@@ -101,8 +101,7 @@ export default function CommentPlugin({
   useEffect(() => {
     const changedElems: Array<HTMLElement> = [];
     function onClick(){
-      if (showComments) navigate(`/dash/page/${params.page_id}`);
-      else navigate(`/dash/page/${params.page_id}?showComments=true`);
+      navigate(`/dash/page/${params.page_id}?showComments=true`);
      }
     mapKeys.map(id => {
       const dataInfo = comments.find(comment => comment.id === id);

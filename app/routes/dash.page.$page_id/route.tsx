@@ -62,7 +62,7 @@ export default function DashPageId() {
               placeholder={'Enter Page Reference Title'}
               onChange={setTitleValue}
             />
-            <LiveBlocksRoom roomId={loaderData?.id} authEndpoint="/liveblocks">
+            <LiveBlocksRoom roomId={loaderData?.id} authEndpoint="/api/liveblocks">
               <PageRichTextEditor
                 namespace={loaderData?.id}
                 userData={userData}
