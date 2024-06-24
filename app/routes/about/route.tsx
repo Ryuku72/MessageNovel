@@ -69,13 +69,13 @@ export default function About() {
             </div>
             <RemixLogo uniqueId="credit-remix" svgColor="none" className="w-auto max-w-full h-16 p-2" />
             <SupabaseLogo uniqueId="credit-supabase" className="w-auto max-w-full h-16 p-2" />
-            <LexicalLogo uniqueId="lexical-logo" className="w-auto max-w-full h-16" />
+            <LexicalLogo uniqueId="lexical-logo" className="w-auto max-w-full h-16 p-2" />
             <TailwindLogo uniqueId="credit-twcss" className="w-auto max-w-full h-16 p-2" />
             <div className="flex max-w-full h-16 p-2 items-center">
               <ViteLogo uniqueId="credit-Vite" className="w-auto h-full" />
               <p className="text-current text-[2.75rem] ml-2 font-bold tracking-wide">Vite</p>
             </div>
-            <LiveblocksLogo uniqueId="liveblocks-logo" className="w-auto max-w-full h-16" />
+            <LiveblocksLogo uniqueId="liveblocks-logo" className="w-auto max-w-full h-16 p-2" />
             <div className="flex max-w-full h-16 p-2 items-center">
               <BunLogo uniqueId="credit-bun" svgColor="currentColor" className="w-auto h-full" />
               <BunTextLogo uniqueId="credit-bun-text" className="w-auto h-full" />

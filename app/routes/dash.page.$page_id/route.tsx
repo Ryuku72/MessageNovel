@@ -29,7 +29,7 @@ export default function DashPageId() {
   const navigationState = useNavigation();
   const isLoading = ['submitting'].includes(navigationState.state);
 
-  const LocalStrings = LOCALES.dash.draft;
+  const LocalStrings: (typeof LOCALES)['dash']['draft'] = LOCALES.dash.draft;
   const [titleValue, setTitleValue] = useState(loaderData?.reference_title);
 
   useEffect(() => {
@@ -83,7 +83,7 @@ export default function DashPageId() {
                 {isLoading ? (
                   <LoadingSpinner className="w-full h-10" svgColor="#fff" uniqueId="index-spinner" />
                 ) : (
-                  LocalStrings.primary_button
+                  'Publish'
                 )}
               </button>
             </div>

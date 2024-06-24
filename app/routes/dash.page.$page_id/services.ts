@@ -30,33 +30,42 @@ export async function DashPageIdAction({ request, params }: ActionFunctionArgs) 
   const publishedData = formData.get('lexical') as string;
   const reference_title = formData.get('page-title');
   const enable_collab = formData.get('enableCollab');
-
   const { supabaseClient, headers } = await initServer(request);
   const userData = await supabaseClient.auth.getUser();
   const user = userData.data?.user;
+  
   if (!user?.id) return null;
-  if (enable_collab) {
-    const response = await supabaseClient
-      .from('pages')
-      .update({
-        enable_collab
-      })
-      .match({ id: params.page_id })
-      .select()
-      .single();
+  try {
+    if (enable_collab) {
+      const response = await supabaseClient
+        .from('pages')
+        .update({
+          enable_collab
+        })
+        .match({ id: params.page_id })
+        .select()
+        .single();
+      if (response.error) throw response.error;
+      return json(response?.data, { headers });
+    } else if (publishedData) {
+      const response = await supabaseClient
+        .from('pages')
+        .update({
+          published: JSON.parse(publishedData),
+          reference_title
+        })
+        .match({ id: params.page_id })
+        .select()
+        .single();
 
-    return json(response?.data, { headers });
-  } else if (publishedData) {
-    const response = await supabaseClient
-      .from('pages')
-      .update({
-        body: JSON.parse(publishedData),
-        reference_title
-      })
-      .match({ id: params.page_id })
-      .select()
-      .single();
-
-    return json(response?.data, { headers });
-  } else return json(null, { headers });
+      if (response.error) throw response.error;
+      return json(response?.data, { headers });
+    } else return json(null, { headers });
+  } catch (error) {
+    console.error(error);
+    console.error('process error in dash novel id');
+    if (isRouteErrorResponse(error))
+      return new Response(`${error.status} - ${error?.statusText || 'Error'}`, { status: error.status, headers });
+    return json(error, { headers });
+  }
 }
