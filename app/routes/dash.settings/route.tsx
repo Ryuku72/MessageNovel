@@ -39,7 +39,7 @@ export default function DashSettings() {
   const [showDelModal, setShowDelModal] = useState(false);
 
   useEffect(() => {
-    if (!channel || !actionData) return;
+    if (!channel) return;
     channel.send({
       type: 'broadcast',
       event: 'user update',

@@ -3,7 +3,6 @@ import { ActionFunctionArgs, LoaderFunctionArgs, json, redirect } from '@remix-r
 import { isRouteErrorResponse } from '@remix-run/react';
 
 import { initServer } from '~/services/API';
-import { ProfileEntry } from '~/types';
 
 export async function DashIndexLoader(request: LoaderFunctionArgs['request']) {
   const { supabaseClient, headers } = await initServer(request);
@@ -15,14 +14,12 @@ export async function DashIndexLoader(request: LoaderFunctionArgs['request']) {
 
     const novels = await supabaseClient
       .from('novels')
-      .select('*, owner:profiles!owner(color, username, avatar, id), members:novel_members(profiles!novel_members_user_id_fkey(color, username, avatar, id))')
+      .select('*, owner:profiles!owner(color, username, avatar, id), members:novel_members!id(user_id))')
       .order('updated_at', { ascending: false });
+
+      console.dir(novels);
     if (novels.error) throw novels.error;
-    const filterResults = novels.data.map(novel => ({
-      ...novel,
-      members: novel.members.map((member: { profiles: ProfileEntry }) => member.profiles) // Flatten the profiles data
-    }));
-    return json(filterResults, { headers });
+    return json(novels.data, { headers });
   } catch (error) {
     console.error(error);
     console.error('process error in dash');

@@ -30,7 +30,8 @@ export async function DashNovelIdLoader(data: LoaderFunctionArgs) {
       .select(
         '*, owner: profiles!owner(color, username, avatar, id), members: page_members(profiles!page_members_user_id_fkey(color, username, avatar, id))'
       )
-      .match({ novel_id: novel_id });
+      .match({ novel_id: novel_id })
+      .order('created_at', { ascending: true });
     if (pages.error) throw pages.error;
 
     const pagesData = pages.data.map(page => ({

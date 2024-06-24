@@ -29,7 +29,7 @@ export default function DashNovelId() {
   const submit = useSubmit();
 
   useEffect(() => {
-    if (!channel || channel.state !== 'joined') return;
+    if (!channel) return;
     channel.track({ userId: user.id, room: 'Dashboard' });
   }, [channel, user.id]);
 
@@ -141,7 +141,7 @@ export default function DashNovelId() {
           </button>
         </Form>
       </div>
-      <div className="flex w-full max-w-wide justify-center sticky bottom-0">
+      <div className="flex w-full max-w-wide justify-center sticky bottom-4">
         <Link to="/dash" className="primaryButton py-2.5" type="button">
           Back
         </Link>

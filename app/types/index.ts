@@ -25,7 +25,7 @@ export type Novel = {
 };
 
 export type NovelWithUsers = Omit<Novel, 'owner'> & { owner: BasicProfile; members: BasicProfile[] };
-
+export type NovelWithMemberIds = Omit<NovelWithUsers, 'members'> & { members: { user_id: string; }[] };
 export type Page = {
   id: string;
   created_at: string;

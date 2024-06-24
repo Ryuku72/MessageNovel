@@ -1,7 +1,7 @@
 import { LinksFunction } from '@remix-run/node';
 import { Links, Meta, Outlet, Scripts, ScrollRestoration, isRouteErrorResponse, useRouteError } from '@remix-run/react';
 
-import { CSSProperties, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import LOCALES from '~/locales/language_en.json';
 
@@ -66,8 +66,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body
-        className="flex flex-col w-full min-h-full [background:_#bfe3dd] relative"
-        style={{ userColor: '255, 255, 204' } as CSSProperties}>
+        className="flex flex-col w-full min-h-full [background:_#bfe3dd] relative">
         <LoadingLayer />
         <ThreeJsBackground />
         {children}

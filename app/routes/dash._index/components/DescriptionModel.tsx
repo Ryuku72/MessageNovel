@@ -14,12 +14,12 @@ import CloseIcon from '~/svg/CloseIcon/CloseIcon';
 import LoadingSpinner from '~/svg/LoadingSpinner/LoadingSpinner';
 
 import EditorTextPlugin from './EditorTextPlugin';
-import { BasicProfile, NovelWithUsers } from '~/types';
+import { NovelWithMemberIds } from '~/types';
 
 type DescriptionModelProps = {
-  selectedNovel: NovelWithUsers | null;
+  selectedNovel: NovelWithMemberIds | null;
   userId: string;
-  members: BasicProfile[];
+  members: { user_id: string }[];
   ownerId: string;
   close: () => void;
 };
@@ -31,7 +31,7 @@ export function DescriptionModel({ selectedNovel, close, userId, ownerId, member
   const finishedPost = 'loading' === navigationState.state && navigationState.formMethod === 'POST';
   const isLoading = 'submitting' === navigationState.state && navigationState.formMethod === 'DELETE';
   const isLoadingUpdate = 'submitting' === navigationState.state && navigationState.formMethod === 'POST';
-  const member = members.some(user => user.id === userId);
+  const member = members.some(user => user.user_id === userId);
   const isOwner = userId === ownerId;
 
   useEffect(() => {

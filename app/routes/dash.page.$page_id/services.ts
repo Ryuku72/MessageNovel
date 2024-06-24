@@ -33,7 +33,7 @@ export async function DashPageIdAction({ request, params }: ActionFunctionArgs) 
   const { supabaseClient, headers } = await initServer(request);
   const userData = await supabaseClient.auth.getUser();
   const user = userData.data?.user;
-  
+
   if (!user?.id) return null;
   try {
     if (enable_collab) {

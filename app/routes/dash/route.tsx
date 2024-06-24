@@ -5,11 +5,11 @@ import { useEffect, useState } from 'react';
 
 import { createBrowserClient } from '@supabase/ssr';
 import { RealtimeChannel, SupabaseClient } from '@supabase/supabase-js';
-import { UserDataEntry } from '~/types';
 
 import { EnvConfigEntry } from '~/services/API';
 
 import LOCALES from '~/locales/language_en.json';
+import { UserDataEntry } from '~/types';
 
 import DashNavBar from './components/DashNavBar';
 import { DashLoader } from './services';
@@ -35,7 +35,7 @@ export default function Dash() {
   const { sceneReady } = useOutletContext<{ sceneReady: boolean }>();
   const [searchParams] = useSearchParams();
   const showComments = searchParams.get('showComments');
-  
+
   const supabase = createBrowserClient(env.SUPABASE_URL, env.SUPABASE_ANON_KEY);
 
   const [channel, setChannel] = useState<RealtimeChannel>();
@@ -51,25 +51,23 @@ export default function Dash() {
 
   useEffect(() => {
     if (!supabase) return;
-    const channel = supabase.channel('dashboard', {
-      config: { broadcast: { self: true } }
-    });
-    channel.subscribe();
+    const channel = supabase
+      .channel('dashboard')
+      .on('presence', { event: 'sync' }, () => {
+        /** Get the presence state from the channel, keyed by realtime identifier */
+        const presenceState = channel.presenceState();
+        /** transform the presence */
+        const users = Object.keys(presenceState)
+          .map(presenceId => {
+            const presences = presenceState[presenceId] as unknown as { userId: string; room: string }[];
+            return presences.map(presence => ({ id: presence.userId, room: presence.room }));
+          })
+          .flat();
+        /** sort and set the users */
+        setOnlineUsers(users);
+      })
+      .subscribe();
     setChannel(channel);
-
-    channel.on('presence', { event: 'sync' }, () => {
-      /** Get the presence state from the channel, keyed by realtime identifier */
-      const presenceState = channel.presenceState();
-      /** transform the presence */
-      const users = Object.keys(presenceState)
-        .map(presenceId => {
-          const presences = presenceState[presenceId] as unknown as { userId: string; room: string }[];
-          return presences.map(presence => ({ id: presence.userId, room: presence.room }));
-        })
-        .flat();
-      /** sort and set the users */
-      setOnlineUsers(users);
-    });
 
     return () => {
       channel.unsubscribe();
@@ -79,7 +77,7 @@ export default function Dash() {
 
   return (
     <div
-      className={`w-full md:h-full flex flex-row relative ${showComments ? 'md:overflow-visible overflow-hidden' : 'overflow-visible'}`}
+      className={`w-full flex flex-auto flex-row relative ${showComments ? 'md:overflow-visible overflow-hidden' : 'overflow-visible'}`}
       id="dash-default">
       <DashNavBar user={user} />
       <Outlet context={{ user, supabase, channel, onlineUsers, img_url: env.SUPABASE_IMG_STORAGE }} />

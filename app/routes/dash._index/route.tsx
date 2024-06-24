@@ -5,7 +5,7 @@ import { Fragment, useEffect, useState } from 'react';
 
 import { CreateDate } from '~/helpers/DateHelper';
 import LOCALES from '~/locales/language_en.json';
-import { NovelWithUsers } from '~/types';
+import { NovelWithMemberIds } from '~/types';
 
 import LoadingSpinner from '~/svg/LoadingSpinner/LoadingSpinner';
 import PlusIcon from '~/svg/PlusIcon/PlusIcon';
@@ -23,16 +23,16 @@ export function action({ request }: ActionFunctionArgs) {
 }
 
 export default function DashIndex() {
-  const library = useLoaderData() as NovelWithUsers[];
+  const library = useLoaderData() as NovelWithMemberIds[] || [];
   const { user, channel } = useOutletContext<DashOutletContext>();
   const navigationState = useNavigation();
 
-  const [selectedNovel, setSelectedNovel] = useState<NovelWithUsers| null>(null);
+  const [selectedNovel, setSelectedNovel] = useState<NovelWithMemberIds | null>(null);
   const LocalStrings = LOCALES.dash;
   const isLoading = ['submitting'].includes(navigationState.state);
 
   useEffect(() => {
-    if (!channel || channel.state !== 'joined') return;
+    if (!channel) return;
     channel.track({ userId: user.id, room: 'Dashboard' });
   }, [channel, user.id]);
   return (
