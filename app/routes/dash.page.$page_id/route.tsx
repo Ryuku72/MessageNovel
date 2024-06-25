@@ -54,7 +54,7 @@ export default function DashPageId() {
           <Form
             aria-label="draft-update"
             method="post"
-            className="w-full flex flex-col gap-3 text-mono relative bg-white bg-opacity-50 backdrop-blur-sm rounded-b-md rounded-t-md md:px-4 px-2 py-4 md:overflow-hidden">
+            className="w-full flex flex-col gap-3 text-mono relative bg-white bg-opacity-50 backdrop-blur-sm rounded-b-md rounded-t-md md:px-4 px-2 py-4">
             <TitleInput
               title="Page Reference Title"
               id="page-title"
