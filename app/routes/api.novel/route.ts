@@ -12,7 +12,7 @@ export async function action({ request }: ActionFunctionArgs) {
     const env = envConfig();
     const data = await request.json();
     const id = data.record.id;
-    if (!id) throw new Error('No user id attached');
+    if (!id) throw new Error('No page id attached');
     try {
       const liveblocks = new Liveblocks({ secret: env.LIVEBLOCKS_SECRET_KEY });
       const room = await liveblocks.createRoom(id, {  defaultAccesses: ['room:write'] });
@@ -20,7 +20,7 @@ export async function action({ request }: ActionFunctionArgs) {
       return json(room);
     } catch (err) {
       console.error(err);
-      throw new Error('No user id attached');
+      throw new Error('No page id attached');
     }
   } else return null;
 }
