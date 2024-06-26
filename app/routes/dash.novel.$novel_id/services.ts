@@ -41,7 +41,7 @@ export async function DashNovelIdLoader(data: LoaderFunctionArgs) {
     return json({ novel: novelData, pages: pagesData }, { headers });
   } catch (error) {
     console.error(error);
-    console.error('process error in dash new');
+    console.error('process error in novel id services');
     if (isRouteErrorResponse(error))
       return new Response(`${error.status} - ${error?.statusText || 'Error'}`, { status: error.status, headers });
     return json(null, { headers });
@@ -104,7 +104,7 @@ export async function DashNovelIdAction({ request, params }: ActionFunctionArgs)
     } else return json(null, { headers });
   } catch (error) {
     console.error(error);
-    console.error('process error in dash new');
+    console.error('process error in novel id services');
     if (isRouteErrorResponse(error))
       return new Response(`${error.status} - ${error?.statusText || 'Error'}`, { status: error.status, headers });
     return json(null, { headers });

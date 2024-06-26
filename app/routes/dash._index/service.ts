@@ -37,7 +37,9 @@ export async function DashIndexAction(request: ActionFunctionArgs['request']) {
   if (!user) return redirect('/', { headers });
   if (request.method === 'DELETE' && novel_id) {
     try {
+      console.log(novel_id);
       const update = await supabaseClient.from('novels').delete().match({ id: novel_id }).select();
+      if (update.error) throw update.error;
       return json(update, { headers });
     } catch (error) {
       console.error(error);

@@ -1,9 +1,9 @@
 /* eslint-disable no-console */
-import { ActionFunctionArgs, json, redirect } from '@remix-run/node';
+import { ActionFunctionArgs, redirect } from '@remix-run/node';
 
 import { Liveblocks } from '@liveblocks/node';
 
-import { envConfig, initServer } from '~/services/API';
+import { initServer } from '~/services/API';
 
 import { userColor } from '~/helpers/UserColor';
 
@@ -35,20 +35,5 @@ export async function action({ request }: ActionFunctionArgs) {
     const { body, status } = await session.authorize();
 
     return new Response(body, { headers, status });
-  } else if (request.method === 'DELETE') {
-    const env = envConfig();
-    const data = await request.json();
-    const id = data.record.id;
-
-    if (!id) throw new Error('No page id attached');
-    try {
-      const liveblocks = new Liveblocks({ secret: env.LIVEBLOCKS_SECRET_KEY });
-      await liveblocks.deleteRoom(id);
-      return json('success');
-    } catch (err) {
-      console.error(err);
-      throw new Error('Error whilst attempting to delete a room');
-    }
-
   } else return null;
 }
