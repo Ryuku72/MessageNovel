@@ -3,7 +3,7 @@ import { ActionFunctionArgs, json } from '@remix-run/node';
 
 import { Liveblocks } from '@liveblocks/node';
 
-import { envConfig, initServer } from '~/services/API';
+import { envConfig } from '~/services/API';
 
 import { initialData } from './initial_state_binary';
 
@@ -17,8 +17,6 @@ export async function action({ request }: ActionFunctionArgs) {
       const liveblocks = new Liveblocks({ secret: env.LIVEBLOCKS_SECRET_KEY });
       const room = await liveblocks.createRoom(id, {  defaultAccesses: ['room:write'] });
       await liveblocks.sendYjsBinaryUpdate(room.id, initialData);
-      const { supabaseClient } = await initServer(request);
-      await supabaseClient.from('pages').update({ success: true }).match({ id });
       return json(room);
     } catch (err) {
       console.error(err);
