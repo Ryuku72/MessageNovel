@@ -97,7 +97,6 @@ export async function DashNovelIdAction({ request, params }: ActionFunctionArgs)
         })
         .select()
         .single();
-        console.dir(update);
       if (update.error) throw update.error;
       
       } 

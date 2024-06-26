@@ -16,8 +16,6 @@ export async function DashIndexLoader(request: LoaderFunctionArgs['request']) {
       .from('novels')
       .select('*, owner:profiles!owner(color, username, avatar, id), members:novel_members!id(user_id))')
       .order('updated_at', { ascending: false });
-
-      console.dir(novels);
     if (novels.error) throw novels.error;
     return json(novels.data, { headers });
   } catch (error) {
