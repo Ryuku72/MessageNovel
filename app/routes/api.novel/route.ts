@@ -10,7 +10,7 @@ import { initialData } from './initial_state_binary';
 export async function action({ request }: ActionFunctionArgs) {
   if (request.method === 'POST') {
     const data = await request.json();
-    const id = data.id;
+    const id = data.record.id;
     const { supabaseClient, headers, env } = await initServer(request);
     const userData = await supabaseClient.auth.getUser();
     const user = userData.data?.user;
