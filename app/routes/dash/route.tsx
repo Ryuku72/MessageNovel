@@ -6,8 +6,6 @@ import { useEffect, useState } from 'react';
 import { createBrowserClient } from '@supabase/ssr';
 import { RealtimeChannel, SupabaseClient } from '@supabase/supabase-js';
 
-import { EnvConfigEntry } from '~/services/API';
-
 import LOCALES from '~/locales/language_en.json';
 import { UserDataEntry } from '~/types';
 
@@ -31,7 +29,7 @@ export type DashOutletContext = {
 };
 
 export default function Dash() {
-  const { user, env } = useLoaderData<{ user: UserDataEntry; env: EnvConfigEntry }>();
+  const { user, env } = useLoaderData<{ user: UserDataEntry; env: { SUPABASE_URL: string; SUPABASE_ANON_KEY: string; SUPABASE_IMG_STORAGE: string} }>();
   const { sceneReady } = useOutletContext<{ sceneReady: boolean }>();
   const [searchParams] = useSearchParams();
   const showComments = searchParams.get('showComments');

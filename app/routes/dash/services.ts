@@ -23,7 +23,9 @@ export async function DashLoader(request: LoaderFunctionArgs['request']) {
       color: user?.user_metadata.color || '#aeaeae'
     };
 
-    return json({ user: userData, env }, { headers });
+    return json({ user: userData, env: { SUPABASE_URL: env.SUPABASE_URL,
+      SUPABASE_ANON_KEY: env.SUPABASE_ANON_KEY,
+      SUPABASE_IMG_STORAGE: env.SUPABASE_IMG_STORAGE } }, { headers });
   } catch (error) {
     console.error(error);
     console.error('process error in dash');
