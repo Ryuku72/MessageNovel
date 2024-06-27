@@ -111,7 +111,7 @@ export function PageRichTextEditor({
   return (
     <LexicalComposer initialConfig={initialConfig}>
       <div
-        className={`rounded-sm w-full text-gray-900 font-normal text-left flex flex-col flex-auto min-h-[500px] ${!editorState ? 'overflow-hidden max-h-[500px]' : 'overflow-visible'}`}>
+        className="rounded-sm w-full text-gray-900 font-normal text-left flex flex-col flex-auto min-h-[500px]">
         <p className="w-full text-sm font-medium text-gray-600 mb-2">Participants</p>
         <div className="flex gap-2 text-blue-800 items-center text-sm mb-3 max-w-[80%]">
           {users.map((user, index) => (
