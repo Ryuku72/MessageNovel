@@ -41,18 +41,18 @@ export default function About() {
         </h1>
         <div className="flex flex-col gap-2 bg-gray-100 p-6 rounded-xl bg-opacity-35 backdrop-blur-sm shadow-sm text-gray-800 leading-10 max-w-full">
           <p className="text-xl leading-10">
-            <strong className="text-3xl pl-4 pr-1">_Message Novel</strong> is a full stack open source project created
-            by <strong className="text-2xl">Joshua K Bader</strong>.
+            <strong className="text-3xl pl-4 pr-1 text-emerald-800 tracking-wide">_Message Novel</strong> is a full stack open source project created
+            by <strong className="text-2xl text-current tracking-wide">Joshua K Bader</strong>.
           </p>
 
           <p className="text-xl leading-10">
-            Collaborate with fellow <strong className="text-xl italic">Authors</strong> and friends to create an online
-            novel. <strong className="text-xl italic">Write, comment and promote your stories </strong> with the power
-            of <strong className="text-xl italic">Lexical, Liveblocks and Supabase</strong>.
+            Collaborate with fellow <strong className="text-xl italic text-current tracking-wide">Authors</strong> and friends to create an online
+            novel. <strong className="text-xl italic text-curret tracking-wide">Write, comment and promote your stories </strong> with the power
+            of <strong className="text-xl italic text-current tracking-wide">Lexical, Liveblocks and Supabase</strong>.
           </p>
           <div className="text-xl break-all">
             Source Code:{' '}
-            <a className="font-semibold text-xl break-all" href="https://github.com/Ryuku72/MessageNovel">
+            <a className="font-semibold text-xl break-all text-orange-700 tracking-wide" href="https://github.com/Ryuku72/MessageNovel">
               https://github.com/Ryuku72/MessageNovel
             </a>
           </div>
@@ -88,17 +88,17 @@ export default function About() {
             <VercelLogo uniqueId="credit-vercel" className="w-auto max-w-full h-16 p-2" />
           </div>
         </div>
-        <div className="flex flex-col gap-3 w-full bg-gray-100 p-10 rounded-xl bg-opacity-35 backdrop-blur-sm shadow-sm">
-          <h2 className="text-4xl m-0 font-mono text-center font-semibold text-gray-800 tracking-wide underline">
+        <div className="flex flex-col gap-3 w-full bg-gray-100 p-10 rounded-xl bg-opacity-35 text-gray-800  backdrop-blur-sm shadow-sm">
+          <h2 className="text-4xl m-0 font-mono text-center font-semibold text-current tracking-wide underline">
             {LocalStrings.background.title}
           </h2>
-          <p className="text-2xl text-gray-800 font-semibold">{LocalStrings.background.name}</p>
-          <p className="text-xl text-gray-800 break-all">
-            <strong className="font-semibold">Author: </strong>
+          <p className="text-2xl text-current font-semibold">{LocalStrings.background.name}</p>
+          <p className="text-xl text-current break-all">
+            <strong className="font-semibold text-orange-700">Author: </strong>
             {LocalStrings.background.author}
           </p>
           <a href={LocalStrings.background.source} className="text-xl text-gray-800 break-all max-w-full">
-            <strong className="font-semibold">Source:</strong> {LocalStrings.background.source}
+            <strong className="font-semibold text-orange-700">Source:</strong> {LocalStrings.background.source}
           </a>
         </div>
         <Link to="/" className="primaryButton py-2.5">
