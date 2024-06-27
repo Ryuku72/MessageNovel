@@ -23,7 +23,7 @@ export function action({ request }: ActionFunctionArgs) {
 }
 
 export default function DashIndex() {
-  const library = useLoaderData() as NovelWithMemberIds[] || [];
+  const library = (useLoaderData() as NovelWithMemberIds[]) || [];
   const { user, channel } = useOutletContext<DashOutletContext>();
   const navigationState = useNavigation();
 

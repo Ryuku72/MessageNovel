@@ -6,6 +6,7 @@ import { Liveblocks } from '@liveblocks/node';
 import { envConfig } from '~/services/API';
 
 export async function action({ request }: ActionFunctionArgs) {
+  if (request.method === 'POST') {
     const env = envConfig();
     const data = await request.json();
     const id = data.old_record.id;
@@ -19,4 +20,5 @@ export async function action({ request }: ActionFunctionArgs) {
       console.error(err);
       return json('Error whilst attempting to delete a room', { status: 500 });
     }
+  } else return null;
 }
