@@ -91,7 +91,7 @@ export default function DashNovelId() {
                 className="rounded-lg text-gray-100 font-semibold flex items-center justify-center h-[50px] w-[165px] bg-slate-700 hover:bg-slate-500">
                 Read Novel
               </Link> */}
-              <Form method="delete" className={page.owner.id === user.id ? 'flex' : 'hidden'}>
+              <Form method="delete" navigate={false} className={page.owner.id === user.id ? 'flex' : 'hidden'}>
                 <button
                   disabled={isLoadingUpdate}
                   value={page.id}
