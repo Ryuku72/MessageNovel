@@ -65,6 +65,7 @@ export async function DashNovelIdAction({ request, params }: ActionFunctionArgs)
     if (request.method === 'DELETE' && delete_page_id) {
       const update = await supabaseClient.from('pages').delete().match({ id: delete_page_id }).select();
       if (update.error) throw update.error;
+      console.dir({ ...update, page_id: delete_page_id || 'hello' });
       return json(update.data, { headers });
     } else if (request.method === 'POST' && page_id) {
       const update = await supabaseClient
