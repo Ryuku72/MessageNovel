@@ -5,10 +5,11 @@ import { Liveblocks } from '@liveblocks/node';
 
 import { envConfig } from '~/services/API';
 
-export async function action({ request, params }: ActionFunctionArgs) {
+export async function action({ request }: ActionFunctionArgs) {
   if (request.method === 'DELETE') {
     const env = envConfig();
-    const id = params.novel_id as string;
+    const data = await request.json();
+    const id = data.old_record.id;
 
     if (!id) throw new Error('No page id attached');
     try {
