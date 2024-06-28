@@ -56,7 +56,10 @@ The Supabase Img Storage value is the following 'SUPABASE_URL' + '/storage/v1/ob
 
 ## Supabase Database Setup
 
-To set up tables and storage in Supabase please copy and paste the following commands into the SQL Editor. Please do it in order due to how dropping tables for updates work.
+To set up tables and storage in Supabase please copy and paste the following commands into the SQL Editor. Please do it in order due to how dropping tables for updates work. 
+
+!! important please enable webhooks before doing any of this.
+Also remove email authentication requirements. (Authentication > Providers > Email > Confirm Email: false)
 
 ### Public Profile
 ```sh
@@ -420,6 +423,31 @@ VALUES
     new.owner
   );
 RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+create policy "Can only select if authenticated." on public.page_members for
+select
+  using (true);
+
+create policy "Can only insert if authenticated." on public.page_members for insert to authenticated
+with
+  check (true);
+
+create policy "Can only delete if authenticated" on public.page_members for DELETE to authenticated using (true);
+
+create policy "Can only update if authenticated" on public.page_members
+for update
+  to authenticated using (true);
+
+CREATE
+OR REPLACE TRIGGER create_user_page_member_trigger
+AFTER INSERT ON public.pages FOR EACH ROW WHEN (
+  new.id IS NOT NULL
+  and new.owner is not null
+)
+EXECUTE FUNCTION public.create_first_page_member ();
+
 
 ```
 

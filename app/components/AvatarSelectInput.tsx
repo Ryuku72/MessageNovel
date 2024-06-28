@@ -116,7 +116,7 @@ export default function AvatarInput({ title, id, imageSrc, setImage }: AvatarInp
       type: 'image/png'
     });
     blobUrlRef.current = URL.createObjectURL(blob);
-    const file = new File([blobUrlRef.current], 'avatar.png');
+    const file = new File([blob], 'avatar.png');
     if (imageElRef.current) imageElRef.current.src = blobUrlRef.current;
     setImage(file);
     handleClose();
@@ -156,6 +156,7 @@ export default function AvatarInput({ title, id, imageSrc, setImage }: AvatarInp
           className="w-32 h-32 rounded-full object-cover bg-gradient-to-b from-slate-500 to-fuchsia-600"
           ref={imageElRef}
           src={imageSrc || Default_Avatar}
+          onError={event => event.currentTarget.src = Default_Avatar}
         />
         {title}
         <input
