@@ -4,8 +4,11 @@
   },
   "about": {
     "title": "About",
+    "description_title": "Message Novel",
+    "description": "is a full stack open source project created by Joshua K Bader. \n\nCollaborate with fellow Authors and friends to create an online novel. Write, comment and promote your stories with the power of Lexical, Liveblocks and Supabase. If you are interested in the inner mechanics take a look at the source code @ ",
+    "project_link": "https://github.com/Ryuku72/MessageNovel",
     "technology": {
-      "title": "Technology",
+      "title": "Technology Stack",
       "list": [
         {
           "name": "Remix",
@@ -52,6 +55,8 @@
     "background": {
       "title": "Background Model Information",
       "name": "Medieval Fantasy Book",
+      "author_title": "Author: ",
+      "source_title": "Source: ",
       "source": "https://sketchfab.com/3d-models/medieval-fantasy-book-06d5a80a04fc4c5ab552759e9a97d91a",
       "author": "Pixel @ https://sketchfab.com/stefan.lengyel1"
     },

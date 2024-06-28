@@ -36,31 +36,22 @@ export default function About() {
   return (
     <PublicLayout>
       <div className="max-w-[1200px] w-full flex items-center flex-col flex-auto gap-10">
-        <h1 className="text-red-700 text-6xl m-0 font-mono text-center font-miltonian [text-shadow:_5px_3px_2px_rgb(225_225_225_/_50%)]">
-          {LocalStrings.title}
-        </h1>
-        <div className="flex flex-col gap-2 bg-gray-100 p-6 rounded-xl bg-opacity-35 backdrop-blur-sm shadow-sm text-gray-800 leading-10 max-w-full">
-          <p className="text-xl leading-10">
-            <strong className="text-3xl pl-4 pr-1 text-emerald-800 tracking-wide">_Message Novel</strong> is a full stack open source project created
-            by <strong className="text-2xl text-current tracking-wide">Joshua K Bader</strong>.
-          </p>
-
-          <p className="text-xl leading-10">
-            Collaborate with fellow <strong className="text-xl italic text-current tracking-wide">Authors</strong> and friends to create an online
-            novel. <strong className="text-xl italic text-curret tracking-wide">Write, comment and promote your stories </strong> with the power
-            of <strong className="text-xl italic text-current tracking-wide">Lexical, Liveblocks and Supabase</strong>.
-          </p>
-          <div className="text-xl break-all">
-            Source Code:{' '}
-            <a className="font-semibold text-xl break-all text-orange-700 tracking-wide" href="https://github.com/Ryuku72/MessageNovel">
-              https://github.com/Ryuku72/MessageNovel
+        <div className="flex flex-col gap-2 bg-gray-100 p-6 rounded-xl bg-opacity-50 backdrop-blur-sm shadow-sm text-gray-800 leading-10 max-w-full">
+          <h1 className="text-red-700 text-5xl m-0 font-mono text-center font-miltonian [text-shadow:_5px_3px_2px_rgb(225_225_225_/_50%)]">
+            {LocalStrings.title}
+          </h1>
+          <p className="text-gray-700 text-xl leading-10">
+            <strong className="text-3xl">{LocalStrings.description_title}{' '}</strong>
+            {LocalStrings.description}{' '}
+            <a className="text-xl break-all font-bold hover:text-blue-700 tracking-wide" href={LocalStrings.project_link}>
+              {LocalStrings.project_link}{' '}
             </a>
-          </div>
+            .
+          </p>
         </div>
-
-        <div className="flex flex-col gap-10 bg-gray-100 p-6 rounded-xl bg-opacity-35 backdrop-blur-sm shadow-sm">
+        <div className="flex flex-col gap-10 bg-gray-100 p-6 rounded-xl bg-opacity-50 backdrop-blur-sm shadow-sm">
           <h2 className="text-4xl m-0 font-mono text-center font-semibold text-gray-800 tracking-wide underline">
-            Technology Stack
+            {LocalStrings.technology.title}
           </h2>
           <div className="w-full flex flex-wrap justify-center items-center gap-6 text-gray-800">
             <div className="flex max-w-full h-16 p-2 items-center">
@@ -88,17 +79,17 @@ export default function About() {
             <VercelLogo uniqueId="credit-vercel" className="w-auto max-w-full h-16 p-2" />
           </div>
         </div>
-        <div className="flex flex-col gap-3 w-full bg-gray-100 p-10 rounded-xl bg-opacity-35 text-gray-800  backdrop-blur-sm shadow-sm">
+        <div className="flex flex-col gap-3 w-full bg-gray-100 p-10 rounded-xl bg-opacity-50 text-gray-800  backdrop-blur-sm shadow-sm">
           <h2 className="text-4xl m-0 font-mono text-center font-semibold text-current tracking-wide underline">
             {LocalStrings.background.title}
           </h2>
           <p className="text-2xl text-current font-semibold">{LocalStrings.background.name}</p>
           <p className="text-xl text-current break-all">
-            <strong className="font-semibold text-orange-700">Author: </strong>
+            <strong className="font-semibold text-orange-700">{LocalStrings.background.author_title}</strong>
             {LocalStrings.background.author}
           </p>
           <a href={LocalStrings.background.source} className="text-xl text-gray-800 break-all max-w-full">
-            <strong className="font-semibold text-orange-700">Source:</strong> {LocalStrings.background.source}
+            <strong className="font-semibold text-orange-700">{LocalStrings.background.source_title}</strong> {LocalStrings.background.source}
           </a>
         </div>
         <Link to="/" className="primaryButton py-2.5">
