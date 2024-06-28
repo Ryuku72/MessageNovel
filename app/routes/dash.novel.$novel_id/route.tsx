@@ -7,6 +7,7 @@ import { CreateDate } from '~/helpers/DateHelper';
 import { NovelWithUsers, PageWithUsers } from '~/types';
 
 import Default_Avatar from '~/assets/default_avatar.jpeg';
+import { PrivateNovelIcon, PublicNovelIcon, TrashIcon } from '~/svg';
 import PlusIcon from '~/svg/PlusIcon/PlusIcon';
 
 import { DashOutletContext } from '../dash/route';
@@ -86,20 +87,26 @@ export default function DashNovelId() {
               <DescriptionPreview editorState={page.published} />
             </div>
             <div className="w-full flex gap-3 flex-wrap mt-2 justify-end">
-              {/* <Link
-                to={`/novels/${novel.id}#${index}`}
-                className="rounded-lg text-gray-100 font-semibold flex items-center justify-center h-[50px] w-[165px] bg-slate-700 hover:bg-slate-500">
-                Read Novel
-              </Link> */}
               <Form method="delete" navigate={false} className={page.owner.id === user.id ? 'flex' : 'hidden'}>
                 <button
                   disabled={isLoadingUpdate}
                   value={page.id}
                   name="page_id_delete"
-                  className="rounded-lg text-gray-100 font-semibold flex items-center justify-center h-[50px] w-[165px] bg-orange-700 hover:bg-orange-500">
-                  Delete Page
+                  className="rounded-lg text-gray-100 font-semibold flex items-center justify-center h-[50px] w-[80px] bg-orange-700 hover:bg-orange-500">
+                  <TrashIcon uniqueId="delete-page" svgColor="#fff" className="w-5 h-auto" />
                 </button>
               </Form>
+              <button
+                type="button"
+                title={`Owner has ${page.enable_collab ? 'enabled collabaration' : 'disabled collabaration'} `}
+                className="rounded-lg flex gap-2 cursor-pointer h-[50px] items-center justify-center pl-5 pr-6 capitalize font-semibold text-white bg-slate-700 pointer-events-none">
+                {page.enable_collab ? (
+                  <PublicNovelIcon uniqueId="public-novel-icon" className="w-5 h-auto -scale-x-100" />
+                ) : (
+                  <PrivateNovelIcon uniqueId="public-novel-icon" className="w-5 h-auto -scale-x-100" />
+                )}
+                {page.enable_collab ? 'Collab' : 'Solo'}
+              </button>
               <Form method="post" className={!page.members.some(member => member.id === user.id) ? 'flex' : 'hidden'}>
                 <button
                   value={page.id}

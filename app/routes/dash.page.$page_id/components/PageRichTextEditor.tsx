@@ -203,7 +203,7 @@ export function PageRichTextEditor({
               ) : (
                 <PrivateNovelIcon uniqueId="public-novel-icon" className="w-5 h-auto -scale-x-100" />
               )}
-              {enableCollab ? 'Collab' : 'Single'}
+              {enableCollab ? 'Collab' : 'Solo'}
             </button>
           </div>
         </div>
