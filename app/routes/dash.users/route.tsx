@@ -119,7 +119,7 @@ export default function DashUsers() {
                 <h3 className="text-current text-2xl font-semibold tracking-wide truncate max-w-full overflow-hidden capitalize">
                   {profile.username}
                 </h3>
-                <p className="text-current italic font-semibold tracking-wide max-w-full overflow-hidden capitalize w-full flex items-center ellipsis-2">
+                <p className="text-current italic font-semibold tracking-wide max-w-full capitalize w-full items-center line-clamp-2">
                   {!online ? 'Away from Keyboard' : online?.room}
                 </p>
                 <p
