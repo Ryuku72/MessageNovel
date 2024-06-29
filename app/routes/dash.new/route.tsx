@@ -1,5 +1,5 @@
 import { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node';
-import { Form, NavLink, useLoaderData, useNavigation, useOutletContext, useSearchParams } from '@remix-run/react';
+import { Form, NavLink, useLoaderData, useNavigation, useSearchParams } from '@remix-run/react';
 
 import { Fragment, useEffect, useState } from 'react';
 
@@ -11,7 +11,6 @@ import TitleInput from '~/components/TitleInput';
 
 import LoadingSpinner from '~/svg/LoadingSpinner/LoadingSpinner';
 
-import { DashOutletContext } from '../dash/route';
 import PlainTextEditor from './components/PlainTextEditor';
 import { DashNewAction, DashNewLoader } from './services';
 
@@ -25,7 +24,6 @@ export function action(data: ActionFunctionArgs) {
 
 export default function DashNew() {
   const library = useLoaderData<Novel>();
-  const { user, channel } = useOutletContext<DashOutletContext>();
   const navigationState = useNavigation();
   const [searchParams] = useSearchParams();
 
@@ -45,11 +43,6 @@ export default function DashNew() {
     setDraftNovelTitle(library?.title || '');
     setDraftNovelDescription(JSON.stringify(library?.description) || '');
   }, [library, resetState]);
-
-  useEffect(() => {
-    if (!channel || channel.state !== 'joined') return;
-    channel.track({ userId: user.id, room: (library?.title || 'New') + ' details' });
-  }, [channel, library?.title, user.id]);
 
   return (
     <div className="flex flex-col flex-auto md:flex-1 items-center w-full md:px-10 px-3 pt-4 pb-[100px] md:py-6 gap-6 m-auto">

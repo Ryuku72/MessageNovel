@@ -1,8 +1,6 @@
 import { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node';
 import { Form, Link, useLoaderData, useNavigation, useOutletContext, useSubmit } from '@remix-run/react';
 
-import { useEffect } from 'react';
-
 import { CreateDate } from '~/helpers/DateHelper';
 import { NovelWithUsers, PageWithUsers } from '~/types';
 
@@ -24,15 +22,10 @@ export function action(data: ActionFunctionArgs) {
 
 export default function DashNovelId() {
   const { novel, pages } = useLoaderData() as { pages: PageWithUsers[]; novel: NovelWithUsers };
-  const { user, channel, img_url } = useOutletContext<DashOutletContext>();
+  const { user, img_url } = useOutletContext<DashOutletContext>();
   const navigationState = useNavigation();
   const isLoadingUpdate = 'submitting' === navigationState.state;
   const submit = useSubmit();
-
-  useEffect(() => {
-    if (!channel) return;
-    channel.track({ userId: user.id, room: 'Dashboard' });
-  }, [channel, user.id]);
 
   return (
     <div className="flex flex-col flex-auto md:flex-1 items-center w-full md:px-10 px-3 md:py-12 py-4 gap-6">
@@ -69,7 +62,7 @@ export default function DashNovelId() {
                     key={user.id}
                     className={`text-grey-700 text-sm ${user.color} pl-1 pr-2 py-1 rounded flex gap-1 flex-wrap items-center text-gray-700`}>
                     <img
-                      src={user.avatar ? img_url + 'public/avatars/' + user.avatar : Default_Avatar}
+                      src={user.avatar ? img_url + user.avatar : Default_Avatar}
                       className="rounded-full w-4 h-4"
                       alt="user-avatar"
                       onError={e => {

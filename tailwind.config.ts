@@ -34,7 +34,7 @@ export default {
         'card-l': '480px',
         'c-600': '600px',
         'c-800': '800px',
-        wide: '1850px'
+        wide: 'min(100%, 1850px)'
       },
       maxWidth: {
         'card-l': '480px',

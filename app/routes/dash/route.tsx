@@ -24,7 +24,7 @@ export type DashOutletContext = {
   user: UserDataEntry;
   supabase: SupabaseClient;
   channel: RealtimeChannel;
-  onlineUsers: { id: string; room: string }[];
+  onlineUsers: string[];
   img_url: string;
 };
 
@@ -37,7 +37,7 @@ export default function Dash() {
   const supabase = createBrowserClient(env.SUPABASE_URL, env.SUPABASE_ANON_KEY);
 
   const [channel, setChannel] = useState<RealtimeChannel>();
-  const [onlineUsers, setOnlineUsers] = useState<{ id: string; room: string }[]>([]);
+  const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
 
   useEffect(() => {
     if (!sceneReady) return;
@@ -57,14 +57,17 @@ export default function Dash() {
         /** transform the presence */
         const users = Object.keys(presenceState)
           .map(presenceId => {
-            const presences = presenceState[presenceId] as unknown as { userId: string; room: string }[];
-            return presences.map(presence => ({ id: presence.userId, room: presence.room }));
+            const presences = presenceState[presenceId] as unknown as { user_id: string }[];
+            return presences.map(presence => (presence.user_id));
           })
           .flat();
         /** sort and set the users */
-        setOnlineUsers(users);
+        setOnlineUsers(Array.from(new Set(users)));
       })
-      .subscribe();
+      .subscribe(async (status) => {
+        if (status !== 'SUBSCRIBED') return;
+        return await channel.track({ user_id: user.id });
+      });
     setChannel(channel);
 
     return () => {
@@ -78,7 +81,7 @@ export default function Dash() {
       className={`w-full flex flex-auto flex-row relative ${showComments ? 'md:overflow-visible overflow-hidden' : 'overflow-visible'}`}
       id="dash-default">
       <DashNavBar user={user} />
-      <Outlet context={{ user, supabase, channel, onlineUsers, img_url: env.SUPABASE_IMG_STORAGE }} />
+      <Outlet context={{ user, supabase, channel, onlineUsers, img_url: env.SUPABASE_IMG_STORAGE + 'public/avatars/' }} />
     </div>
   );
 }

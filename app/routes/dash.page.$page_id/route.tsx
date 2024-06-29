@@ -1,7 +1,7 @@
 import { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node';
 import { Form, NavLink, useLoaderData, useNavigation, useOutletContext } from '@remix-run/react';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import LOCALES from '~/locales/language_en.json';
 import { Page } from '~/types';
@@ -25,17 +25,12 @@ export function action(data: ActionFunctionArgs) {
 
 export default function DashPageId() {
   const loaderData = useLoaderData<Page>();
-  const { user, channel } = useOutletContext<DashOutletContext>();
+  const { user } = useOutletContext<DashOutletContext>();
   const navigationState = useNavigation();
   const isLoading = ['submitting'].includes(navigationState.state);
 
   const LocalStrings: (typeof LOCALES)['dash']['draft'] = LOCALES.dash.draft;
   const [titleValue, setTitleValue] = useState(loaderData?.reference_title);
-
-  useEffect(() => {
-    if (!channel) return;
-    channel.track({ userId: user.id, room: loaderData?.reference_title + ' DRAFT' });
-  }, [channel, loaderData?.reference_title, user.id]);
 
   const userData = {
     userId: user.id,

@@ -1,10 +1,9 @@
 import { ActionFunctionArgs, MetaFunction } from '@remix-run/node';
-import { Form, Link, useActionData, useNavigation, useOutletContext, useSubmit } from '@remix-run/react';
+import { Form, Link, useNavigation, useOutletContext, useSubmit } from '@remix-run/react';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import LOCALES from '~/locales/language_en.json';
-import { UserDataEntry } from '~/types';
 
 import AvatarInput from '~/components/AvatarSelectInput';
 import ColorInput from '~/components/ColorInput';
@@ -27,9 +26,8 @@ export function action({ request }: ActionFunctionArgs) {
 }
 
 export default function DashSettings() {
-  const { user, channel } = useOutletContext<DashOutletContext>();
+  const { user } = useOutletContext<DashOutletContext>();
   const navigationState = useNavigation();
-  const actionData = useActionData<UserDataEntry>();
   const isLoading = 'submitting' === navigationState.state;
   const submit = useSubmit();
 
@@ -37,21 +35,6 @@ export default function DashSettings() {
   const [username, setUsername] = useState(user.username);
   const [imageFile, setImage] = useState<File | null>(null);
   const [showDelModal, setShowDelModal] = useState(false);
-
-  useEffect(() => {
-    if (!channel) return;
-    channel.send({
-      type: 'broadcast',
-      event: 'user update',
-      payload: actionData
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [actionData]);
-
-  useEffect(() => {
-    if (!channel || channel.state !== 'joined') return;
-    channel.track({ userId: user.id, room: 'Settings' });
-  }, [channel, user.id]);
 
   const disabled = username === user.username && !imageFile && user.color === colorSelect;
   const formDisabled = ['submitting', 'loading'].includes(navigationState.state);
