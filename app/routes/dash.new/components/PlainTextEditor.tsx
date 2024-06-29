@@ -48,7 +48,7 @@ export default function PlainTextEditor({
     <div className="w-full flex flex-col gap-2 font-mono">
       <label htmlFor={id} className="w-full text-sm font-medium text-gray-600">
         {title}{' '}
-        <span className="text-xs font-medium text-gray-500">{`(Minimium 120 and Maximium ${limit} characters)`}</span>
+        <span className="text-xs font-medium text-gray-500">{`(Recommend 120 to ${limit} characters)`}</span>
       </label>
       <div className="relative flex overflow-hidden border rounded-lg border-grey-300 p-1 bg-white">
         <LexicalComposer initialConfig={initialConfig}>

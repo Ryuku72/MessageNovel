@@ -26,6 +26,7 @@ type DescriptionModelProps = {
 
 export function DescriptionModel({ selectedNovel, close, userId, ownerId, members = [] }: DescriptionModelProps) {
   const [openConfirm, setOpenConfirm] = useState(false);
+  
   const navigationState = useNavigation();
   const finishedDelete = 'loading' === navigationState.state && navigationState.formMethod === 'DELETE';
   const finishedPost = 'loading' === navigationState.state && navigationState.formMethod === 'POST';

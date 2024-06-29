@@ -1,5 +1,5 @@
 import { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node';
-import { Form, NavLink, useLoaderData, useNavigation, useSearchParams } from '@remix-run/react';
+import { Form, NavLink, useLoaderData, useNavigation, useOutletContext, useSearchParams } from '@remix-run/react';
 
 import { Fragment, useEffect, useState } from 'react';
 
@@ -11,6 +11,7 @@ import TitleInput from '~/components/TitleInput';
 
 import LoadingSpinner from '~/svg/LoadingSpinner/LoadingSpinner';
 
+import { DashOutletContext } from '../dash/route';
 import PlainTextEditor from './components/PlainTextEditor';
 import { DashNewAction, DashNewLoader } from './services';
 
@@ -24,6 +25,7 @@ export function action(data: ActionFunctionArgs) {
 
 export default function DashNew() {
   const library = useLoaderData<Novel>();
+  const { user, supabase } = useOutletContext<DashOutletContext>();
   const navigationState = useNavigation();
   const [searchParams] = useSearchParams();
 
@@ -36,13 +38,25 @@ export default function DashNew() {
   const isLoading = ['submitting'].includes(navigationState.state);
   const searchNovelId = searchParams.get('novel_id');
   const LocalStrings = LOCALES.dash.new;
-  const resetState = navigationState.state === 'loading' && !navigationState.formMethod;
+  const resetState = navigationState.state === 'loading' && !navigationState.formMethod && navigationState.location.pathname === '/dash/new';
 
   useEffect(() => {
     if (resetState) return;
     setDraftNovelTitle(library?.title || '');
     setDraftNovelDescription(JSON.stringify(library?.description) || '');
   }, [library, resetState]);
+
+  useEffect(() => {
+    const channel = supabase
+      .channel('user location', { config: { presence: { key: user.id }, broadcast: { self: true } } })
+      .subscribe(status => {
+        if (status !== 'SUBSCRIBED') return;
+        channel.track({ novel_id: searchNovelId || '', page_id: '', room: searchNovelId ? `Room: Updating ${draftNovelTitle} Details` : 'Room: New Novel', user_id: user.id });
+      });
+    return () => {
+      channel.unsubscribe();
+    };
+  }, [draftNovelTitle, searchNovelId, supabase, user.id]);
 
   return (
     <div className="flex flex-col flex-auto md:flex-1 items-center w-full md:px-10 px-3 pt-4 pb-[100px] md:py-6 gap-6 m-auto">

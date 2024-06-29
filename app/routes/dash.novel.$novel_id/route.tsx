@@ -1,8 +1,19 @@
 import { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node';
 import { Form, Link, useLoaderData, useNavigation, useOutletContext, useSubmit } from '@remix-run/react';
 
+import { useEffect, useRef, useState } from 'react';
+
 import { CreateDate } from '~/helpers/DateHelper';
-import { NovelWithUsers, PageWithUsers } from '~/types';
+import {
+  BasicProfile,
+  NovelWithUsers,
+  OnlineUser,
+  Page,
+  PageWithUsers,
+  Page_Member,
+  ProfileEntry,
+  SupabaseBroadcast
+} from '~/types';
 
 import Default_Avatar from '~/assets/default_avatar.jpeg';
 import { PrivateNovelIcon, PublicNovelIcon, TrashIcon } from '~/svg';
@@ -11,6 +22,9 @@ import PlusIcon from '~/svg/PlusIcon/PlusIcon';
 import { DashOutletContext } from '../dash/route';
 import { DescriptionPreview } from './components/DescriptionPreview';
 import { DashNovelIdAction, DashNovelIdLoader } from './services';
+import DialogWrapper from '~/components/DialogWrapper';
+import CloseIcon from '~/svg/CloseIcon/CloseIcon';
+import LoadingSpinner from '~/svg/LoadingSpinner/LoadingSpinner';
 
 export function loader(request: LoaderFunctionArgs) {
   return DashNovelIdLoader(request);
@@ -20,12 +34,143 @@ export function action(data: ActionFunctionArgs) {
   return DashNovelIdAction(data);
 }
 
+type PageBroadcast = Omit<SupabaseBroadcast, 'new' | 'old'> & { new: Page; old: Page };
+type PageMemberBroadcast = Omit<SupabaseBroadcast, 'new' | 'old'> & { new: Page_Member; old: Page_Member };
+
 export default function DashNovelId() {
   const { novel, pages } = useLoaderData() as { pages: PageWithUsers[]; novel: NovelWithUsers };
-  const { user, img_url } = useOutletContext<DashOutletContext>();
+  const { user, img_url, supabase } = useOutletContext<DashOutletContext>();
   const navigationState = useNavigation();
   const isLoadingUpdate = 'submitting' === navigationState.state;
+  const finishedDelete = 'loading' === navigationState.state && navigationState.formMethod === 'DELETE';
   const submit = useSubmit();
+
+  const [novelPages, setNovelPages] = useState(pages);
+  const [onlinePages, setOnlinePages] = useState<string[]>([]);
+  const [debouncedOnlinePages, setDebouncedOnlinePages] = useState<string[]>([]);
+  const [selectedPage, setSelectedPage] = useState<PageWithUsers | null>(null);
+  const debounceTimer = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    if (!supabase) return;
+    const channel = supabase
+      .channel('page-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'pages'
+        },
+        async payload => {
+          const info = payload as unknown as PageBroadcast;
+          switch (payload.eventType) {
+            case 'INSERT': {
+              const insert = await supabase
+                .from('pages')
+                .select(
+                  '*, owner: profiles!owner(color, username, avatar, id), members: page_members(profiles!page_members_user_id_fkey(color, username, avatar, id))'
+                )
+                .match({ id: payload.new.id })
+                .single();
+              if (insert.error) return;
+              const pagesData = {
+                ...insert.data,
+                members: insert.data.members.map((member: { profiles: ProfileEntry }) => member.profiles)
+              } as PageWithUsers;
+              return setNovelPages(pages => [...pages, pagesData]);
+            }
+            case 'UPDATE':
+              return setNovelPages(pages =>
+                pages.map(page => {
+                  if (page.id === info.new.id) return { ...info.new, owner: page.owner, members: page.members };
+                  else return page;
+                })
+              );
+            case 'DELETE':
+              return setNovelPages(pages => pages.filter(page => page.id !== info.old.id));
+          }
+        }
+      )
+      .subscribe();
+    return () => {
+      channel.unsubscribe();
+    };
+  }, [supabase]);
+
+  useEffect(() => {
+    if (!supabase) return;
+    const channel = supabase
+      .channel('page_member-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'page_members'
+        },
+        async payload => {
+          const info = payload as unknown as PageMemberBroadcast;
+          if (info.new.user_id === user.id || info.new.user_id === novel.owner.id) return;
+          const userData = await supabase.from('profiles').select('*').match({ id: info.new.user_id }).single();
+          const thisUser: BasicProfile = {
+            id: userData.data.id,
+            username: userData.data.username,
+            color: userData.data.color,
+            avatar: userData.data?.avatar || null
+          };
+          return setNovelPages(p =>
+            p.map(page => {
+              if (page.id === info.new.page_id) return { ...page, members: page.members.concat(thisUser) };
+              else return page;
+            })
+          );
+        }
+      )
+      .subscribe();
+    return () => {
+      channel.unsubscribe();
+    };
+  }, [novel.owner.id, supabase, user.id]);
+
+  useEffect(() => {
+    const channel = supabase
+      .channel('user location', { config: { presence: { key: user.id }, broadcast: { self: true } } })
+      .on('presence', { event: 'sync' }, () => {
+        /** Get the presence state from the channel, keyed by realtime identifier */
+        const presenceState = channel.presenceState();
+        /** transform the presence */
+        const users = Object.keys(presenceState)
+          .map(presenceId => {
+            const presences = presenceState[presenceId] as unknown as OnlineUser[];
+            return presences.map(presence => presence.page_id);
+          })
+          .flat();
+        /** sort and set the users */
+        setDebouncedOnlinePages(users);
+      })
+      .subscribe(status => {
+        if (status !== 'SUBSCRIBED') return;
+        channel.track({ novel_id: novel.id, page_id: '', room: 'Novel: ' + novel.title, user_id: user.id });
+      });
+    return () => {
+      channel.unsubscribe();
+    };
+  }, [supabase, user.id, novel.id, novel.title]);
+
+  useEffect(() => {
+    debounceTimer.current = setTimeout(() => {
+      setOnlinePages(debouncedOnlinePages);
+    }, 500);
+
+    return () => {
+      if (debounceTimer.current) clearTimeout(debounceTimer.current);
+    };
+  }, [debouncedOnlinePages]);
+
+  useEffect(() => {
+    if (finishedDelete) setSelectedPage(null);
+  }, [finishedDelete]);
 
   return (
     <div className="flex flex-col flex-auto md:flex-1 items-center w-full md:px-10 px-3 md:py-12 py-4 gap-6">
@@ -33,10 +178,17 @@ export default function DashNovelId() {
         &nbsp;&nbsp;{novel.title}&nbsp;&nbsp;&nbsp;
       </h1>
       <div className="grid grid-cols-1 gap-4 w-full max-w-wide">
-        {pages.map(page => (
+        {novelPages.map(page => (
           <div
-            className="w-full max-w-wide rounded-lg flex flex-col gap-1 bg-white bg-opacity-35 backdrop-blur-lg p-8 text-gray-700 drop-shadow-lg"
+            className="w-full max-w-wide rounded-lg flex flex-col gap-1 bg-white bg-opacity-35 backdrop-blur-lg p-8 text-gray-700 drop-shadow-lg relative"
             key={page.id}>
+              <div className={onlinePages.some(page_id => page_id === page.id) ? 'absolute top-3 right-4 flex gap-2 items-center z-50' : 'hidden'}>
+              <p className="text-current text-sm font-semibold">Active</p>
+              <span className="relative flex h-3 w-3">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+              </span>
+            </div>
             <p className="text-current text-left text-xl font-semibold truncate max-w-full overflow-hidden">
               {page.reference_title}
             </p>
@@ -80,26 +232,37 @@ export default function DashNovelId() {
               <DescriptionPreview editorState={page.published} />
             </div>
             <div className="w-full flex gap-3 flex-wrap mt-2 justify-end">
-              <Form method="delete" navigate={false} className={page.owner.id === user.id ? 'flex' : 'hidden'}>
                 <button
                   disabled={isLoadingUpdate}
-                  value={page.id}
-                  name="page_id_delete"
-                  className="rounded-lg text-gray-100 font-semibold flex items-center justify-center h-[50px] w-[80px] bg-orange-700 hover:bg-orange-500">
+                  onClick={() => setSelectedPage(page)}
+                  className={
+                    novel.owner.id === user.id
+                      ? 'rounded-lg text-gray-100 font-semibold flex items-center justify-center h-[50px] w-[80px] bg-orange-700 hover:bg-orange-500'
+                      : 'hidden'
+                  }>
                   <TrashIcon uniqueId="delete-page" svgColor="#fff" className="w-5 h-auto" />
                 </button>
+              <Form
+                onSubmit={e => {
+                  e.preventDefault();
+                  const formData = new FormData();
+                  formData.append('enable_collab', (!page.enable_collab).toString());
+                  formData.append('page_id', page.id);
+                  submit(formData, { method: 'POST', action: '/api/page/enable_collab', navigate: false });
+                }}>
+                <button
+                  name="enable_collab"
+                  disabled={page.owner.id !== user.id}
+                  title={`Owner has ${page.enable_collab ? 'enabled collabaration' : 'disabled collabaration'} `}
+                  className="rounded-lg flex gap-2 h-[50px] items-center justify-center pl-5 pr-6 capitalize font-semibold text-white bg-slate-700">
+                  {page.enable_collab ? (
+                    <PublicNovelIcon uniqueId="public-novel-icon" className="w-5 h-auto -scale-x-100" />
+                  ) : (
+                    <PrivateNovelIcon uniqueId="public-novel-icon" className="w-5 h-auto -scale-x-100" />
+                  )}
+                  {page.enable_collab ? 'Collab' : 'Solo'}
+                </button>
               </Form>
-              <button
-                type="button"
-                title={`Owner has ${page.enable_collab ? 'enabled collabaration' : 'disabled collabaration'} `}
-                className="rounded-lg flex gap-2 cursor-pointer h-[50px] items-center justify-center pl-5 pr-6 capitalize font-semibold text-white bg-slate-700 pointer-events-none">
-                {page.enable_collab ? (
-                  <PublicNovelIcon uniqueId="public-novel-icon" className="w-5 h-auto -scale-x-100" />
-                ) : (
-                  <PrivateNovelIcon uniqueId="public-novel-icon" className="w-5 h-auto -scale-x-100" />
-                )}
-                {page.enable_collab ? 'Collab' : 'Solo'}
-              </button>
               <Form method="post" className={!page.members.some(member => member.id === user.id) ? 'flex' : 'hidden'}>
                 <button
                   value={page.id}
@@ -133,7 +296,11 @@ export default function DashNovelId() {
           <button
             type="submit"
             name="add_page"
-            className="w-full max-w-wide h-[180px] rounded-lg bg-slate-400 bg-opacity-25 backdrop-blur-lg items-center drop-shadow-lg">
+            className={
+              user.id === novel.owner.id
+                ? 'w-full max-w-wide h-[180px] rounded-lg bg-slate-400 bg-opacity-25 backdrop-blur-lg items-center drop-shadow-lg'
+                : 'hidden'
+            }>
             <div className="truncate max-w-full p-8 overflow-hidden flex flex-wrap gap-3 text-gray-700">
               <PlusIcon uniqueId="add_another_page" svgColor="currentColor" className="w-5 h-auto " />{' '}
               <p className="text-xl font-semibold">Add Another Page</p>
@@ -146,6 +313,46 @@ export default function DashNovelId() {
           Back
         </Link>
       </div>
+      <DialogWrapper open={Boolean(selectedPage)}>
+        <div className="bg-slate-50 bg-opacity-55 backdrop-blur-lg flex flex-col gap-0.5 rounded-t-lg rounded-b-md self-center w-full max-w-card-l">
+          <div className="w-full pt-4 px-6 pb-2 flex flex-wrap rounded-t-[inherit] justify-between items-center bg-white">
+            <h3 className="font-medium text-xl text-gray-600 underline underline-offset-4 capitalize">
+              &#8197;Confirm Delete&nbsp;&nbsp;&nbsp;
+            </h3>
+            <button
+              className="w-10 h-10 flex items-center justify-center text-slate-500 hover:text-red-500 hover:border hover:border-red-500 rounded"
+              type="button"
+              onClick={() => setSelectedPage(null)}>
+              <CloseIcon className="w-3 h-3" uniqueId="dash-close" svgColor="currentColor" />
+            </button>
+          </div>
+          <div className="w-full py-8 px-4 bg-white text-gray-700">
+            Are you sure you would like to delete the page{' '}
+            <strong className="whitespace-pre capitalize">{'"' + selectedPage?.reference_title + '" ?'}</strong>
+          </div>
+          <div className="flex w-full justify-end bg-white rounded-b-md p-2 gap-3">
+            <Form method="delete">
+              <button
+                title="delete page"
+                value={selectedPage?.id}
+                name="page_id_delete"
+                className="rounded-lg text-gray-100 font-semibold flex items-center justify-center h-[50px] w-[165px] bg-orange-700 hover:bg-red-600">
+                {isLoadingUpdate ? (
+                  <LoadingSpinner className="w-full h-10" svgColor="#fff" uniqueId="index-spinner" />
+                ) : (
+                  'Delete Page'
+                )}
+              </button>
+            </Form>
+            <button
+              type="button"
+              onClick={() => setSelectedPage(null)}
+              className="rounded-lg text-gray-100 font-semibold flex items-center justify-center h-[50px] w-[165px] bg-emerald-700 hover:bg-emerald-500">
+              Cancel
+            </button>
+          </div>
+        </div>
+      </DialogWrapper>
     </div>
   );
 }

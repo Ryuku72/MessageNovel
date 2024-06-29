@@ -1,10 +1,10 @@
 import { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node';
-import { Form, NavLink, useLoaderData, useNavigation, useOutletContext } from '@remix-run/react';
+import { Form, NavLink, useLoaderData, useNavigate, useNavigation, useOutletContext } from '@remix-run/react';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import LOCALES from '~/locales/language_en.json';
-import { Page } from '~/types';
+import { Page, SupabaseBroadcast } from '~/types';
 
 import { LiveBlocksRoom } from '~/components/LiveBlocksRoom';
 import TitleInput from '~/components/TitleInput';
@@ -23,14 +23,19 @@ export function action(data: ActionFunctionArgs) {
   return DashPageIdAction(data);
 }
 
+type PageBroadcast = Omit<SupabaseBroadcast, 'new' | 'old'> & { new: Page; old: Page };
+
 export default function DashPageId() {
   const loaderData = useLoaderData<Page>();
-  const { user } = useOutletContext<DashOutletContext>();
+  const { user, supabase } = useOutletContext<DashOutletContext>();
   const navigationState = useNavigation();
   const isLoading = ['submitting'].includes(navigationState.state);
+  const navigate = useNavigate();
 
   const LocalStrings: (typeof LOCALES)['dash']['draft'] = LOCALES.dash.draft;
   const [titleValue, setTitleValue] = useState(loaderData?.reference_title);
+
+  const [pageData, setPageData] = useState(loaderData);
 
   const userData = {
     userId: user.id,
@@ -38,6 +43,57 @@ export default function DashPageId() {
     color: user.color,
     avatar: user?.avatar || null
   };
+
+  useEffect(() => {
+    if (!supabase) return;
+    const channel = supabase
+      .channel('page-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'pages'
+        },
+        async payload => {
+          const info = payload as unknown as PageBroadcast;
+          switch (payload.eventType) {
+            case 'UPDATE': {
+              if (info.new.id !== loaderData.id) return;
+              return setPageData({ ...info.new });
+            }
+            case 'DELETE': {
+              const alert = new CustomEvent('alertFromError', {
+                detail: 'Page has been removed'
+              });
+              window.dispatchEvent(alert);
+              navigate('/dash');
+            }
+          }
+        }
+      )
+      .subscribe();
+    return () => {
+      channel.unsubscribe();
+    };
+  }, [supabase, navigate, loaderData.id]);
+
+  useEffect(() => {
+    const channel = supabase
+      .channel('user location', { config: { presence: { key: user.id }, broadcast: { self: true } } })
+      .subscribe(status => {
+        if (status !== 'SUBSCRIBED') return;
+        return channel.track({
+          novel_id: loaderData.novel_id,
+          page_id: loaderData.id,
+          room: 'Pages: ' + loaderData.reference_title,
+          user_id: user.id
+        });
+      });
+    return () => {
+      channel.unsubscribe();
+    };
+  }, [supabase, user.id, loaderData.id, loaderData.reference_title, loaderData.novel_id]);
 
   return (
     <div className="w-full h-full flex flex-row relative">
@@ -57,21 +113,21 @@ export default function DashPageId() {
               placeholder={'Enter Page Reference Title'}
               onChange={setTitleValue}
             />
-            <LiveBlocksRoom roomId={loaderData?.id} authEndpoint="/api/liveblocks">
+            <LiveBlocksRoom roomId={pageData?.id} authEndpoint="/api/liveblocks">
               <PageRichTextEditor
                 namespace={loaderData?.id}
                 userData={userData}
-                enableCollab={loaderData.enable_collab}
-                owner={user.id === loaderData.owner}
+                enableCollab={pageData.enable_collab}
+                owner={user.id === pageData.owner}
               />
             </LiveBlocksRoom>
             <div className="w-full flex items-center gap-3 justify-end pt-3">
-              <NavLink to={`/dash/novel/${loaderData?.novel_id}`} className="primaryButton py-2.5">
+              <NavLink to={`/dash/novel/${pageData?.novel_id}`} className="primaryButton py-2.5">
                 {LocalStrings.secondary_button}
               </NavLink>
               <button
                 className={
-                  loaderData?.owner === user.id ? `secondaryButton ${isLoading ? 'py-0.5' : 'py-2.5'}` : 'hidden'
+                  pageData?.owner === user.id ? `secondaryButton ${isLoading ? 'py-0.5' : 'py-2.5'}` : 'hidden'
                 }
                 type="submit"
                 disabled={false}>

@@ -14,7 +14,7 @@ import { HorizontalRulePlugin } from '@lexical/react/LexicalHorizontalRulePlugin
 import { ListPlugin } from '@lexical/react/LexicalListPlugin';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { Provider } from '@lexical/yjs';
-import { useBroadcastEvent, useEventListener, useOthers, useRoom, useStatus } from '@liveblocks/react';
+import { useOthers, useRoom, useStatus } from '@liveblocks/react';
 import { LiveblocksYjsProvider } from '@liveblocks/yjs';
 import { $createParagraphNode, $createTextNode, $getRoot } from 'lexical';
 import { Doc } from 'yjs';
@@ -66,7 +66,6 @@ export function PageRichTextEditor({
 
   const submit = useSubmit();
 
-  const broadcast = useBroadcastEvent();
   const room = useRoom();
   const status = useStatus();
   const userInfo = {
@@ -77,12 +76,6 @@ export function PageRichTextEditor({
   const othersInfo = useOthers();
   const otherusers = othersInfo?.map(user => user.info);
   const users = [userInfo].concat(otherusers);
-
-  useEventListener(({ event }) => {
-    if (event.type === 'enableCollab') {
-      setToggleCollab(event.state);
-    }
-  });
 
   useEffect(() => {
     setInit(true);
@@ -189,14 +182,15 @@ export function PageRichTextEditor({
             </button>
             <button
               type="button"
+              disabled={!owner}
               title={`Owner has ${enableCollab ? 'enabled collabaration' : 'disabled collabaration'} `}
-              className={`flex gap-2 rounded cursor-pointer h-[40px] items-center justify-center pl-2 pr-3 capitalize ${!enableCollab ? 'bg-purple-400 text-gray-600' : 'bg-orange-500 text-gray-500'} bg-opacity-25 backdrop-blur-sm ${owner ? 'pointer-events-auto' : 'pointer-events-none'}`}
+              className={`flex gap-2 rounded cursor-pointer h-[40px] items-center justify-center pl-2 pr-3 capitalize ${!enableCollab ? 'bg-purple-400 text-gray-600' : 'bg-orange-500 text-gray-500'} bg-opacity-25 backdrop-blur-sm`}
               onClick={e => {
                 e.preventDefault();
                 const formData = new FormData();
-                broadcast({ type: 'enableCollab', state: !enableCollab });
-                formData.append('enableCollab', (!enableCollab).toString());
-                submit(formData, { method: 'put' });
+                formData.append('enable_collab', (!enableCollab).toString());
+                formData.append('page_id', namespace);
+                submit(formData, { method: 'POST', action: '/api/page/enable_collab', navigate: false });
               }}>
               {enableCollab ? (
                 <PublicNovelIcon uniqueId="public-novel-icon" className="w-5 h-auto -scale-x-100" />

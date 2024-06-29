@@ -199,3 +199,10 @@
   background-color: rgba(204, 204, 255, var(--tw-bg-opacity));
   border-bottom-color: rgba(204, 204, 255, var(--tw-border-opacity));
 }
+
+.ellipsis-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  text-overflow: ellipsis;
+}

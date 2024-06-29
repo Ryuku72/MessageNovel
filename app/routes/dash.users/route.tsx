@@ -1,9 +1,9 @@
 import { LoaderFunctionArgs } from '@remix-run/node';
 import { useLoaderData, useOutletContext } from '@remix-run/react';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
-import { ProfileEntry } from '~/types';
+import { OnlineUser, ProfileEntry, SupabaseBroadcast } from '~/types';
 
 import Default_Avatar from '~/assets/default_avatar.jpeg';
 
@@ -13,23 +13,16 @@ import { UserLoader } from './services';
 export function loader({ request }: LoaderFunctionArgs) {
   return UserLoader(request);
 }
-// update - new and old
-// delete - old
-// insert - new?
-export type UserChangesBroadcast = {
-  commit_timestamp: string;
-  errors: null | Error;
-  eventType: 'UPDATE' | 'DELETE' | 'INSERT';
-  new: ProfileEntry;
-  old: ProfileEntry;
-  schema: 'Public';
-  table: 'profiles';
-};
+
+export type UserChangesBroadcast = Omit<SupabaseBroadcast, 'new' | 'old'> & { new: ProfileEntry; old: ProfileEntry };
 
 export default function DashUsers() {
   const profiles = useLoaderData<ProfileEntry[]>();
-  const { supabase, onlineUsers, img_url } = useOutletContext<DashOutletContext>();
+  const { supabase, img_url, user } = useOutletContext<DashOutletContext>();
   const [userProfiles, setUserProfiles] = useState<ProfileEntry[]>(profiles);
+  const [onlineUsers, setOnlineUsers] = useState<{ user_id: string, room: string }[]>([]);
+  const [debouncedOnlineUsers, setDebouncedOnlineUsers] = useState<{ user_id: string, room: string }[]>([]);
+  const debounceTimer = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     if (!supabase) return;
@@ -42,15 +35,20 @@ export default function DashUsers() {
           schema: 'public',
           table: 'profiles'
         },
-        (payload) => {
+        payload => {
           const info = payload as unknown as UserChangesBroadcast;
           switch (payload.eventType) {
-            case 'INSERT': return setUserProfiles(profiles => [...profiles, info.new]);
-            case 'UPDATE': return setUserProfiles(profiles => profiles.map(user => {
-              if (user.id === info.new.id) return info.new;
-              else return user;
-            }));
-            case 'DELETE': return setUserProfiles(profiles => profiles.filter(user => user.id !== info.old.id));
+            case 'INSERT':
+              return setUserProfiles(profiles => [...profiles, info.new]);
+            case 'UPDATE':
+              return setUserProfiles(profiles =>
+                profiles.map(user => {
+                  if (user.id === info.new.id) return info.new;
+                  else return user;
+                })
+              );
+            case 'DELETE':
+              return setUserProfiles(profiles => profiles.filter(user => user.id !== info.old.id));
           }
         }
       )
@@ -60,18 +58,53 @@ export default function DashUsers() {
     };
   }, [supabase]);
 
+  useEffect(() => {
+    const channel = supabase
+      .channel('user location', { config: { presence: { key: user.id }, broadcast: { self: true } } })
+      .on('presence', { event: 'sync' }, () => {
+        /** Get the presence state from the channel, keyed by realtime identifier */
+        const presenceState = channel.presenceState();
+        /** transform the presence */
+        const users = Object.keys(presenceState)
+          .map(presenceId => {
+            const presences = presenceState[presenceId] as unknown as OnlineUser[];
+            return presences.map(presence => ({ user_id: presence.user_id, room: presence.room }));
+          })
+          .flat();
+        /** sort and set the users */
+        setDebouncedOnlineUsers(users);
+      })
+      .subscribe(status => {
+        if (status !== 'SUBSCRIBED') return;
+        return channel.track({ novel_id: '', page_id: '', room: 'Room: Participants', user_id: user.id });
+      });
+    return () => {
+      channel.unsubscribe();
+    };
+  }, [supabase, user.id]);
+
+  useEffect(() => {
+    debounceTimer.current = setTimeout(() => {
+     setOnlineUsers(debouncedOnlineUsers);
+    }, 500);
+
+    return () => {
+      if (debounceTimer.current) clearTimeout(debounceTimer.current);
+    };
+  }, [debouncedOnlineUsers]);
+
   return (
     <div className="flex flex-col flex-auto items-center w-full md:px-10 px-3 md:pt-12 md:pb-12 pb-[200px] pt-4 gap-10">
       <h1 className="text-red-700 text-4xl underline underline-offset-8 [text-shadow:_5px_3px_2px_rgb(225_225_225_/_50%)] font-miltonian">
         &nbsp;&nbsp;Participants&nbsp;&nbsp;&nbsp;
       </h1>
-      <div className="grid grid-cols-[repeat(auto-fill,320px)] gap-4 w-wide">
+      <div className="grid md:grid-cols-[repeat(auto-fill,400px)] grid-cols-[repeat(auto-fill,100%)] gap-4 w-wide">
         {userProfiles?.map(profile => {
-          const online = onlineUsers?.find(user_id => user_id === profile?.id);
+          const online = onlineUsers.find(user => user.user_id === profile?.id);
           return (
             <div
               key={profile.id}
-              className={`flex flex-wrap w-full px-10 py-6 overflow-hidden relative rounded-lg font-mono flex-col gap-1 text-white items-center ${online ? profile.color : 'bg-gray-400'} bg-opacity-65 backdrop-blur-lg`}>
+              className={`flex w-full px-4 py-6 overflow-hidden relative rounded-lg font-mono gap-5 h-[155px] text-white items-center ${online ? profile.color : 'bg-gray-400'} bg-opacity-65 backdrop-blur-lg`}>
               <img
                 alt="create-img"
                 className="w-20 h-20 relative z-10 rounded-full object-cover bg-gradient-to-b from-slate-500 to-fuchsia-600"
@@ -82,12 +115,15 @@ export default function DashUsers() {
                   return e;
                 }}
               />
-              <div className="relative flex flex-col z-10 text-center">
+              <div className="relative flex flex-col z-10 flex-auto">
                 <h3 className="text-current text-2xl font-semibold tracking-wide truncate max-w-full overflow-hidden capitalize">
                   {profile.username}
                 </h3>
+                <p className="text-current italic font-semibold tracking-wide max-w-full overflow-hidden capitalize w-full flex items-center ellipsis-2">
+                  {!online ? 'Away from Keyboard' : online?.room}
+                </p>
                 <p
-                  className={`${online ? 'text-emerald-600 font-semibold' : 'text-slate-700'} font-semibold tracking-wide overflow-hidden`}>
+                  className={`${online ? 'text-emerald-600 font-semibold' : 'text-slate-700'} text-sm font-semibold tracking-wide overflow-hidden`}>
                   {online ? 'Online' : 'Offline'}
                 </p>
               </div>

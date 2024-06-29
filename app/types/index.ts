@@ -25,7 +25,7 @@ export type Novel = {
 };
 
 export type NovelWithUsers = Omit<Novel, 'owner'> & { owner: BasicProfile; members: BasicProfile[] };
-export type NovelWithMemberIds = Omit<NovelWithUsers, 'members'> & { members: { user_id: string; }[] };
+export type NovelWithMemberIds = Omit<NovelWithUsers, 'members'> & { members: { user_id: string }[] };
 export type Page = {
   id: string;
   created_at: string;
@@ -81,5 +81,30 @@ export type Unit =
   | 'vh'
   | 'vmin'
   | 'vmax';
+
+// update - new and old
+// delete - old
+// insert - new?
+export type SupabaseBroadcast = {
+  commit_timestamp: string;
+  errors: null | Error;
+  eventType: 'UPDATE' | 'DELETE' | 'INSERT';
+  new: unknown;
+  old: unknown;
+  schema: 'Public';
+  table: string;
+};
+
+export type Page_Member = {
+  page_id: string;
+  user_id: string;
+}
+
+export type Novel_Member = {
+  novel_id: string;
+  user_id: string;
+}
+
+export type OnlineUser = { novel_id: string; page_id: string; room: string; user_id: string };
 
 export type Escape = (className: string) => string;

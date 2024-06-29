@@ -15,7 +15,7 @@ export type AvatarInputProps = {
   title: string;
   id: string;
   setImage: (image: File) => void;
-  imageSrc: string | null;
+  imageSrc?: string | null;
 };
 
 function centerAspectCrop(mediaWidth: number, mediaHeight: number, aspect: number) {
@@ -34,7 +34,7 @@ function centerAspectCrop(mediaWidth: number, mediaHeight: number, aspect: numbe
   );
 }
 
-export default function AvatarInput({ title, id, imageSrc, setImage }: AvatarInputProps) {
+export default function AvatarInput({ title, id, imageSrc = null, setImage }: AvatarInputProps) {
   const [showDialog, setShowDialog] = useState(false);
   const [imgSrc, setImgSrc] = useState('');
   const [crop, setCrop] = useState<Crop>();

@@ -1,7 +1,7 @@
 import { ActionFunctionArgs, MetaFunction } from '@remix-run/node';
 import { Form, Link, useNavigation, useOutletContext, useSubmit } from '@remix-run/react';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import LOCALES from '~/locales/language_en.json';
 
@@ -26,7 +26,7 @@ export function action({ request }: ActionFunctionArgs) {
 }
 
 export default function DashSettings() {
-  const { user } = useOutletContext<DashOutletContext>();
+  const { user, supabase } = useOutletContext<DashOutletContext>();
   const navigationState = useNavigation();
   const isLoading = 'submitting' === navigationState.state;
   const submit = useSubmit();
@@ -39,6 +39,18 @@ export default function DashSettings() {
   const disabled = username === user.username && !imageFile && user.color === colorSelect;
   const formDisabled = ['submitting', 'loading'].includes(navigationState.state);
   const LocalStrings = LOCALES.settings;
+
+  useEffect(() => {
+    const channel = supabase
+      .channel('user location', { config: { presence: { key: user.id }, broadcast: { self: true } } })
+      .subscribe(status => {
+        if (status !== 'SUBSCRIBED') return;
+        return channel.track({ novel_id: '', page_id: '', room: 'Room: User Settings', user_id: user.id });
+      });
+    return () => {
+      channel.unsubscribe();
+    };
+  }, [supabase, user.id]);
 
   return (
     <div className="w-full h-full flex flex-col justify-center items-center relative m-auto md:mb-0 md:pb-10 py-10 pb-[100px]">

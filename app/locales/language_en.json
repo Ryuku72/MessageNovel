@@ -90,13 +90,13 @@
     "description": "Collaborate and build your own novel"
   },
   "dash": {
-    "title": "Dashboard",
+    "title": "Library",
     "username": "Username",
     "email": "Email",
     "password": "Password",
     "color": "Favourite Color",
     "primary_button": "User Settings",
-    "secondary_button": "Dashboard",
+    "secondary_button": "Library",
     "tertiary_button": "New Novel",
     "sign_out_button": "Sign Out",
     "table_heading": {
