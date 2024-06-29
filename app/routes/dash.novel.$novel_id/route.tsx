@@ -161,7 +161,7 @@ export default function DashNovelId() {
   useEffect(() => {
     debounceTimer.current = setTimeout(() => {
       setOnlinePages(debouncedOnlinePages);
-    }, 500);
+    }, 3000);
 
     return () => {
       if (debounceTimer.current) clearTimeout(debounceTimer.current);

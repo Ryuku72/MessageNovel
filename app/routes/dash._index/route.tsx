@@ -138,7 +138,7 @@ export default function DashIndex() {
   useEffect(() => {
     debounceTimer.current = setTimeout(() => {
       setOnlineNovels(debouncedOnlineNovels);
-    }, 500);
+    }, 3000);
 
     return () => {
       if (debounceTimer.current) clearTimeout(debounceTimer.current);

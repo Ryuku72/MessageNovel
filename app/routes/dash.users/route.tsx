@@ -86,7 +86,7 @@ export default function DashUsers() {
   useEffect(() => {
     debounceTimer.current = setTimeout(() => {
      setOnlineUsers(debouncedOnlineUsers);
-    }, 500);
+    }, 3000);
 
     return () => {
       if (debounceTimer.current) clearTimeout(debounceTimer.current);
