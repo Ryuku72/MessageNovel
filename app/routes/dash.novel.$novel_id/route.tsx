@@ -50,6 +50,7 @@ export default function DashNovelId() {
   const [debouncedOnlinePages, setDebouncedOnlinePages] = useState<string[]>([]);
   const [selectedPage, setSelectedPage] = useState<PageWithUsers | null>(null);
   const debounceTimer = useRef<NodeJS.Timeout | null>(null);
+  const lastUpdate = useRef('');
 
   useEffect(() => {
     if (!supabase) return;
@@ -140,14 +141,17 @@ export default function DashNovelId() {
         /** Get the presence state from the channel, keyed by realtime identifier */
         const presenceState = channel.presenceState();
         /** transform the presence */
-        const users = Object.keys(presenceState)
+        const online = Object.keys(presenceState)
           .map(presenceId => {
             const presences = presenceState[presenceId] as unknown as OnlineUser[];
             return presences.map(presence => presence.page_id);
           })
           .flat();
         /** sort and set the users */
-        setDebouncedOnlinePages(users);
+        if (!lastUpdate.current) {
+          setOnlinePages(online);
+          lastUpdate.current = new Date().toString();
+        } else setDebouncedOnlinePages(online);
       })
       .subscribe(status => {
         if (status !== 'SUBSCRIBED') return;
@@ -160,8 +164,9 @@ export default function DashNovelId() {
 
   useEffect(() => {
     debounceTimer.current = setTimeout(() => {
+      lastUpdate.current = new Date().toString();
       setOnlinePages(debouncedOnlinePages);
-    }, 3000);
+    }, 1500);
 
     return () => {
       if (debounceTimer.current) clearTimeout(debounceTimer.current);

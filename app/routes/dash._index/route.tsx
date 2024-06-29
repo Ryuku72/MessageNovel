@@ -5,7 +5,7 @@ import { Fragment, useEffect, useRef, useState } from 'react';
 
 import { CreateDate } from '~/helpers/DateHelper';
 import LOCALES from '~/locales/language_en.json';
-import { Novel, Novel_Member, NovelWithMemberIds, OnlineUser, SupabaseBroadcast } from '~/types';
+import { Novel, NovelWithMemberIds, Novel_Member, OnlineUser, SupabaseBroadcast } from '~/types';
 
 import LoadingSpinner from '~/svg/LoadingSpinner/LoadingSpinner';
 import PlusIcon from '~/svg/PlusIcon/PlusIcon';
@@ -29,14 +29,16 @@ export default function DashIndex() {
   const library = (useLoaderData() as NovelWithMemberIds[]) || [];
   const { user, supabase } = useOutletContext<DashOutletContext>();
   const navigationState = useNavigation();
+  const isLoading = ['submitting'].includes(navigationState.state);
 
   const [LibraryNovels, setLibraryNovels] = useState(library);
   const [selectedNovel, setSelectedNovel] = useState<NovelWithMemberIds | null>(null);
   const [onlineNovels, setOnlineNovels] = useState<string[]>([]);
   const [debouncedOnlineNovels, setDebouncedOnlineNovels] = useState<string[]>([]);
   const debounceTimer = useRef<NodeJS.Timeout | null>(null);
+  const lastUpdate = useRef('');
+
   const LocalStrings = LOCALES.dash;
-  const isLoading = ['submitting'].includes(navigationState.state);
 
   useEffect(() => {
     const channel = supabase
@@ -45,14 +47,17 @@ export default function DashIndex() {
         /** Get the presence state from the channel, keyed by realtime identifier */
         const presenceState = channel.presenceState();
         /** transform the presence */
-        const users = Object.keys(presenceState)
+        const online = Object.keys(presenceState)
           .map(presenceId => {
             const presences = presenceState[presenceId] as unknown as OnlineUser[];
             return presences.map(presence => presence.novel_id);
           })
           .flat();
         /** sort and set the users */
-        setDebouncedOnlineNovels(users);
+        if (!lastUpdate.current) {
+          setOnlineNovels(online);
+          lastUpdate.current = new Date().toString();
+        } else setDebouncedOnlineNovels(online);
       })
       .subscribe(status => {
         if (status !== 'SUBSCRIBED') return;
@@ -80,9 +85,7 @@ export default function DashIndex() {
             case 'INSERT': {
               const insert = await supabase
                 .from('novels')
-                .select(
-                  '*, owner:profiles!owner(color, username, avatar, id), members:novel_members!id(user_id))'
-                )
+                .select('*, owner:profiles!owner(color, username, avatar, id), members:novel_members!id(user_id))')
                 .match({ id: payload.new.id })
                 .single();
               if (insert.error) return;
@@ -122,7 +125,8 @@ export default function DashIndex() {
           if (info.new.user_id === user.id) return;
           return setLibraryNovels(novels =>
             novels.map(novel => {
-              if (novel.id === info.new.novel_id) return { ...novel, members: novel.members.concat({ user_id: info.new.user_id }) };
+              if (novel.id === info.new.novel_id)
+                return { ...novel, members: novel.members.concat({ user_id: info.new.user_id }) };
               else return novel;
             })
           );
@@ -134,11 +138,11 @@ export default function DashIndex() {
     };
   }, [supabase, user.id]);
 
-
   useEffect(() => {
     debounceTimer.current = setTimeout(() => {
       setOnlineNovels(debouncedOnlineNovels);
-    }, 3000);
+      lastUpdate.current = new Date().toString();
+    }, 1500);
 
     return () => {
       if (debounceTimer.current) clearTimeout(debounceTimer.current);
@@ -160,7 +164,12 @@ export default function DashIndex() {
             key={novel.id}
             className={`flex text-left bg-gray-400 bg-opacity-50 backdrop-blur-xl p-9 overflow-hidden relative rounded-[25px] font-mono flex-col gap-1 group transition-all duration-500 ease-linear ${selectedNovel && selectedNovel?.id === novel?.id ? 'text-gray-700' : 'md:text-white hover:text-gray-700 text-gray-700'}`}
             onClick={() => setSelectedNovel(novel)}>
-            <div className={onlineNovels.some(novel_id => novel_id === novel.id) ? 'absolute top-3 right-4 flex gap-2 items-center z-50' : 'hidden'}>
+            <div
+              className={
+                onlineNovels.some(novel_id => novel_id === novel.id)
+                  ? 'absolute top-3 right-4 flex gap-2 items-center z-50'
+                  : 'hidden'
+              }>
               <p className="text-current text-sm">Active</p>
               <span className="relative flex h-3 w-3">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>

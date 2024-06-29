@@ -20,9 +20,10 @@ export default function DashUsers() {
   const profiles = useLoaderData<ProfileEntry[]>();
   const { supabase, img_url, user } = useOutletContext<DashOutletContext>();
   const [userProfiles, setUserProfiles] = useState<ProfileEntry[]>(profiles);
-  const [onlineUsers, setOnlineUsers] = useState<{ user_id: string, room: string }[]>([]);
-  const [debouncedOnlineUsers, setDebouncedOnlineUsers] = useState<{ user_id: string, room: string }[]>([]);
+  const [onlineUsers, setOnlineUsers] = useState<{ user_id: string; room: string }[]>([]);
+  const [debouncedOnlineUsers, setDebouncedOnlineUsers] = useState<{ user_id: string; room: string }[]>([]);
   const debounceTimer = useRef<NodeJS.Timeout | null>(null);
+  const lastUpdate = useRef('');
 
   useEffect(() => {
     if (!supabase) return;
@@ -65,14 +66,17 @@ export default function DashUsers() {
         /** Get the presence state from the channel, keyed by realtime identifier */
         const presenceState = channel.presenceState();
         /** transform the presence */
-        const users = Object.keys(presenceState)
+        const online = Object.keys(presenceState)
           .map(presenceId => {
             const presences = presenceState[presenceId] as unknown as OnlineUser[];
             return presences.map(presence => ({ user_id: presence.user_id, room: presence.room }));
           })
           .flat();
         /** sort and set the users */
-        setDebouncedOnlineUsers(users);
+        if (!lastUpdate.current) {
+          setOnlineUsers(online);
+          lastUpdate.current = new Date().toString();
+        } else setDebouncedOnlineUsers(online);
       })
       .subscribe(status => {
         if (status !== 'SUBSCRIBED') return;
@@ -85,8 +89,9 @@ export default function DashUsers() {
 
   useEffect(() => {
     debounceTimer.current = setTimeout(() => {
-     setOnlineUsers(debouncedOnlineUsers);
-    }, 3000);
+      lastUpdate.current = new Date().toString();
+      setOnlineUsers(debouncedOnlineUsers);
+    }, 1500);
 
     return () => {
       if (debounceTimer.current) clearTimeout(debounceTimer.current);
