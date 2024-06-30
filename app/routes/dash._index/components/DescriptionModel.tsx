@@ -65,8 +65,8 @@ export function DescriptionModel({ selectedNovel, close, userId, ownerId, member
     <DialogWrapper open={Boolean(selectedNovel)}>
       <div className="w-full md:max-w-[800px] md:p-4 flex flex-col gap-1 md:self-center self-baseline text-mono m-auto md:m-0">
         <div className="bg-slate-50 bg-opacity-55 backdrop-blur-lg flex flex-col gap-0.5 rounded-t-lg rounded-b-md flex-auto md:flex-1">
-          <div className="w-full pt-4 px-6 pb-2 flex flex-wrap rounded-t-[inherit] justify-between items-center bg-white">
-            <h3 className="font-medium text-xl text-gray-600 underline underline-offset-4 capitalize flex flex-wrap items-center gap-2">
+          <div className="w-full pt-4 px-6 pb-2 flex rounded-t-[inherit] justify-between items-center bg-white">
+            <h3 className="font-medium text-xl text-gray-600 underline underline-offset-4 capitalize flex items-center gap-2">
               &nbsp;{selectedNovel?.title}&nbsp;&nbsp;&nbsp;
             </h3>
             <button
@@ -153,7 +153,7 @@ export function DescriptionModel({ selectedNovel, close, userId, ownerId, member
       </div>
       <DialogWrapper open={openConfirm}>
         <div className="bg-slate-50 bg-opacity-55 backdrop-blur-lg flex flex-col rounded-t-lg rounded-b-md self-center w-full max-w-card-l">
-          <div className="w-full pt-4 px-6 pb-2 flex flex-wrap rounded-t-[inherit] justify-between items-center bg-white">
+          <div className="w-full pt-4 px-6 pb-2 flex rounded-t-[inherit] justify-between items-center bg-white">
             <h3 className="font-medium text-xl text-gray-600 underline underline-offset-4 capitalize">
               &#8197;Confirm Delete&nbsp;&nbsp;&nbsp;
             </h3>
@@ -166,7 +166,7 @@ export function DescriptionModel({ selectedNovel, close, userId, ownerId, member
           </div>
           <div className="w-full py-8 px-4 bg-white text-gray-700 mt-0.5">
             Are you sure you would like to delete the novel{' '}
-            <strong className="whitespace-pre capitalize">{'"' + selectedNovel?.title + '" ?'}</strong>
+            <strong className="capitalize">{'"' + selectedNovel?.title + '" ?'}</strong>
           </div>
           <div className="flex w-full justify-end bg-white rounded-b-md p-2 gap-3">
             <Form method="delete">

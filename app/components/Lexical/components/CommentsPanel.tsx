@@ -89,7 +89,7 @@ export default function CommentsPanel({
       data-id="CommentPlugin_CommentsPanel"
       className={`fixed flex flex-col flex-auto gap-1 right-0 md:w-[400px] w-full md:h-[calc(100%_-_80px)] h-full md:top-10 top-0 z-40 transition-transform ease-out duration-500 ${show ? 'translate-x-0' : 'md:translate-x-[400px] translate-x-[767px]'}`}>
       <div className="w-full flex flex-col flex-auto gap-1 overflow-hidden rounded-l-md bg-white bg-opacity-50 backdrop-blur-sm shadow-[0_0_10px_rgba(0,_0,_0,_0.1)] ">
-        <div className="w-full flex-shrink-0 pt-4 px-6 pb-2 flex flex-wrap rounded-t-[inherit] justify-between items-center bg-white bg-opacity-80 backdrop-blur-sm">
+        <div className="w-full flex-shrink-0 pt-4 px-6 pb-2 flex rounded-t-[inherit] justify-between items-center bg-white bg-opacity-80 backdrop-blur-sm">
           <div className="flex gap-3 items-center">
             <h3 className="font-medium text-xl text-gray-600 underline underline-offset-4 capitalize">
               &#8197;Comments&nbsp;&nbsp;&nbsp;

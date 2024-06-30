@@ -121,7 +121,7 @@ export default function DashSettings() {
           className="w-full max-w-card-l md:p-4 p-0 flex flex-col gap-1 md:self-center self-baseline text-mono m-auto md:m-0">
           <fieldset disabled={formDisabled}>
             <div className="bg-slate-50 bg-opacity-55 backdrop-blur-lg flex flex-col gap-0.5 rounded-t-lg rounded-b-md flex-auto md:flex-1">
-              <div className="w-full pt-4 px-6 pb-2 flex flex-wrap rounded-t-[inherit] justify-between items-center bg-white">
+              <div className="w-full pt-4 px-6 pb-2 flex rounded-t-[inherit] justify-between items-center bg-white">
                 <h3 className="font-medium text-xl text-gray-600 underline underline-offset-4 capitalize">
                   &#8197;Delete User Account&nbsp;&nbsp;&nbsp;
                 </h3>

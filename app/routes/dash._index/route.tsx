@@ -212,7 +212,7 @@ export default function DashIndex() {
         <Link
           to="/dash/new"
           className="
-          secondaryButton whitespace-pre !max-w-[200px] !h-button !px-0 justify-center items-center">
+          secondaryButton !max-w-[200px] !h-button !px-0 justify-center items-center">
           {isLoading ? (
             <LoadingSpinner className="w-full h-10" svgColor="#fff" uniqueId="index-spinner" />
           ) : (

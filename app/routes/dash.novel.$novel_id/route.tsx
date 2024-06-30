@@ -320,7 +320,7 @@ export default function DashNovelId() {
       </div>
       <DialogWrapper open={Boolean(selectedPage)}>
         <div className="bg-slate-50 bg-opacity-55 backdrop-blur-lg flex flex-col rounded-t-lg rounded-b-md self-center w-full max-w-card-l">
-          <div className="w-full pt-4 px-6 pb-2 flex flex-wrap rounded-t-[inherit] justify-between items-center bg-white">
+          <div className="w-full pt-4 px-6 pb-2 flex rounded-t-[inherit] justify-between items-center bg-white">
             <h3 className="font-medium text-xl text-gray-600 underline underline-offset-4 capitalize">
               &#8197;Confirm Delete&nbsp;&nbsp;&nbsp;
             </h3>
@@ -333,7 +333,7 @@ export default function DashNovelId() {
           </div>
           <div className="w-full py-8 px-4 bg-white text-gray-700 mt-0.5">
             Are you sure you would like to delete the page{' '}
-            <strong className="whitespace-pre capitalize">{'"' + selectedPage?.reference_title + '" ?'}</strong>
+            <strong className="capitalize">{'"' + selectedPage?.reference_title + '" ?'}</strong>
           </div>
           <div className="flex w-full justify-end bg-white rounded-b-md p-2 gap-3">
             <Form method="delete">
