@@ -19,7 +19,6 @@ export async function DashLoader(request: LoaderFunctionArgs['request']) {
       avatar: avatarURL ? env.SUPABASE_IMG_STORAGE + 'public/avatars/' + avatarURL : null,
       id: user?.id || '',
       username: user?.user_metadata.username || 'Not Found',
-      email: user?.email || 'Unknonwn',
       color: user?.user_metadata.color || '#aeaeae'
     };
 

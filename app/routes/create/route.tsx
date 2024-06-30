@@ -79,7 +79,9 @@ export default function Create() {
             <fieldset className="w-full flex flex-col justify-center items-center gap-3" disabled={isLoading}>
               <div className="flex gap-6 flex-wrap justify-center items-center">
                 <AvatarInput title={LocalStrings.avatar} id="avatar" setImage={setImage} />
-                <ColorInput title={LocalStrings.color} id="color" value={colorSelect} onChange={setColorSelect} />
+                <div className="w-52">
+                  <ColorInput title={LocalStrings.color} id="color" value={colorSelect} onChange={setColorSelect} />
+                </div>
               </div>
               <TitleInput
                 title={LocalStrings.username}

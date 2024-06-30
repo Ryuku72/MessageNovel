@@ -128,8 +128,6 @@
   "settings": {
     "title": "User Settings",
     "username": "Username",
-    "email": "Email",
-    "password": "Password",
     "color": "Favourite Color",
     "primary_button": "back"
   },

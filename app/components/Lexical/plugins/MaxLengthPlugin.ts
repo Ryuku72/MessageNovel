@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { $trimTextContentFromAnchor } from '@lexical/selection';
 import { $restoreEditorState } from '@lexical/utils';
-import { $getSelection, $isRangeSelection, EditorState, RootNode } from 'lexical';
+import { $getRoot, $getSelection, $isRangeSelection, EditorState, RootNode } from 'lexical';
 
 export function MaxLengthPlugin({
   maxLength,
@@ -16,7 +16,6 @@ export function MaxLengthPlugin({
 
   useEffect(() => {
     let lastRestoredEditorState: EditorState | null = null;
-
     return editor.registerNodeTransform(RootNode, (rootNode: RootNode) => {
       const selection = $getSelection();
       if (!$isRangeSelection(selection) || !selection.isCollapsed()) {
@@ -25,7 +24,6 @@ export function MaxLengthPlugin({
       const prevEditorState = editor.getEditorState();
       const prevTextContentSize = prevEditorState.read(() => rootNode.getTextContentSize());
       const textContentSize = rootNode.getTextContentSize();
-      setTextLength(textContentSize);
       if (prevTextContentSize !== textContentSize) {
         const delCount = textContentSize - maxLength;
         const anchor = selection.anchor;
@@ -42,7 +40,17 @@ export function MaxLengthPlugin({
         }
       }
     });
-  }, [editor, maxLength, setTextLength]);
+  }, [editor, maxLength]);
+
+  useEffect(() => {
+    return editor.registerUpdateListener(({ editorState }) => {
+      editorState.read(() => {
+        const rootNode = $getRoot();
+        const contentSize = rootNode.getTextContentSize();
+        setTextLength(contentSize);
+      });
+    });
+  }, [editor, setTextLength]);
 
   return null;
 }

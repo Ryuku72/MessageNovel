@@ -68,20 +68,29 @@ export default function DashSettings() {
         }}
         aria-label="update-account"
         method="post"
-        className="p-4 w-card-l max-w-full">
-        <fieldset className="w-full flex flex-col justify-center items-center gap-3" disabled={formDisabled}>
+        className="p-4 md:w-[700px] w-[360px] max-w-full">
+        <fieldset className="w-full flex flex-col justify-center items-center md:gap-3 gap-6" disabled={formDisabled}>
           <div
-            className={`w-full flex justify-center items-center gap-3 flex-col rounded-lg shadow-xl px-12 py-8 ${user.color} bg-opacity-65 backdrop-blur-lg`}>
+            className={`w-full flex justify-center items-center md:flex-row flex-col rounded-lg shadow-xl md:gap-10 gap-3 md:px-8 px-4 py-8 ${user.color} bg-opacity-65 backdrop-blur-lg`}>
             <AvatarInput title="Upload file" id="avatar" setImage={setImage} imageSrc={user?.avatar} />
-            <TitleInput title={LocalStrings.email} id="email" value={user.email} disabled={true} />
-            <TitleInput
-              title={LocalStrings.username}
-              id="username"
-              value={username}
-              placeholder="Enter New Username..."
-              onChange={setUsername}
-            />
-            <ColorInput title={LocalStrings.color} id="color" value={colorSelect} onChange={setColorSelect} />
+            <div className="flexCenter flex-col gap-3 flex-auto md:w-auto w-full">
+              <TitleInput
+                labelColor="text-gray-600"
+                textSize="text-left font-medium"
+                title={LocalStrings.username}
+                id="username"
+                value={username}
+                placeholder="Enter New Username..."
+                onChange={setUsername}
+              />
+                <ColorInput
+                  textAlign="text-left"
+                  title={LocalStrings.color}
+                  id="color"
+                  value={colorSelect}
+                  onChange={setColorSelect}
+                />
+            </div>
           </div>
           <div className="flex flex-wrap gap-3 w-full justify-center">
             <Link to="/dash" className="primaryButton py-2.5" type="button">

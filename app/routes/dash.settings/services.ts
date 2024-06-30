@@ -69,7 +69,6 @@ export async function SettingsAction(request: ActionFunctionArgs['request']) {
         avatar: env.SUPABASE_IMG_STORAGE + 'public/avatars/' + user?.user_metadata?.avatar,
         id: user?.id || '',
         username: user?.user_metadata.username || 'Not Found',
-        email: user?.email || 'Unknonwn',
         color: user?.user_metadata.color || '#aeaeae'
       };
 

@@ -52,7 +52,7 @@ export type AuthProfileEntry = User & {
   };
 };
 
-export type UserDataEntry = Omit<ProfileEntry, 'created_at' | 'updated_at'>;
+export type UserDataEntry = Omit<ProfileEntry, 'created_at' | 'updated_at' | 'email'>;
 
 export type SVG_Stoke_Component_props = {
   className: string;
