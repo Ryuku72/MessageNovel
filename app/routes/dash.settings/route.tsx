@@ -103,7 +103,7 @@ export default function DashSettings() {
       <button
         type="button"
         onClick={() => setShowDelModal(true)}
-        className="absolute top-3 right-3 text-sm text-red-700 hover:text-red-500 text-right h-[40px] px-5 border-red-700 hover:border-red-500 border rounded bg-white bg-opacity-10 backdrop-blur-sm font-bold">
+        className="absolute top-3 right-3 text-sm text-red-700 hover:text-red-500 text-right h-access px-5 border-red-700 hover:border-red-500 border rounded bg-white bg-opacity-10 backdrop-blur-sm font-bold">
         <TrashIcon uniqueId="deleteaccount" svgColor="currentColor" className="w-4 h-auto" />
       </button>
       <DialogWrapper open={showDelModal}>

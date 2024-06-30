@@ -87,7 +87,7 @@ export default function CommentInputModal({
         }
       }
     });
-  }, [editor, selectionState]);
+  }, [authorDetails.color, editor, selectionState.elements]);
 
   useEffect(() => {
     updateLocation();

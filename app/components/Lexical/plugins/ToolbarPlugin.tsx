@@ -259,7 +259,7 @@ export default function ToolbarPlugin() {
         onClick={() => {
           editor.dispatchCommand(UNDO_COMMAND, undefined);
         }}
-        className="flex rounded cursor-pointer w-[40px] h-[40px] items-center justify-center text-gray-500 disabled:text-gray-300"
+        className="flex rounded cursor-pointer w-access h-access items-center justify-center text-gray-500 disabled:text-gray-300"
         aria-label="Undo">
         <ArrowCounterClockwiseIcon uniqueId="lexical-undo" className="w-5 h-auto" />
       </button>
@@ -270,7 +270,7 @@ export default function ToolbarPlugin() {
         onClick={() => {
           editor.dispatchCommand(REDO_COMMAND, undefined);
         }}
-        className="flex rounded cursor-pointer w-[40px] h-[40px] items-center justify-center text-gray-500 disabled:text-gray-300"
+        className="flex rounded cursor-pointer w-access h-access items-center justify-center text-gray-500 disabled:text-gray-300"
         aria-label="Redo">
         <ArrowClockwiseIcon uniqueId="lexical-redo" className="w-5 h-auto" />
       </button>
@@ -280,7 +280,7 @@ export default function ToolbarPlugin() {
         title="Format Heading size 1"
         onClick={() => formatHeading('h1')}
         className={
-          'flex rounded cursor-pointer w-[40px] h-[40px] items-center justify-center ' +
+          'flex rounded cursor-pointer w-access h-access items-center justify-center ' +
           (blockType === 'h1' ? 'border bg-gray-200 text-gray-600' : 'text-gray-500')
         }
         aria-label="Format Heading size 1">
@@ -291,7 +291,7 @@ export default function ToolbarPlugin() {
         title="Format Heading size 2"
         onClick={() => formatHeading('h2')}
         className={
-          'flex rounded cursor-pointer w-[40px] h-[40px] items-center justify-center ' +
+          'flex rounded cursor-pointer w-access h-access items-center justify-center ' +
           (blockType === 'h2' ? 'border bg-gray-200 text-gray-600' : 'text-gray-500')
         }
         aria-label="Format Heading size 2">
@@ -302,7 +302,7 @@ export default function ToolbarPlugin() {
         title="Format Heading size 3"
         onClick={() => formatHeading('h3')}
         className={
-          'flex rounded cursor-pointer w-[40px] h-[40px] items-center justify-center ' +
+          'flex rounded cursor-pointer w-access h-access items-center justify-center ' +
           (blockType === 'h3' ? 'border bg-gray-200 text-gray-600' : 'text-gray-500')
         }
         aria-label="Format Heading size 3">
@@ -316,7 +316,7 @@ export default function ToolbarPlugin() {
           editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'bold');
         }}
         className={
-          'flex rounded cursor-pointer w-[40px] h-[40px] items-center justify-center ' +
+          'flex rounded cursor-pointer w-access h-access items-center justify-center ' +
           (isBold ? 'border bg-gray-200 text-gray-600' : 'text-gray-500')
         }
         aria-label="Format Bold">
@@ -329,7 +329,7 @@ export default function ToolbarPlugin() {
           editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'italic');
         }}
         className={
-          'flex rounded cursor-pointer w-[40px] h-[40px] items-center justify-center ' +
+          'flex rounded cursor-pointer w-access h-access items-center justify-center ' +
           (isItalic ? 'border bg-gray-200 text-gray-600' : 'text-gray-500')
         }
         aria-label="Format Italics">
@@ -342,7 +342,7 @@ export default function ToolbarPlugin() {
           editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'underline');
         }}
         className={
-          'flex rounded cursor-pointer w-[40px] h-[40px] items-center justify-center ' +
+          'flex rounded cursor-pointer w-access h-access items-center justify-center ' +
           (isUnderline ? 'border bg-gray-200 text-gray-600' : 'text-gray-500')
         }
         aria-label="Format Underline">
@@ -355,7 +355,7 @@ export default function ToolbarPlugin() {
           editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'strikethrough');
         }}
         className={
-          'flex rounded cursor-pointer w-[40px] h-[40px] items-center justify-center ' +
+          'flex rounded cursor-pointer w-access h-access items-center justify-center ' +
           (isStrikethrough ? 'border bg-gray-200 text-gray-600' : 'text-gray-500')
         }
         aria-label="Format Strikethrough">
@@ -367,7 +367,7 @@ export default function ToolbarPlugin() {
         title="Format Paragraph"
         onClick={formatParagraph}
         className={
-          'flex rounded cursor-pointer w-[40px] h-[40px] items-center justify-center ' +
+          'flex rounded cursor-pointer w-access h-access items-center justify-center ' +
           (blockType === 'paragraph' ? 'border bg-gray-200 text-gray-600' : 'text-gray-500')
         }
         aria-label="Format Paragraph">
@@ -378,7 +378,7 @@ export default function ToolbarPlugin() {
         title="Order List Align"
         onClick={formatNumberedList}
         className={
-          'flex rounded cursor-pointer w-[40px] h-[40px] items-center justify-center ' +
+          'flex rounded cursor-pointer w-access h-access items-center justify-center ' +
           (blockType === 'number' ? 'border bg-gray-200 text-gray-600' : 'text-gray-500')
         }
         aria-label="Order List Align">
@@ -389,7 +389,7 @@ export default function ToolbarPlugin() {
         title="Unorder List Align"
         onClick={formatBulletList}
         className={
-          'flex rounded cursor-pointer w-[40px] h-[40px] items-center justify-center ' +
+          'flex rounded cursor-pointer w-access h-access items-center justify-center ' +
           (blockType === 'bullet' ? 'border bg-gray-200 text-gray-600' : 'text-gray-500')
         }
         aria-label="Unorder List Align">
@@ -400,7 +400,7 @@ export default function ToolbarPlugin() {
         title="Checklist"
         onClick={formatCheckList}
         className={
-          'flex rounded cursor-pointer w-[40px] h-[40px] items-center justify-center ' +
+          'flex rounded cursor-pointer w-access h-access items-center justify-center ' +
           (blockType === 'check' ? 'border bg-gray-200 text-gray-600' : 'text-gray-500')
         }
         aria-label="Checklist">
@@ -411,7 +411,7 @@ export default function ToolbarPlugin() {
         title="Quote Align"
         onClick={formatQuote}
         className={
-          'flex rounded cursor-pointer w-[40px] h-[40px] items-center justify-center ' +
+          'flex rounded cursor-pointer w-access h-access items-center justify-center ' +
           (blockType === 'quote' ? 'border bg-gray-200 text-gray-600' : 'text-gray-500')
         }
         aria-label="Quote Align">
@@ -425,7 +425,7 @@ export default function ToolbarPlugin() {
           editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, 'left');
         }}
         className={
-          'flex rounded cursor-pointer w-[40px] h-[40px] items-center justify-center ' +
+          'flex rounded cursor-pointer w-access h-access items-center justify-center ' +
           (elementFormat === 'left' ? 'border bg-gray-200 text-gray-600' : 'text-gray-500')
         }
         aria-label="Left Align">
@@ -438,7 +438,7 @@ export default function ToolbarPlugin() {
           editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, 'center');
         }}
         className={
-          'flex rounded cursor-pointer w-[40px] h-[40px] items-center justify-center ' +
+          'flex rounded cursor-pointer w-access h-access items-center justify-center ' +
           (elementFormat === 'center' ? 'border bg-gray-200 text-gray-600' : 'text-gray-500')
         }
         aria-label="Center Align">
@@ -451,7 +451,7 @@ export default function ToolbarPlugin() {
           editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, 'right');
         }}
         className={
-          'flex rounded cursor-pointer w-[40px] h-[40px] items-center justify-center ' +
+          'flex rounded cursor-pointer w-access h-access items-center justify-center ' +
           (elementFormat === 'right' ? 'border bg-gray-200 text-gray-600' : 'text-gray-500')
         }
         aria-label="Right Align">
@@ -464,7 +464,7 @@ export default function ToolbarPlugin() {
           editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, 'justify');
         }}
         className={
-          'flex rounded cursor-pointer w-[40px] h-[40px] items-center justify-center ' +
+          'flex rounded cursor-pointer w-access h-access items-center justify-center ' +
           (elementFormat === 'justify' ? 'border bg-gray-200 text-gray-600' : 'text-gray-500')
         }
         aria-label="Justify Align">
@@ -477,7 +477,7 @@ export default function ToolbarPlugin() {
         onClick={() => {
           editor.dispatchCommand(INSERT_HORIZONTAL_RULE_COMMAND, undefined);
         }}
-        className="flex rounded cursor-pointer w-[40px] h-[40px] items-center justify-center text-gray-500"
+        className="flex rounded cursor-pointer w-access h-access items-center justify-center text-gray-500"
         aria-label="Horizonital Rule Insert">
         <HorizontalRuleIcon uniqueId="lexical-justify" className="w-5 h-auto" />
       </button>
@@ -493,7 +493,7 @@ export default function ToolbarPlugin() {
             className={
               !enableSpeech
                 ? 'hidden'
-                : 'flex flex-col rounded cursor-pointer w-[40px] h-[40px] items-center justify-center ' +
+                : 'flex flex-col rounded cursor-pointer w-access h-access items-center justify-center ' +
                   (isSpeechToText ? 'border bg-red-400 text-white' : 'text-gray-500')
             }
             title="Speech To Text"
@@ -505,7 +505,7 @@ export default function ToolbarPlugin() {
       <Divider />
       <button
         type="button"
-        className={`flex gap-3 rounded cursor-pointer w-[40px] h-[40px] items-center justify-center px-2 bg-opacity-25 backdrop-blur-sm ${showComments ? 'bg-blue-400 text-gray-600' : 'bg-gray-300 text-gray-500'}`}
+        className={`flex gap-3 rounded cursor-pointer w-access h-access items-center justify-center px-2 bg-opacity-25 backdrop-blur-sm ${showComments ? 'bg-blue-400 text-gray-600' : 'bg-gray-300 text-gray-500'}`}
         data-id="CommentPlugin_ShowCommentsButton"
         onClick={() => handleShowComments()}
         title={showComments ? 'Hide Comments' : 'Show Comments'}>

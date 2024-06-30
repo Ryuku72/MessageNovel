@@ -164,13 +164,13 @@ export function PageRichTextEditor({
           <CommentPlugin namespace={namespace} userData={userData} providerFactory={createChatProviderFactory} />
           <div className="sticky md:bottom-3 bottom-[90px] right-4 self-end m-2 flex gap-2">
             <p
-              className={`bg-slate-400 backdrop-blur-sm bg-opacity-50 px-2 flex items-center h-[40px] rounded-lg text-xs self-end ${textLength < maxLength ? 'text-blue-800' : 'text-red-400'}`}>
+              className={`bg-slate-400 backdrop-blur-sm bg-opacity-50 px-2 flex items-center h-access rounded-lg text-xs self-end ${textLength < maxLength ? 'text-blue-800' : 'text-red-400'}`}>
               {textLength} / {maxLength} length
             </p>
             <button
               type="button"
               title={`Novel YJS ${status}`}
-              className={`flex gap-2 rounded cursor-pointer w-[40px] h-[40px] flex-[0,0,auto] items-center justify-center pl-2 pr-3 capitalize text-gray-500 ${status === 'disconnected' || status === 'initial' ? 'bg-red-300' : status === 'connecting' ? 'bg-blue-400' : 'bg-green-300'} bg-opacity-25 backdrop-blur-sm ${!isSynced ? 'pointer-events-none' : 'pointer-events-auto'}`}
+              className={`flex gap-2 rounded cursor-pointer w-access h-access flex-[0,0,auto] items-center justify-center pl-2 pr-3 capitalize text-gray-500 ${status === 'disconnected' || status === 'initial' ? 'bg-red-300' : status === 'connecting' ? 'bg-blue-400' : 'bg-green-300'} bg-opacity-25 backdrop-blur-sm ${!isSynced ? 'pointer-events-none' : 'pointer-events-auto'}`}
               onClick={() => (status === 'connected' ? room.disconnect() : room.connect())}>
               {!isSynced ? (
                 <SyncIcon uniqueId="lexical-sync" className="w-5 h-auto animate-spin" />
@@ -184,7 +184,7 @@ export function PageRichTextEditor({
               type="button"
               disabled={!owner}
               title={`Owner has ${enableCollab ? 'enabled collabaration' : 'disabled collabaration'} `}
-              className={`flex gap-2 rounded cursor-pointer h-[40px] items-center justify-center pl-2 pr-3 capitalize ${!enableCollab ? 'bg-purple-400 text-gray-600' : 'bg-orange-500 text-gray-500'} bg-opacity-25 backdrop-blur-sm`}
+              className={`flex gap-2 rounded cursor-pointer h-access items-center justify-center pl-2 pr-3 capitalize ${!enableCollab ? 'bg-purple-400 text-gray-600' : 'bg-orange-500 text-gray-500'} bg-opacity-25 backdrop-blur-sm`}
               onClick={e => {
                 e.preventDefault();
                 const formData = new FormData();

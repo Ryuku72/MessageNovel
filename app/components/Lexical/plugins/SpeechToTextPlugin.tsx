@@ -17,14 +17,10 @@ const getElement = (): HTMLElement => {
   if (element === null) {
     element = document.createElement('div');
     element.id = 'report-container';
-    element.style.position = 'fixed';
-    element.style.top = '50%';
-    element.style.left = '50%';
-    element.style.fontSize = '32px';
-    element.style.transform = 'translate(-50%, -50px)';
-    element.style.padding = '20px';
-    element.style.background = 'rgba(240, 240, 240, 0.4)';
-    element.style.borderRadius = '20px';
+    element.classList.add('md:px-[100px]', 'px-4', 'py-[40px]', 'md:pb-[40px]', 'pb-[100px]', 'flexCenter', 'w-full', 'h-full', 'fixed', 'top-0', 'left-0', 'overflow-hidden');
+    const paragraph = document.createElement('p');
+    paragraph.classList.add('bg-slate-100', 'bg-opacity-30', 'backdrop-blur-sm', 'text-gray-600', 'rounded', 'text-3xl', 'p-4', 'leading-relaxed', 'overflow-hidden', 'max-h-full', 'flex', 'items-end');
+    element.append(paragraph);
 
     if (document.body) {
       document.body.appendChild(element);
@@ -57,7 +53,7 @@ export function useReport(): (arg0: string) => ReturnType<typeof setTimeout> {
       if (timer.current !== null) {
         clearTimeout(timer.current);
       }
-      element.innerHTML = content;
+      element.children[0].innerHTML = content;
       timer.current = setTimeout(cleanup, 1000);
       return timer.current;
     },

@@ -178,7 +178,7 @@ export default function DashNovelId() {
   }, [finishedDelete]);
 
   return (
-    <div className="flex flex-col flex-auto md:flex-1 items-center w-full md:px-10 px-3 md:py-12 py-4 gap-6">
+    <div className="flex flex-col flex-auto md:flex-1 items-center w-full md:px-10 px-3 md:pt-12 pt-4 md:pb-12 pb-[120px] gap-6">
       <h1 className="text-red-700 text-4xl underline underline-offset-8 [text-shadow:_5px_3px_2px_rgb(225_225_225_/_50%)] font-miltonian">
         &nbsp;&nbsp;{novel.title}&nbsp;&nbsp;&nbsp;
       </h1>
@@ -242,7 +242,7 @@ export default function DashNovelId() {
                   onClick={() => setSelectedPage(page)}
                   className={
                     novel.owner.id === user.id
-                      ? 'rounded-lg text-gray-100 font-semibold flex items-center justify-center h-[50px] w-[80px] bg-orange-700 hover:bg-orange-500'
+                      ? 'rounded-lg text-gray-100 font-semibold flex items-center justify-center h-button w-[80px] bg-orange-700 hover:bg-orange-500'
                       : 'hidden'
                   }>
                   <TrashIcon uniqueId="delete-page" svgColor="#fff" className="w-5 h-auto" />
@@ -259,7 +259,7 @@ export default function DashNovelId() {
                   name="enable_collab"
                   disabled={page.owner.id !== user.id}
                   title={`Owner has ${page.enable_collab ? 'enabled collabaration' : 'disabled collabaration'} `}
-                  className="rounded-lg flex gap-2 h-[50px] items-center justify-center pl-5 pr-6 capitalize font-semibold text-white bg-slate-700">
+                  className="rounded-lg flex gap-2 h-button w-[105px] items-center justify-center capitalize font-semibold text-white bg-slate-700 hover:bg-slate-500">
                   {page.enable_collab ? (
                     <PublicNovelIcon uniqueId="public-novel-icon" className="w-5 h-auto -scale-x-100" />
                   ) : (
@@ -273,7 +273,7 @@ export default function DashNovelId() {
                   value={page.id}
                   name="selected_page"
                   disabled={isLoadingUpdate}
-                  className="rounded-lg text-gray-100 font-semibold flex items-center justify-center h-[50px] w-[165px] bg-emerald-700 hover:bg-emerald-500">
+                  className="rounded-lg text-gray-100 font-semibold flex items-center justify-center h-button w-[105px] bg-emerald-700 hover:bg-emerald-500">
                   Participate
                 </button>
               </Form>
@@ -281,10 +281,10 @@ export default function DashNovelId() {
                 to={`/dash/page/${page.id}`}
                 className={
                   page.members.some(member => member.id === user.id)
-                    ? 'rounded-lg text-gray-100 font-semibold flex items-center justify-center h-[50px] w-[165px] bg-emerald-700 hover:bg-emerald-500'
+                    ? 'rounded-lg text-gray-100 font-semibold flex items-center justify-center h-button w-[105px] bg-emerald-700 hover:bg-emerald-500'
                     : 'hidden'
                 }>
-                Continue Writing
+                Continue
               </Link>
             </div>
           </div>
@@ -313,13 +313,13 @@ export default function DashNovelId() {
           </button>
         </Form>
       </div>
-      <div className="flex w-full max-w-wide justify-center sticky bottom-4">
+      <div className="flex w-full max-w-wide justify-center sticky md:bottom-4 bottom-[100px]">
         <Link to="/dash" className="primaryButton py-2.5" type="button">
           Back
         </Link>
       </div>
       <DialogWrapper open={Boolean(selectedPage)}>
-        <div className="bg-slate-50 bg-opacity-55 backdrop-blur-lg flex flex-col gap-0.5 rounded-t-lg rounded-b-md self-center w-full max-w-card-l">
+        <div className="bg-slate-50 bg-opacity-55 backdrop-blur-lg flex flex-col rounded-t-lg rounded-b-md self-center w-full max-w-card-l">
           <div className="w-full pt-4 px-6 pb-2 flex flex-wrap rounded-t-[inherit] justify-between items-center bg-white">
             <h3 className="font-medium text-xl text-gray-600 underline underline-offset-4 capitalize">
               &#8197;Confirm Delete&nbsp;&nbsp;&nbsp;
@@ -331,7 +331,7 @@ export default function DashNovelId() {
               <CloseIcon className="w-3 h-3" uniqueId="dash-close" svgColor="currentColor" />
             </button>
           </div>
-          <div className="w-full py-8 px-4 bg-white text-gray-700">
+          <div className="w-full py-8 px-4 bg-white text-gray-700 mt-0.5">
             Are you sure you would like to delete the page{' '}
             <strong className="whitespace-pre capitalize">{'"' + selectedPage?.reference_title + '" ?'}</strong>
           </div>
@@ -341,18 +341,18 @@ export default function DashNovelId() {
                 title="delete page"
                 value={selectedPage?.id}
                 name="page_id_delete"
-                className="rounded-lg text-gray-100 font-semibold flex items-center justify-center h-[50px] w-[165px] bg-orange-700 hover:bg-red-600">
+                className="rounded-lg text-gray-100 font-semibold flex items-center justify-center h-button w-[105px] bg-orange-700 hover:bg-red-600">
                 {isLoadingUpdate ? (
                   <LoadingSpinner className="w-full h-10" svgColor="#fff" uniqueId="index-spinner" />
                 ) : (
-                  'Delete Page'
+                  'Delete'
                 )}
               </button>
             </Form>
             <button
               type="button"
               onClick={() => setSelectedPage(null)}
-              className="rounded-lg text-gray-100 font-semibold flex items-center justify-center h-[50px] w-[165px] bg-emerald-700 hover:bg-emerald-500">
+              className="rounded-lg text-gray-100 font-semibold flex items-center justify-center h-button w-[105px] bg-emerald-700 hover:bg-emerald-500">
               Cancel
             </button>
           </div>

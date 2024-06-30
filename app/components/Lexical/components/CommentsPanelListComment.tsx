@@ -57,7 +57,7 @@ export function CommentsPanelList({
           className={
             comment.deleted
               ? 'hidden'
-              : 'flex right-3 absolute top-2.5 rounded cursor-pointer w-[40px] h-[30px] py-1 justify-center text-gray-500 hover:text-red-400 opacity-0 group-hover:opacity-100'
+              : 'flex right-3 absolute top-2.5 rounded cursor-pointer w-access h-[30px] py-1 justify-center text-gray-500 hover:text-red-400 opacity-0 group-hover:opacity-100'
           }>
           <TrashIcon className="w-4 h-auto" uniqueId="Comment-delete" />
         </button>
@@ -125,7 +125,7 @@ export function CommentThread({
             type="button"
             title="delete quote"
             onClick={() => setShowModal(true)}
-            className="absolute flexCenter top-4 right-5 rounded cursor-pointer w-[40px] h-[40px] py-1 text-gray-500 hover:text-red-400 opacity-0 group-hover:opacity-100 flex whitespace-pre">
+            className="absolute flexCenter top-4 right-5 rounded cursor-pointer w-access h-access py-1 text-gray-500 hover:text-red-400 opacity-0 group-hover:opacity-100 flex whitespace-pre">
             <StickyIcon className="w-3 h-auto rotate-45" uniqueId="Comment-sticky" />
             <TrashIcon className="w-4 h-auto translate-y-2" uniqueId="Comment-quote" />
           </button>

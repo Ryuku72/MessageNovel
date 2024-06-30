@@ -28,20 +28,28 @@ export default {
         'card-l': '480px',
         'c-600': '600px',
         'c-800': '800px',
-        button: '145px'
+        button: '105px'
       },
       width: {
         'card-l': '480px',
         'c-600': '600px',
         'c-800': '800px',
+        access: '40px',
+        icon: '60px',
+        button: '105px',
         wide: 'min(100%, 1850px)'
       },
       maxWidth: {
         'card-l': '480px',
         'c-600': '600px',
         'c-800': '800px',
-        button: '145px',
+        button: '105px',
         wide: 'min(100%, 1850px)'
+      },
+      height: {
+        icon: '60px',
+        button: '50px',
+        access: '40px'
       },
       colors: {
         'pastel-black': '#D3D3D3',

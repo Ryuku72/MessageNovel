@@ -109,45 +109,27 @@ export default function AddCommentBox({
     const floatingElemRect = floatingElem.getBoundingClientRect();
     const editorScrollerRect = scrollerElem.getBoundingClientRect();
 
-    if (document.body.clientWidth < 768) {
-      const windowTop = window.pageYOffset || document.documentElement.scrollTop;
-      const top = targetRect.top - floatingElemRect.height + windowTop;
-      let left = targetRect.left;
+    const windowTop = window.pageYOffset || document.documentElement.scrollTop;
+    const top = targetRect.top - floatingElemRect.height + windowTop;
+    let left = targetRect.left;
 
-      if (left + floatingElemRect.width > editorScrollerRect.right) {
-        left = editorScrollerRect.right - floatingElemRect.width;
-      }
-
-      floatingElem.style.opacity = '1';
-      floatingElem.style.left = `${left + 15}px`;
-      floatingElem.style.top = `${top - 15}px`;
-    } else {
-      let top = targetRect.top - floatingElemRect.height;
-      let left = targetRect.left;
-
-      if (top < editorScrollerRect.top) {
-        // adjusted height for link element if the element is at top
-        top += floatingElemRect.height + targetRect.height;
-      }
-
-      if (left + floatingElemRect.width > editorScrollerRect.right) {
-        left = editorScrollerRect.right - floatingElemRect.width;
-      }
-
-      floatingElem.style.opacity = '1';
-      floatingElem.style.left = `${left + 15}px`;
-      floatingElem.style.top = `${top - 15}px`;
+    if (left + floatingElemRect.width > editorScrollerRect.right) {
+      left = editorScrollerRect.right - floatingElemRect.width;
     }
+
+    floatingElem.style.opacity = '1';
+    floatingElem.style.left = `${left + 15}px`;
+    floatingElem.style.top = `${top - 15}px`;
   }
 
   return (
     <button
       type="button"
       data-id="CommentPlugin_AddCommentBox_button"
-      className="h-[50px] pl-0 pr-3 flexCenter absolute rounded-xl bg-white z-10 shadow-l text-gray-500 cursor-pointer hover:bg-gray-100 text-md"
+      className="h-button pl-0 pr-3 flexCenter absolute rounded-xl bg-white z-10 shadow-l text-gray-500 cursor-pointer hover:bg-gray-100 text-md"
       onClick={onAddComment}
       ref={boxRef}>
-      <StickyIcon svgColor="currentColor" uniqueId="lexical-comment" className="w-[40px] h-auto p-2" />
+      <StickyIcon svgColor="currentColor" uniqueId="lexical-comment" className="w-access h-auto p-2" />
       Comment
     </button>
   );

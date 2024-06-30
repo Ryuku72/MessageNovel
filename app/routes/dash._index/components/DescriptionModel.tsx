@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
 
 import { CreateDate } from '~/helpers/DateHelper';
+import { NovelWithMemberIds } from '~/types';
 
 import DialogWrapper from '~/components/DialogWrapper';
 import { emptyContent } from '~/components/Lexical/helpers';
@@ -14,7 +15,6 @@ import CloseIcon from '~/svg/CloseIcon/CloseIcon';
 import LoadingSpinner from '~/svg/LoadingSpinner/LoadingSpinner';
 
 import EditorTextPlugin from './EditorTextPlugin';
-import { NovelWithMemberIds } from '~/types';
 
 type DescriptionModelProps = {
   selectedNovel: NovelWithMemberIds | null;
@@ -26,7 +26,7 @@ type DescriptionModelProps = {
 
 export function DescriptionModel({ selectedNovel, close, userId, ownerId, members = [] }: DescriptionModelProps) {
   const [openConfirm, setOpenConfirm] = useState(false);
-  
+
   const navigationState = useNavigation();
   const finishedDelete = 'loading' === navigationState.state && navigationState.formMethod === 'DELETE';
   const finishedPost = 'loading' === navigationState.state && navigationState.formMethod === 'POST';
@@ -67,18 +67,6 @@ export function DescriptionModel({ selectedNovel, close, userId, ownerId, member
         <div className="bg-slate-50 bg-opacity-55 backdrop-blur-lg flex flex-col gap-0.5 rounded-t-lg rounded-b-md flex-auto md:flex-1">
           <div className="w-full pt-4 px-6 pb-2 flex flex-wrap rounded-t-[inherit] justify-between items-center bg-white">
             <h3 className="font-medium text-xl text-gray-600 underline underline-offset-4 capitalize flex flex-wrap items-center gap-2">
-              <button
-                type="button"
-                onClick={() => setOpenConfirm(true)}
-                value={selectedNovel?.id}
-                title="selected_novel"
-                className={
-                  isOwner
-                    ? 'hover:text-red-500 hover:border hover:border-current rounded text-current text-xs h-10 w-10 text-left flexCenter'
-                    : 'hidden'
-                }>
-                <TrashIcon className="w-5 h-auto" uniqueId="descript-delete" />
-              </button>
               &nbsp;{selectedNovel?.title}&nbsp;&nbsp;&nbsp;
             </h3>
             <button
@@ -106,19 +94,31 @@ export function DescriptionModel({ selectedNovel, close, userId, ownerId, member
             </div>
           </div>
           <div className="flex w-full justify-end bg-white rounded-b-md p-2 gap-3 sticky bottom-0">
+            <button
+              type="button"
+              onClick={() => setOpenConfirm(true)}
+              value={selectedNovel?.id}
+              title="selected_novel"
+              className={
+                isOwner
+                  ? 'rounded-lg text-gray-100 font-semibold flex items-center justify-center h-button w-[65px] bg-orange-700 hover:bg-red-600'
+                  : 'hidden'
+              }>
+              <TrashIcon className="w-5 h-auto" uniqueId="descript-delete" />
+            </button>
             <Link
               to={`/dash/new?novel_id=${selectedNovel?.id}`}
               className={
                 isOwner
-                  ? 'rounded-lg text-gray-100 font-semibold flex items-center justify-center h-[50px] w-[165px] bg-slate-700 hover:bg-slate-500'
+                  ? 'rounded-lg text-gray-100 font-semibold flex items-center justify-center h-button w-[105px] bg-slate-700 hover:bg-slate-500'
                   : 'hidden'
               }>
-              Edit Title & Blurb
+              Edit
             </Link>
             <button
               className={
                 member && !isOwner
-                  ? 'rounded-lg text-gray-100 font-semibold flex items-center justify-center h-[50px] w-[165px] bg-orange-700 hover:bg-orange-500'
+                  ? 'rounded-lg text-gray-100 font-semibold flex items-center justify-center h-button w-[105px] bg-orange-700 hover:bg-orange-500'
                   : 'hidden'
               }
               type="button"
@@ -129,10 +129,10 @@ export function DescriptionModel({ selectedNovel, close, userId, ownerId, member
               to={`/dash/novel/${selectedNovel?.id}`}
               className={
                 member
-                  ? 'rounded-lg text-gray-100 font-semibold flex items-center justify-center h-[50px] w-[165px] bg-emerald-700 hover:bg-emerald-500'
+                  ? 'rounded-lg text-gray-100 font-semibold flex items-center justify-center h-button w-[105px] bg-emerald-700 hover:bg-emerald-500'
                   : 'hidden'
               }>
-              Select Page
+              Next
             </Link>
             <Form method="post">
               <fieldset disabled={isLoadingUpdate}>
@@ -141,7 +141,7 @@ export function DescriptionModel({ selectedNovel, close, userId, ownerId, member
                   value={selectedNovel?.id}
                   className={
                     !member
-                      ? 'rounded-lg text-gray-100 font-semibold flex items-center justify-center h-[50px] w-[165px] bg-emerald-700 hover:bg-emerald-500'
+                      ? 'rounded-lg text-gray-100 font-semibold flex items-center justify-center h-button w-[105px] bg-emerald-700 hover:bg-emerald-500'
                       : 'hidden'
                   }>
                   Participate?
@@ -152,7 +152,7 @@ export function DescriptionModel({ selectedNovel, close, userId, ownerId, member
         </div>
       </div>
       <DialogWrapper open={openConfirm}>
-        <div className="bg-slate-50 bg-opacity-55 backdrop-blur-lg flex flex-col gap-0.5 rounded-t-lg rounded-b-md self-center w-full max-w-card-l">
+        <div className="bg-slate-50 bg-opacity-55 backdrop-blur-lg flex flex-col rounded-t-lg rounded-b-md self-center w-full max-w-card-l">
           <div className="w-full pt-4 px-6 pb-2 flex flex-wrap rounded-t-[inherit] justify-between items-center bg-white">
             <h3 className="font-medium text-xl text-gray-600 underline underline-offset-4 capitalize">
               &#8197;Confirm Delete&nbsp;&nbsp;&nbsp;
@@ -164,7 +164,7 @@ export function DescriptionModel({ selectedNovel, close, userId, ownerId, member
               <CloseIcon className="w-3 h-3" uniqueId="dash-close" svgColor="currentColor" />
             </button>
           </div>
-          <div className="w-full py-8 px-4 bg-white text-gray-700">
+          <div className="w-full py-8 px-4 bg-white text-gray-700 mt-0.5">
             Are you sure you would like to delete the novel{' '}
             <strong className="whitespace-pre capitalize">{'"' + selectedNovel?.title + '" ?'}</strong>
           </div>
@@ -174,18 +174,18 @@ export function DescriptionModel({ selectedNovel, close, userId, ownerId, member
                 title="delete novel"
                 value={selectedNovel?.id}
                 name="selected_novel"
-                className="rounded-lg text-gray-100 font-semibold flex items-center justify-center h-[50px] w-[165px] bg-orange-700 hover:bg-red-600">
+                className="rounded-lg text-gray-100 font-semibold flex items-center justify-center h-access w-[105px] bg-orange-700 hover:bg-red-600">
                 {isLoading ? (
                   <LoadingSpinner className="w-full h-10" svgColor="#fff" uniqueId="index-spinner" />
                 ) : (
-                  'Delete Novel'
+                  'Delete'
                 )}
               </button>
             </Form>
             <button
               type="button"
               onClick={() => setOpenConfirm(false)}
-              className="rounded-lg text-gray-100 font-semibold flex items-center justify-center h-[50px] w-[165px] bg-emerald-700 hover:bg-emerald-500">
+              className="rounded-lg text-gray-100 font-semibold flex items-center justify-center h-access w-[105px] bg-emerald-700 hover:bg-emerald-500">
               Cancel
             </button>
           </div>

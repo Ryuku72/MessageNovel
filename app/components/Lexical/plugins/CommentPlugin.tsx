@@ -26,11 +26,12 @@ import {
 } from 'lexical';
 import { Doc } from 'yjs';
 
+import { ActiveUserProfile } from '~/routes/dash.page.$page_id/components/PageRichTextEditor';
+
 import AddCommentBox from '../components/AddCommentBox';
 import CommentInputModal from '../components/CommentInputModal';
 import CommentsPanel from '../components/CommentsPanel';
 import { Comment, CommentStore, Thread, useCollabAuthorName, useCommentStore } from '../helpers';
-import { ActiveUserProfile } from '~/routes/dash.page.$page_id/components/PageRichTextEditor';
 
 export const INSERT_INLINE_COMMAND: LexicalCommand<void> = createCommand('INSERT_INLINE_COMMAND');
 
@@ -60,7 +61,7 @@ export default function CommentPlugin({
     return new Map();
   }, []);
   const collabContext = useCollaborationContext();
-  const authorDetails= useCollabAuthorName(namespace, userData);
+  const authorDetails = useCollabAuthorName(namespace, userData);
   const { yjsDocMap } = collabContext;
   const mapKeys = Array.from(markNodeMap, ([name]) => name);
 
@@ -70,7 +71,6 @@ export default function CommentPlugin({
       return commentStore.registerCollaboration(provider, namespace);
     }
   }, [commentStore, providerFactory, yjsDocMap, namespace]);
-
 
   useEffect(() => {
     setInit(true);
@@ -100,9 +100,9 @@ export default function CommentPlugin({
 
   useEffect(() => {
     const changedElems: Array<HTMLElement> = [];
-    function onClick(){
+    function onClick() {
       navigate(`/dash/page/${params.page_id}?showComments=true`);
-     }
+    }
     mapKeys.map(id => {
       const dataInfo = comments.find(comment => comment.id === id);
       const keys = markNodeMap.get(id);
@@ -189,7 +189,6 @@ export default function CommentPlugin({
 
           if ($isRangeSelection(selection)) {
             const anchorNode = selection.anchor.getNode();
-
             if ($isTextNode(anchorNode)) {
               const commentIDs = $getMarkIDs(anchorNode, selection.anchor.offset);
               if (commentIDs !== null) {
@@ -201,8 +200,7 @@ export default function CommentPlugin({
                 hasAnchorKey = true;
               }
             }
-          }
-          if (!hasActiveIds) {
+          } else if (!hasActiveIds) {
             setActiveIDs(_activeIds => (_activeIds.length === 0 ? _activeIds : []));
           }
           if (!hasAnchorKey) {
@@ -262,9 +260,13 @@ export default function CommentPlugin({
           }
         });
         setShowCommentInput(false);
+        if (!showComments) {
+          searchParams.set('showComments', 'true');
+          setSearchParams(searchParams);
+        }
       }
     },
-    [commentStore, editor]
+    [commentStore, editor, namespace, searchParams, setSearchParams, showComments]
   );
 
   const deleteCommentOrThread = useCallback(
@@ -299,7 +301,7 @@ export default function CommentPlugin({
         }
       }
     },
-    [commentStore, editor, markNodeMap]
+    [commentStore, editor, markNodeMap, namespace]
   );
 
   const openCommentBox = init && activeAnchorKey !== null && activeAnchorKey !== undefined && !showCommentInput;

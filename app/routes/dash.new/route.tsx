@@ -88,7 +88,7 @@ export default function DashNew() {
               <NavLink to="/dash" className="primaryButton py-2.5">
                 Back
               </NavLink>
-              <button className="secondaryButton whitespace-pre !max-w-[160px] !h-[50px] !px-0 justify-center items-center">
+              <button className="secondaryButton whitespace-pre !max-w-[160px] !h-button !px-0 justify-center items-center">
                 {isLoading ? (
                   <LoadingSpinner className="w-full h-10" svgColor="#fff" uniqueId="index-spinner" />
                 ) : (
