@@ -9,12 +9,12 @@ import { Page, SupabaseBroadcast } from '~/types';
 import { LiveBlocksRoom } from '~/components/LiveBlocksRoom';
 import TitleInput from '~/components/TitleInput';
 
+import { ArrowIcon, PublishIcon } from '~/svg';
 import LoadingSpinner from '~/svg/LoadingSpinner/LoadingSpinner';
 
 import { DashOutletContext } from '../dash/route';
 import { PageRichTextEditor } from './components/PageRichTextEditor';
 import { DashPageIdAction, DashPageIdLoader } from './services';
-import { ArrowIcon, PublishIcon } from '~/svg';
 
 export function loader(data: LoaderFunctionArgs) {
   return DashPageIdLoader(data);
@@ -28,15 +28,17 @@ type PageBroadcast = Omit<SupabaseBroadcast, 'new' | 'old'> & { new: Page; old: 
 
 export default function DashPageId() {
   const loaderData = useLoaderData<Page>();
+  const [pageData, setPageData] = useState(loaderData);
+
   const { user, supabase } = useOutletContext<DashOutletContext>();
   const navigationState = useNavigation();
   const isLoading = ['submitting'].includes(navigationState.state);
+  const loadingPagesDash =
+    'loading' === navigationState.state && navigationState.location.pathname === `/dash/novel/${pageData?.novel_id}`;
   const navigate = useNavigate();
 
   const LocalStrings: (typeof LOCALES)['dash']['draft'] = LOCALES.dash.draft;
   const [titleValue, setTitleValue] = useState(loaderData?.reference_title);
-
-  const [pageData, setPageData] = useState(loaderData);
 
   const userData = {
     userId: user.id,
@@ -124,8 +126,15 @@ export default function DashPageId() {
               />
             </LiveBlocksRoom>
             <div className="w-full flex items-center gap-3 justify-end pt-3">
-              <NavLink to={`/dash/novel/${pageData?.novel_id}`} className="cancelButton w-button after:content-[attr(data-string)]" data-string={LocalStrings.secondary_button}>
-                <ArrowIcon uniqueId="settings-back" className="w-6 h-auto rotate-180" />
+              <NavLink
+                to={`/dash/novel/${pageData?.novel_id}`}
+                className="cancelButton w-button after:content-[attr(data-string)]"
+                data-string={loadingPagesDash ? '' : LocalStrings.secondary_button}>
+                {loadingPagesDash ? (
+                  <LoadingSpinner className="w-full h-10" svgColor="#fff" uniqueId="index-pages-spinner" />
+                ) : (
+                  <ArrowIcon uniqueId="settings-back" className="w-6 h-auto rotate-180" />
+                )}
               </NavLink>
               <button
                 className={

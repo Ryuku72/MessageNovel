@@ -37,6 +37,7 @@ export default function DashNew() {
   const [textLength, setTextLength] = useState(0);
 
   const isLoading = ['submitting'].includes(navigationState.state);
+  const isDashLoading = 'loading' === navigationState.state && navigationState.location.pathname === '/dash';
   const searchNovelId = searchParams.get('novel_id');
   const LocalStrings = LOCALES.dash.new;
   const resetState =
@@ -94,11 +95,15 @@ export default function DashNew() {
               clearCondition={resetState}
             />
             <div className="w-full flex gap-3 flex-wrap mt-2 justify-end">
-              <NavLink to="/dash" className="cancelButton md:after:content-['Back'] md:w-wide-button w-icon">
-                <ArrowIcon uniqueId="dash-new-back" className="w-6 h-auto rotate-180" />
+              <NavLink data-string={isDashLoading ? '' : 'Back'} to="/dash" className="cancelButton md:after:content-[attr(data-string)] md:w-wide-button w-icon">
+                {isDashLoading ? (
+                  <LoadingSpinner className="w-full h-10" svgColor="#fff" uniqueId="dash-back-spinner" />
+                ) : (
+                  <ArrowIcon uniqueId="dash-new-back" className="w-6 h-auto rotate-180" />
+                )}
               </NavLink>
               <button
-                className="confirmButton md:after:content-[attr(data-string)] md:w-wide-button w-icon"
+                className="confirmButton md:after:content-[attr(data-string)] md:w-wide-button w-icon !gap-2.5"
                 data-string={isLoading ? '' : searchNovelId ? 'Update Novel' : LocalStrings.primary_button}>
                 {isLoading ? (
                   <LoadingSpinner className="w-full h-10" svgColor="#fff" uniqueId="index-spinner" />

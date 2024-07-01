@@ -37,7 +37,9 @@ export default function DashSettings() {
   const [showDelModal, setShowDelModal] = useState(false);
 
   const disabled = username === user.username && !imageFile && user.color === colorSelect;
-  const formDisabled = ['submitting', 'loading'].includes(navigationState.state);
+  const formDisabled =
+    ['submitting', 'loading'].includes(navigationState.state) && navigationState.formMethod === 'POST';
+  const loadingDash = 'loading' === navigationState.state && navigationState.location.pathname === '/dash';
   const LocalStrings = LOCALES.settings;
 
   useEffect(() => {
@@ -64,10 +66,9 @@ export default function DashSettings() {
           if (imageFile) formData.append('avatar', imageFile);
           formData.append('color', colorSelect);
           formData.append('username', username);
-          submit(formData, { method: 'post', encType: 'multipart/form-data' });
+          submit(formData, { method: 'POST', encType: 'multipart/form-data' });
         }}
         aria-label="update-account"
-        method="post"
         className="p-4 md:w-[700px] w-[360px] max-w-full">
         <fieldset className="w-full flex flex-col justify-center items-center md:gap-3 gap-6" disabled={formDisabled}>
           <div
@@ -93,8 +94,12 @@ export default function DashSettings() {
             </div>
           </div>
           <div className="flex flex-wrap gap-3 w-full justify-center">
-            <Link to="/dash" className="cancelButton md:w-wide-button md:after:content-['Back'] w-icon" type="button">
-              <ArrowIcon uniqueId="settings-back" className="w-6 h-auto rotate-180" />
+            <Link data-string={loadingDash ? '' : 'Back'}  to="/dash" className="cancelButton md:w-wide-button md:after:content-[attr(data-string)] w-icon" type="button">
+              {loadingDash ? (
+                <LoadingSpinner className="w-full h-10" svgColor="#fff" uniqueId="dash-spinner" />
+              ) : (
+                <ArrowIcon uniqueId="settings-back" className="w-6 h-auto rotate-180" />
+              )}
             </Link>
             <button
               className="confirmButton disabled:bg-gray-300 md:after:content-[attr(data-string)] md:w-wide-button w-icon"
@@ -126,10 +131,7 @@ export default function DashSettings() {
                 <h3 className="font-medium text-xl text-gray-600 underline underline-offset-4 capitalize">
                   &#8197;Delete User Account&nbsp;&nbsp;&nbsp;
                 </h3>
-                <button
-                  className="crossButton"
-                  type="button"
-                  onClick={() => setShowDelModal(false)}>
+                <button className="crossButton" type="button" onClick={() => setShowDelModal(false)}>
                   <CloseIcon className="w-3 h-3" uniqueId="dash-close" svgColor="currentColor" />
                 </button>
               </div>
