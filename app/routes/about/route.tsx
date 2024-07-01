@@ -16,6 +16,7 @@ import SupabaseLogo from './svg/SupabaseLogo/SupabaseLogo';
 import TailwindLogo from './svg/TailwindLogo/TailwindLogo';
 import ThreeLogo from './svg/ThreeLogo/ThreeLogo';
 import ViteLogo from './svg/ViteLogo/ViteLogo';
+import { ArrowIcon } from '~/svg';
 
 export const meta: MetaFunction = () => {
   return [{ title: LOCALES.meta.title }, { name: 'description', content: LOCALES.meta.description }];
@@ -35,15 +36,17 @@ export default function About() {
 
   return (
     <PublicLayout>
-      <div className="max-w-[1200px] w-full flex items-center flex-col flex-auto gap-10">
+      <div className="max-w-[1200px] w-full flex items-center flex-col gap-10">
         <div className="flex flex-col gap-2 bg-gray-100 p-6 rounded-xl bg-opacity-50 backdrop-blur-sm shadow-sm text-gray-800 leading-10 max-w-full">
           <h1 className="text-red-700 text-5xl m-0 font-mono text-center font-miltonian [text-shadow:_5px_3px_2px_rgb(225_225_225_/_50%)]">
             {LocalStrings.title}
           </h1>
           <p className="text-gray-700 text-xl leading-10">
-            <strong className="text-3xl">{LocalStrings.description_title}{' '}</strong>
+            <strong className="text-3xl">{LocalStrings.description_title} </strong>
             {LocalStrings.description}{' '}
-            <a className="text-xl break-all font-bold hover:text-blue-700 tracking-wide" href={LocalStrings.project_link}>
+            <a
+              className="text-xl break-all font-bold hover:text-blue-700 tracking-wide"
+              href={LocalStrings.project_link}>
               {LocalStrings.project_link}{' '}
             </a>
             .
@@ -89,11 +92,15 @@ export default function About() {
             {LocalStrings.background.author}
           </p>
           <a href={LocalStrings.background.source} className="text-xl text-gray-800 break-all max-w-full">
-            <strong className="font-semibold text-orange-700">{LocalStrings.background.source_title}</strong> {LocalStrings.background.source}
+            <strong className="font-semibold text-orange-700">{LocalStrings.background.source_title}</strong>{' '}
+            {LocalStrings.background.source}
           </a>
         </div>
-        <Link to="/" className="primaryButton py-2.5">
-          {LocalStrings.primary_button}
+        <Link
+          to="/"
+          className="cancelButton after:content-[attr(data-string)] w-[105px]"
+          data-string={LocalStrings.primary_button}>
+          <ArrowIcon uniqueId="about-back" className="w-6 h-auto rotate-180" />
         </Link>
       </div>
     </PublicLayout>

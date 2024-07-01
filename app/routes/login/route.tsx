@@ -11,6 +11,7 @@ import PasswordInput from '~/components/PasswordInput';
 import { PublicLayout } from '~/components/PublicLayout';
 import TitleInput from '~/components/TitleInput';
 
+import { ArrowIcon, LoginIcon } from '~/svg';
 import LoadingSpinner from '~/svg/LoadingSpinner/LoadingSpinner';
 
 import { LoginAction, LoginLoader } from './services';
@@ -85,14 +86,21 @@ export default function Login() {
               placeholder="****"
             />
             <div className="w-full flex items-center gap-3 justify-center pt-3">
-              <Link to="/" className="primaryButton py-2.5">
-                {LocalStrings.primary_button}
+              <Link
+                to="/"
+                className="cancelButton after:content-[attr(data-string)] w-[105px]"
+                data-string={LocalStrings.primary_button}>
+                <ArrowIcon uniqueId="login-back" className="w-6 h-auto rotate-180" />
               </Link>
-              <button className={`${isLoading ? 'py-0.5 ' : 'py-2.5 '} secondaryButton`} type="submit" disabled={false}>
+              <button
+                className="confirmButton after:content-[attr(data-string)] w-[105px]"
+                type="submit"
+                disabled={false}
+                data-string={isLoading ? '' : LocalStrings.secondary_button}>
                 {isLoading ? (
                   <LoadingSpinner className="w-full h-10" svgColor="#fff" uniqueId="index-spinner" />
                 ) : (
-                  LocalStrings.secondary_button
+                  <LoginIcon uniqueId="login-next" className="w-6 h-auto" />
                 )}
               </button>
             </div>

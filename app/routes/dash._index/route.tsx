@@ -54,10 +54,8 @@ export default function DashIndex() {
           })
           .flat();
         /** sort and set the users */
-        if (!lastUpdate.current) {
-          setOnlineNovels(online);
-          lastUpdate.current = new Date().toString();
-        } else setDebouncedOnlineNovels(online);
+        if (!lastUpdate.current) setOnlineNovels(online);
+        setDebouncedOnlineNovels(online);
       })
       .subscribe(status => {
         if (status !== 'SUBSCRIBED') return;
@@ -211,8 +209,7 @@ export default function DashIndex() {
       <div className="w-full max-w-[1850px] p-2 flex md:sticky md:bottom-0 pb-[120px] md:pb-2">
         <Link
           to="/dash/new"
-          className="
-          secondaryButton !max-w-[200px] !h-button !px-0 justify-center items-center">
+          className="confirmButton px-5">
           {isLoading ? (
             <LoadingSpinner className="w-full h-10" svgColor="#fff" uniqueId="index-spinner" />
           ) : (

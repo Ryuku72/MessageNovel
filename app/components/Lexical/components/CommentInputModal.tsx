@@ -168,14 +168,14 @@ export default function CommentInputModal({
             type="button"
             onClick={cancelAddComment}
             data-id="CommentPlugin_CommentInputBox_Button"
-            className="primaryButton py-1 font-normal rounded">
+            className="cancelButton py-1 font-normal rounded">
             Cancel
           </button>
           <button
             type="button"
             onClick={onClick}
             disabled={!canSubmit}
-            className="secondaryButton py-1 disabled:bg-gray-100 disabled:text-gray-300 font-normal rounded"
+            className="confirmButton py-1 disabled:bg-gray-100 disabled:text-gray-300 font-normal rounded"
             data-id="CommentPlugin_CommentInputBox_Button primary">
             Comment
           </button>

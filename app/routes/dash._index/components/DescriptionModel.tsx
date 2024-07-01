@@ -10,7 +10,7 @@ import { NovelWithMemberIds } from '~/types';
 import DialogWrapper from '~/components/DialogWrapper';
 import { emptyContent } from '~/components/Lexical/helpers';
 
-import { TrashIcon } from '~/svg';
+import { ArrowIcon, PenIcon, TrashIcon } from '~/svg';
 import CloseIcon from '~/svg/CloseIcon/CloseIcon';
 import LoadingSpinner from '~/svg/LoadingSpinner/LoadingSpinner';
 
@@ -64,19 +64,19 @@ export function DescriptionModel({ selectedNovel, close, userId, ownerId, member
   return (
     <DialogWrapper open={Boolean(selectedNovel)}>
       <div className="w-full md:max-w-[800px] md:p-4 flex flex-col gap-1 md:self-center self-baseline text-mono m-auto md:m-0">
-        <div className="bg-slate-50 bg-opacity-55 backdrop-blur-lg flex flex-col gap-0.5 rounded-t-lg rounded-b-md flex-auto md:flex-1">
+        <div className="bg-slate-50 bg-opacity-55 backdrop-blur-lg flex flex-col rounded-t-lg rounded-b-md flex-auto md:flex-1">
           <div className="w-full pt-4 px-6 pb-2 flex rounded-t-[inherit] justify-between items-center bg-white">
             <h3 className="font-medium text-xl text-gray-600 underline underline-offset-4 capitalize flex items-center gap-2">
               &nbsp;{selectedNovel?.title}&nbsp;&nbsp;&nbsp;
             </h3>
             <button
-              className="w-10 h-10 flex items-center justify-center text-slate-500 hover:text-red-500 hover:border hover:border-red-500 rounded"
+              className="crossButton"
               type="button"
               onClick={close}>
               <CloseIcon className="w-3 h-3" uniqueId="dash-close" svgColor="currentColor" />
             </button>
           </div>
-          <div className="w-full px-8 py-4 bg-white flex flex-col gap-10 flex-auto md:flex-1">
+          <div className="w-full px-8 py-4 bg-white flex flex-col gap-10 flex-auto md:flex-1 mt-0.5">
             {selectedNovel && (
               <LexicalComposer initialConfig={initialConfig}>
                 <EditorTextPlugin />
@@ -95,13 +95,19 @@ export function DescriptionModel({ selectedNovel, close, userId, ownerId, member
           </div>
           <div className="flex w-full justify-end bg-white rounded-b-md p-2 gap-3 sticky bottom-0">
             <button
+              className="rounded-lg text-gray-100 font-semibold flex items-center justify-center h-button bg-orange-700 hover:bg-orange-500 md:w-[105px] w-[80px] gap-2 md:after:content-['Back']"
+              type="button"
+              onClick={close}>
+              <ArrowIcon uniqueId="description-back" className="w-6 h-auto rotate-180" />
+            </button>
+            <button
               type="button"
               onClick={() => setOpenConfirm(true)}
               value={selectedNovel?.id}
               title="selected_novel"
               className={
                 isOwner
-                  ? 'rounded-lg text-gray-100 font-semibold flex items-center justify-center h-button w-[65px] bg-orange-700 hover:bg-red-600'
+                  ? 'deleteButton md:w-[105px] w-[80px] md:after:content-["Delete"]'
                   : 'hidden'
               }>
               <TrashIcon className="w-5 h-auto" uniqueId="descript-delete" />
@@ -110,29 +116,19 @@ export function DescriptionModel({ selectedNovel, close, userId, ownerId, member
               to={`/dash/new?novel_id=${selectedNovel?.id}`}
               className={
                 isOwner
-                  ? 'rounded-lg text-gray-100 font-semibold flex items-center justify-center h-button w-[105px] bg-slate-700 hover:bg-slate-500'
+                  ? 'rounded-lg text-gray-100 font-semibold flex items-center justify-center h-button bg-slate-700 hover:bg-slate-500 md:w-[105px] w-[80px] gap-2 md:after:content-["Edit"]'
                   : 'hidden'
               }>
-              Edit
+              <PenIcon uniqueId="description-edit" className="w-6 h-auto" />
             </Link>
-            <button
-              className={
-                member && !isOwner
-                  ? 'rounded-lg text-gray-100 font-semibold flex items-center justify-center h-button w-[105px] bg-orange-700 hover:bg-orange-500'
-                  : 'hidden'
-              }
-              type="button"
-              onClick={close}>
-              Back
-            </button>
             <Link
               to={`/dash/novel/${selectedNovel?.id}`}
               className={
                 member
-                  ? 'rounded-lg text-gray-100 font-semibold flex items-center justify-center h-button w-[105px] bg-emerald-700 hover:bg-emerald-500'
+                  ? 'confirmButton md:w-[105px] w-[80px] gap-2 md:before:content-["Next"]'
                   : 'hidden'
               }>
-              Next
+              <ArrowIcon uniqueId="description-next" className="w-6 h-auto" />
             </Link>
             <Form method="post">
               <fieldset disabled={isLoadingUpdate}>
@@ -141,10 +137,10 @@ export function DescriptionModel({ selectedNovel, close, userId, ownerId, member
                   value={selectedNovel?.id}
                   className={
                     !member
-                      ? 'rounded-lg text-gray-100 font-semibold flex items-center justify-center h-button w-[105px] bg-emerald-700 hover:bg-emerald-500'
+                      ? 'confirmButton md:w-[165px] w-[80px] md:before:content-["Participate"]'
                       : 'hidden'
                   }>
-                  Participate?
+                  <ArrowIcon uniqueId="description-back" className="w-6 h-auto" />
                 </button>
               </fieldset>
             </Form>
@@ -158,7 +154,7 @@ export function DescriptionModel({ selectedNovel, close, userId, ownerId, member
               &#8197;Confirm Delete&nbsp;&nbsp;&nbsp;
             </h3>
             <button
-              className="w-10 h-10 flex items-center justify-center text-slate-500 hover:text-red-500 hover:border hover:border-red-500 rounded"
+              className="crossButton"
               type="button"
               onClick={() => setOpenConfirm(false)}>
               <CloseIcon className="w-3 h-3" uniqueId="dash-close" svgColor="currentColor" />
@@ -174,19 +170,20 @@ export function DescriptionModel({ selectedNovel, close, userId, ownerId, member
                 title="delete novel"
                 value={selectedNovel?.id}
                 name="selected_novel"
-                className="rounded-lg text-gray-100 font-semibold flex items-center justify-center h-access w-[105px] bg-orange-700 hover:bg-red-600">
+                data-string={isLoading ? '' : 'Delete'}
+                className="deleteButton md:after:content-[attr(data-string)] md:w-[105px] w-[80px]">
                 {isLoading ? (
                   <LoadingSpinner className="w-full h-10" svgColor="#fff" uniqueId="index-spinner" />
                 ) : (
-                  'Delete'
+                  <TrashIcon uniqueId="delete-novel-confirm" svgColor="#fff" className="w-5 h-auto" />
                 )}
               </button>
             </Form>
             <button
               type="button"
               onClick={() => setOpenConfirm(false)}
-              className="rounded-lg text-gray-100 font-semibold flex items-center justify-center h-access w-[105px] bg-emerald-700 hover:bg-emerald-500">
-              Cancel
+              className="confirmButton md:after:content-['Cancel'] md:w-[105px] w-[80px]">
+              <ArrowIcon uniqueId="description-back" className="w-6 h-auto rotate-180" />
             </button>
           </div>
         </div>

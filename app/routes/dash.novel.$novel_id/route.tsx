@@ -15,16 +15,17 @@ import {
   SupabaseBroadcast
 } from '~/types';
 
+import DialogWrapper from '~/components/DialogWrapper';
+
 import Default_Avatar from '~/assets/default_avatar.jpeg';
-import { PrivateNovelIcon, PublicNovelIcon, TrashIcon } from '~/svg';
+import { ArrowIcon, PenIcon, PrivateNovelIcon, PublicNovelIcon, TrashIcon } from '~/svg';
+import CloseIcon from '~/svg/CloseIcon/CloseIcon';
+import LoadingSpinner from '~/svg/LoadingSpinner/LoadingSpinner';
 import PlusIcon from '~/svg/PlusIcon/PlusIcon';
 
 import { DashOutletContext } from '../dash/route';
 import { DescriptionPreview } from './components/DescriptionPreview';
 import { DashNovelIdAction, DashNovelIdLoader } from './services';
-import DialogWrapper from '~/components/DialogWrapper';
-import CloseIcon from '~/svg/CloseIcon/CloseIcon';
-import LoadingSpinner from '~/svg/LoadingSpinner/LoadingSpinner';
 
 export function loader(request: LoaderFunctionArgs) {
   return DashNovelIdLoader(request);
@@ -148,10 +149,8 @@ export default function DashNovelId() {
           })
           .flat();
         /** sort and set the users */
-        if (!lastUpdate.current) {
-          setOnlinePages(online);
-          lastUpdate.current = new Date().toString();
-        } else setDebouncedOnlinePages(online);
+        if (!lastUpdate.current) setOnlinePages(online);
+        setDebouncedOnlinePages(online);
       })
       .subscribe(status => {
         if (status !== 'SUBSCRIBED') return;
@@ -187,7 +186,12 @@ export default function DashNovelId() {
           <div
             className="w-full max-w-wide rounded-lg flex flex-col gap-1 bg-white bg-opacity-35 backdrop-blur-lg p-8 text-gray-700 drop-shadow-lg relative"
             key={page.id}>
-              <div className={onlinePages.some(page_id => page_id === page.id) ? 'absolute top-3 right-4 flex gap-2 items-center z-50' : 'hidden'}>
+            <div
+              className={
+                onlinePages.some(page_id => page_id === page.id)
+                  ? 'absolute top-3 right-4 flex gap-2 items-center z-50'
+                  : 'hidden'
+              }>
               <p className="text-current text-sm font-semibold">Active</p>
               <span className="relative flex h-3 w-3">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
@@ -237,16 +241,16 @@ export default function DashNovelId() {
               <DescriptionPreview editorState={page.published} />
             </div>
             <div className="w-full flex gap-3 flex-wrap mt-2 justify-end">
-                <button
-                  disabled={isLoadingUpdate}
-                  onClick={() => setSelectedPage(page)}
-                  className={
-                    novel.owner.id === user.id
-                      ? 'rounded-lg text-gray-100 font-semibold flex items-center justify-center h-button w-[80px] bg-orange-700 hover:bg-orange-500'
-                      : 'hidden'
-                  }>
-                  <TrashIcon uniqueId="delete-page" svgColor="#fff" className="w-5 h-auto" />
-                </button>
+              <button
+                disabled={isLoadingUpdate}
+                onClick={() => setSelectedPage(page)}
+                className={
+                  novel.owner.id === user.id
+                    ? 'deleteButton md:w-[105px] w-[80px] md:after:content-["Delete"]'
+                    : 'hidden'
+                }>
+                <TrashIcon uniqueId="delete-page" svgColor="#fff" className="w-5 h-auto" />
+              </button>
               <Form
                 onSubmit={e => {
                   e.preventDefault();
@@ -257,15 +261,15 @@ export default function DashNovelId() {
                 }}>
                 <button
                   name="enable_collab"
+                  value={page.enable_collab ? 'Collab' : 'Solo'}
                   disabled={page.owner.id !== user.id}
                   title={`Owner has ${page.enable_collab ? 'enabled collabaration' : 'disabled collabaration'} `}
-                  className="rounded-lg flex gap-2 h-button w-[105px] items-center justify-center capitalize font-semibold text-white bg-slate-700 hover:bg-slate-500">
+                  className="altButton md:w-[105px] w-[80px] font-semibold md:after:content-[attr(value)]">
                   {page.enable_collab ? (
                     <PublicNovelIcon uniqueId="public-novel-icon" className="w-5 h-auto -scale-x-100" />
                   ) : (
                     <PrivateNovelIcon uniqueId="public-novel-icon" className="w-5 h-auto -scale-x-100" />
                   )}
-                  {page.enable_collab ? 'Collab' : 'Solo'}
                 </button>
               </Form>
               <Form method="post" className={!page.members.some(member => member.id === user.id) ? 'flex' : 'hidden'}>
@@ -273,18 +277,18 @@ export default function DashNovelId() {
                   value={page.id}
                   name="selected_page"
                   disabled={isLoadingUpdate}
-                  className="rounded-lg text-gray-100 font-semibold flex items-center justify-center h-button w-[105px] bg-emerald-700 hover:bg-emerald-500">
-                  Participate
+                  className="confirmButton font-semibold md:w-[145px] w-[80px] md:after:content-['Participate?']">
+                  <PenIcon uniqueId="public-novel-icon" className="w-5 h-auto" />
                 </button>
               </Form>
               <Link
                 to={`/dash/page/${page.id}`}
                 className={
                   page.members.some(member => member.id === user.id)
-                    ? 'rounded-lg text-gray-100 font-semibold flex items-center justify-center h-button w-[105px] bg-emerald-700 hover:bg-emerald-500'
+                    ? 'confirmButton font-semibold md:w-[125px] w-[80px] md:after:content-["Continue"]'
                     : 'hidden'
                 }>
-                Continue
+                <PenIcon uniqueId="public-novel-icon" className="w-5 h-auto" />
               </Link>
             </div>
           </div>
@@ -314,8 +318,8 @@ export default function DashNovelId() {
         </Form>
       </div>
       <div className="flex w-full max-w-wide justify-center sticky md:bottom-4 bottom-[100px]">
-        <Link to="/dash" className="primaryButton py-2.5" type="button">
-          Back
+        <Link to="/dash" className="cancelButton after:content-['Back'] md:w-[125px] w-[80px]" type="button">
+          <ArrowIcon uniqueId="settings-back" className="w-6 h-auto rotate-180" />
         </Link>
       </div>
       <DialogWrapper open={Boolean(selectedPage)}>
@@ -325,15 +329,15 @@ export default function DashNovelId() {
               &#8197;Confirm Delete&nbsp;&nbsp;&nbsp;
             </h3>
             <button
-              className="w-10 h-10 flex items-center justify-center text-slate-500 hover:text-red-500 hover:border hover:border-red-500 rounded"
+              className="crossButton"
               type="button"
               onClick={() => setSelectedPage(null)}>
               <CloseIcon className="w-3 h-3" uniqueId="dash-close" svgColor="currentColor" />
             </button>
           </div>
-          <div className="w-full py-8 px-4 bg-white text-gray-700 mt-0.5">
-            Are you sure you would like to delete the page{' '}
-            <strong className="capitalize">{'"' + selectedPage?.reference_title + '" ?'}</strong>
+          <div className="w-full flex flex-col py-8 px-4 bg-white text-gray-700 mt-0.5 gap-2">
+            <p>Are you sure you would like to delete the following page?</p>
+            <strong className="capitalize">{'"' + selectedPage?.reference_title + '"'}</strong>
           </div>
           <div className="flex w-full justify-end bg-white rounded-b-md p-2 gap-3">
             <Form method="delete">
@@ -341,19 +345,20 @@ export default function DashNovelId() {
                 title="delete page"
                 value={selectedPage?.id}
                 name="page_id_delete"
-                className="rounded-lg text-gray-100 font-semibold flex items-center justify-center h-button w-[105px] bg-orange-700 hover:bg-red-600">
+                data-string={isLoadingUpdate ? '' : 'Delete'}
+                className="cancelButton md:after:content-[attr(data-string)] md:w-[125px] w-[80px]">
                 {isLoadingUpdate ? (
                   <LoadingSpinner className="w-full h-10" svgColor="#fff" uniqueId="index-spinner" />
                 ) : (
-                  'Delete'
+                  <TrashIcon uniqueId="delete-page" svgColor="#fff" className="w-5 h-auto" />
                 )}
               </button>
             </Form>
             <button
               type="button"
               onClick={() => setSelectedPage(null)}
-              className="rounded-lg text-gray-100 font-semibold flex items-center justify-center h-button w-[105px] bg-emerald-700 hover:bg-emerald-500">
-              Cancel
+              className="confirmButton md:after:content-['Back'] md:w-[125px] w-[80px]">
+               <ArrowIcon uniqueId="settings-delete-back" className="w-6 h-auto rotate-180" />
             </button>
           </div>
         </div>

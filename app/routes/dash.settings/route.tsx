@@ -10,7 +10,7 @@ import ColorInput from '~/components/ColorInput';
 import DialogWrapper from '~/components/DialogWrapper';
 import TitleInput from '~/components/TitleInput';
 
-import { TrashIcon } from '~/svg';
+import { ArrowIcon, SaveIcon, TrashIcon } from '~/svg';
 import CloseIcon from '~/svg/CloseIcon/CloseIcon';
 import LoadingSpinner from '~/svg/LoadingSpinner/LoadingSpinner';
 
@@ -83,27 +83,28 @@ export default function DashSettings() {
                 placeholder="Enter New Username..."
                 onChange={setUsername}
               />
-                <ColorInput
-                  textAlign="text-left"
-                  title={LocalStrings.color}
-                  id="color"
-                  value={colorSelect}
-                  onChange={setColorSelect}
-                />
+              <ColorInput
+                textAlign="text-left"
+                title={LocalStrings.color}
+                id="color"
+                value={colorSelect}
+                onChange={setColorSelect}
+              />
             </div>
           </div>
           <div className="flex flex-wrap gap-3 w-full justify-center">
-            <Link to="/dash" className="primaryButton py-2.5" type="button">
-              Back
+            <Link to="/dash" className="cancelButton w-[165px] after:content-['Back']" type="button">
+              <ArrowIcon uniqueId="settings-back" className="w-6 h-auto rotate-180" />
             </Link>
             <button
-              className={`secondaryButton ${isLoading ? 'py-0.5' : 'py-2.5'} disabled:bg-gray-300`}
+              className="confirmButton disabled:bg-gray-300 after:content-[attr(data-string)] w-[165px]"
               type="submit"
+              data-string={isLoading ? '' : 'Update'}
               disabled={disabled}>
               {isLoading ? (
                 <LoadingSpinner className="w-full h-10" svgColor="#fff" uniqueId="index-spinner" />
               ) : (
-                'Update'
+                <SaveIcon uniqueId="settings-save" className="w-6 h-auto rotate-180" />
               )}
             </button>
           </div>
@@ -126,7 +127,7 @@ export default function DashSettings() {
                   &#8197;Delete User Account&nbsp;&nbsp;&nbsp;
                 </h3>
                 <button
-                  className="w-10 h-10 flex items-center justify-center text-slate-500 hover:text-red-500 hover:border hover:border-red-500 rounded"
+                  className="crossButton"
                   type="button"
                   onClick={() => setShowDelModal(false)}>
                   <CloseIcon className="w-3 h-3" uniqueId="dash-close" svgColor="currentColor" />
@@ -139,14 +140,14 @@ export default function DashSettings() {
                   }
                 </p>
                 <div className="flex w-full justify-end bg-white rounded-b-md gap-3">
-                  <button className="primaryButton py-2.5">Delete</button>{' '}
+                  <button className="cancelButton md:after:content-['Delete'] md:w-[105px] w-[80px]">
+                    <TrashIcon uniqueId="delete-page" svgColor="#fff" className="w-5 h-auto" />
+                  </button>
                   <button
                     type="button"
-                    className="secondaryButton py-2.5"
-                    onClick={() => {
-                      setShowDelModal(false);
-                    }}>
-                    Cancel
+                    className="confirmButton py-2.5 md:after:content-['Back'] md:w-[105px] w-[80px]"
+                    onClick={() => setShowDelModal(false)}>
+                    <ArrowIcon uniqueId="settings-delete-back" className="w-6 h-auto rotate-180" />
                   </button>
                 </div>
               </div>

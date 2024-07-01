@@ -9,7 +9,7 @@ import DialogWrapper from '~/components/DialogWrapper';
 import Default_Avatar from '~/assets/default_avatar.jpeg';
 import CloseIcon from '~/svg/CloseIcon/CloseIcon';
 import LoadingClock from '~/svg/LoadingClock/LoadingClock';
-import PlusIcon from '~/svg/PlusIcon/PlusIcon';
+import { SubmitIcon } from '~/svg';
 
 export type AvatarInputProps = {
   title: string;
@@ -177,7 +177,7 @@ export default function AvatarInput({ title, id, imageSrc = null, setImage }: Av
               &#8197;New Novel Details&nbsp;&nbsp;&nbsp;
             </h3>
             <button
-              className="w-10 h-10 flex items-center justify-center text-slate-500 hover:text-red-500 hover:border hover:border-red-500 rounded"
+              className="crossButton"
               type="button"
               onClick={() => handleClose()}>
               <CloseIcon className="w-3 h-3" uniqueId="dash-close" svgColor="currentColor" />
@@ -217,10 +217,9 @@ export default function AvatarInput({ title, id, imageSrc = null, setImage }: Av
           <div className="w-full flex gap-3 flex-wrap px-6 py-2 rounded-b-md bg-white bg-opacity-75">
             <button
               type="button"
-              className="text-gray-100 bg-blue-500 hover:bg-green-500 rounded-lg text-sm px-5 py-2.5 text-center flex items-center gap-2"
+              className="confirmButton after:content-['Submit'] w-[105px]"
               onClick={() => onSave()}>
-              <PlusIcon uniqueId="dash_plus" svgColor="#fff" className="w-3 h-3" />
-              Submit
+             <SubmitIcon uniqueId="submit-picture" className="w-6 h-auto" />
             </button>
           </div>
         </div>

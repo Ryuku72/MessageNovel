@@ -1,6 +1,6 @@
 import { SVG_Component_props } from '~/types';
 
-export default function LogOutIcon({ className = '', svgColor = '#374151', uniqueId }: SVG_Component_props) {
+export default function LogOutIcon({ className = '', svgColor = 'currentColor', uniqueId }: SVG_Component_props) {
   return (
     <svg fill="none" viewBox="0 0 24 24" className={className} id={uniqueId} xmlns="http://www.w3.org/2000/svg">
       <path

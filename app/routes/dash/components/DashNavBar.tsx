@@ -49,7 +49,7 @@ export default function DashNavBar({ user }: DashNavBarProps) {
             <NavLink
               end={true}
               className={({ isActive, isPending, isTransitioning }) =>
-                `rounded-lg text-gray-100 font-semibold flex items-center justify-center gap-2 w-icon h-button ${isActive || isPending || isTransitioning ? 'bg-emerald-700 hover:bg-emerald-500' : 'bg-slate-700 hover:bg-slate-500'}`
+                `w-icon ${isActive || isPending || isTransitioning ? 'confirmButton' : 'altButton'}`
               }
               type="button"
               to="/dash">
@@ -64,7 +64,7 @@ export default function DashNavBar({ user }: DashNavBarProps) {
           <div className="has-tooltip cursor-pointer relative">
             <NavLink
               className={({ isActive, isPending, isTransitioning }) =>
-                `rounded-lg text-gray-100 font-semibold flex items-center justify-center gap-2 w-icon h-button ${isActive || isPending || isTransitioning ? 'bg-emerald-700 hover:bg-emerald-500' : 'bg-slate-700 hover:bg-slate-500'}`
+                `w-icon ${isActive || isPending || isTransitioning ? 'confirmButton' : 'altButton'}`
               }
               type="button"
               to="/dash/new">
@@ -79,7 +79,7 @@ export default function DashNavBar({ user }: DashNavBarProps) {
           <div className="has-tooltip cursor-pointer relative">
             <NavLink
               className={({ isActive, isPending, isTransitioning }) =>
-                `rounded-lg text-gray-100 font-semibold flex items-center justify-center gap-2 w-icon h-button ${isActive || isPending || isTransitioning ? 'bg-emerald-700 hover:bg-emerald-500' : 'bg-slate-700 hover:bg-slate-500'}`
+                `w-icon ${isActive || isPending || isTransitioning ? 'confirmButton' : 'altButton'}`
               }
               type="button"
               to="/dash/users">
@@ -94,7 +94,7 @@ export default function DashNavBar({ user }: DashNavBarProps) {
         </div>
         <Form method="get" action="/auth" className="has-tooltip cursor-pointer relative">
           <button
-            className={`tertiaryButton ${isLoading ? 'py-0.5' : 'py-2.5'} !w-icon !h-button flex-shrink-0 !p-0`}
+            className={`logOutButton ${isLoading ? 'py-0.5' : 'py-2.5'} !w-icon !h-button flex-shrink-0 !p-0`}
             type="submit"
             name="intent"
             value="signout">

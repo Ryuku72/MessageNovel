@@ -16,6 +16,7 @@ import TitleInput from '~/components/TitleInput';
 import LoadingSpinner from '~/svg/LoadingSpinner/LoadingSpinner';
 
 import { CreateAction } from './services';
+import { ArrowIcon, SubmitIcon } from '~/svg';
 
 export const meta: MetaFunction = () => {
   return [{ title: LOCALES.meta.title }, { name: 'description', content: LOCALES.meta.description }];
@@ -37,7 +38,7 @@ export default function Create() {
   const [password, setPassword] = useState('');
   const [imageFile, setImage] = useState<File | null>(null);
 
-  const isLoading = ['submitting', 'loading'].includes(navigationState.state);
+  const isLoading = ['submitting', 'loading'].includes(navigationState.state) && navigationState.formMethod === 'POST';
   const LocalStrings = LOCALES.create;
 
   useEffect(() => {
@@ -64,7 +65,6 @@ export default function Create() {
         <div className="max-w-full self-center">
           <Form
             aria-label="create-account"
-            method="post"
             onSubmit={e => {
               e.preventDefault();
               const formData = new FormData();
@@ -73,7 +73,7 @@ export default function Create() {
               formData.append('password', password);
               formData.append('color', colorSelect);
               formData.append('username', username);
-              submit(formData, { method: 'post', encType: 'multipart/form-data' });
+              submit(formData, { method: 'POST', encType: 'multipart/form-data' });
             }}
             className="w-full max-w-lg flex rounded-lg shadow-xl p-4 md:px-12 md:py-8 bg-white bg-opacity-35 backdrop-blur-sm">
             <fieldset className="w-full flex flex-col justify-center items-center gap-3" disabled={isLoading}>
@@ -106,17 +106,24 @@ export default function Create() {
                 onChange={setPassword}
               />
               <div className="w-full flex items-center gap-3 justify-center pt-3">
-                <Link to="/" className="primaryButton py-2.5">
-                  {LocalStrings.primary_button}
-                </Link>
-                <button className={`secondaryButton ${isLoading ? 'py-0.5' : 'py-2.5'}`} type="submit" disabled={false}>
-                  {isLoading ? (
-                    <LoadingSpinner className="w-full h-10" svgColor="#fff" uniqueId="index-spinner" />
-                  ) : (
-                    LocalStrings.secondary_button
-                  )}
-                </button>
-              </div>
+              <Link
+                to="/"
+                className="cancelButton after:content-[attr(data-string)] w-[105px]"
+                data-string={LocalStrings.primary_button}>
+                <ArrowIcon uniqueId="create-back" className="w-6 h-auto rotate-180" />
+              </Link>
+              <button
+                className="confirmButton after:content-[attr(data-string)] w-[105px]"
+                type="submit"
+                disabled={false}
+                data-string={isLoading ? '' : LocalStrings.secondary_button}>
+                {isLoading ? (
+                  <LoadingSpinner className="w-full h-10" svgColor="#fff" uniqueId="index-spinner" />
+                ) : (
+                  <SubmitIcon uniqueId="create-next" className="w-6 h-auto" />
+                )}
+              </button>
+            </div>
             </fieldset>
           </Form>
         </div>

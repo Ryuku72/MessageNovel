@@ -1,7 +1,7 @@
 import { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node';
 import { Form, NavLink, useLoaderData, useNavigation, useOutletContext, useSearchParams } from '@remix-run/react';
 
-import { Fragment, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import LOCALES from '~/locales/language_en.json';
 import { Novel } from '~/types';
@@ -9,6 +9,7 @@ import { Novel } from '~/types';
 import { emptyContent } from '~/components/Lexical/helpers';
 import TitleInput from '~/components/TitleInput';
 
+import { ArrowIcon, SaveIcon } from '~/svg';
 import LoadingSpinner from '~/svg/LoadingSpinner/LoadingSpinner';
 
 import { DashOutletContext } from '../dash/route';
@@ -38,7 +39,10 @@ export default function DashNew() {
   const isLoading = ['submitting'].includes(navigationState.state);
   const searchNovelId = searchParams.get('novel_id');
   const LocalStrings = LOCALES.dash.new;
-  const resetState = navigationState.state === 'loading' && !navigationState.formMethod && navigationState.location.pathname === '/dash/new';
+  const resetState =
+    navigationState.state === 'loading' &&
+    !navigationState.formMethod &&
+    navigationState.location.pathname === '/dash/new';
 
   useEffect(() => {
     if (resetState) return;
@@ -51,7 +55,12 @@ export default function DashNew() {
       .channel('user location', { config: { presence: { key: user.id }, broadcast: { self: true } } })
       .subscribe(status => {
         if (status !== 'SUBSCRIBED') return;
-        channel.track({ novel_id: searchNovelId || '', page_id: '', room: searchNovelId ? `Room: Updating ${draftNovelTitle} Details` : 'Room: New Novel', user_id: user.id });
+        channel.track({
+          novel_id: searchNovelId || '',
+          page_id: '',
+          room: searchNovelId ? `Room: Updating ${draftNovelTitle} Details` : 'Room: New Novel',
+          user_id: user.id
+        });
       });
     return () => {
       channel.unsubscribe();
@@ -85,14 +94,16 @@ export default function DashNew() {
               clearCondition={resetState}
             />
             <div className="w-full flex gap-3 flex-wrap mt-2 justify-end">
-              <NavLink to="/dash" className="primaryButton py-2.5">
-                Back
+              <NavLink to="/dash" className="cancelButton md:after:content-['Back'] md:w-[165px] w-[80px]">
+                <ArrowIcon uniqueId="dash-new-back" className="w-6 h-auto rotate-180" />
               </NavLink>
-              <button className="secondaryButton !max-w-[160px] !h-button !px-0 justify-center items-center">
+              <button
+                className="confirmButton md:after:content-[attr(data-string)] md:w-[165px] w-[80px]"
+                data-string={isLoading ? '' : searchNovelId ? 'Update Novel' : LocalStrings.primary_button}>
                 {isLoading ? (
                   <LoadingSpinner className="w-full h-10" svgColor="#fff" uniqueId="index-spinner" />
                 ) : (
-                  <Fragment>{searchNovelId ? 'Update Novel' : LocalStrings.primary_button}</Fragment>
+                  <SaveIcon uniqueId="new-dash-save" className="w-6 h-auto rotate-180" />
                 )}
               </button>
             </div>

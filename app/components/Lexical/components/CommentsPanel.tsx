@@ -96,7 +96,7 @@ export default function CommentsPanel({
             </h3>
           </div>
           <button
-            className="w-10 h-10 flex items-center justify-center text-slate-500 hover:text-red-500 hover:border hover:border-red-500 rounded"
+            className="crossButtond"
             type="button"
             onClick={close}>
             <CloseIcon className="w-3 h-3" uniqueId="dash-close" svgColor="currentColor" />

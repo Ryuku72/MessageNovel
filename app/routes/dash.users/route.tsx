@@ -73,10 +73,8 @@ export default function DashUsers() {
           })
           .flat();
         /** sort and set the users */
-        if (!lastUpdate.current) {
-          setOnlineUsers(online);
-          lastUpdate.current = new Date().toString();
-        } else setDebouncedOnlineUsers(online);
+        if (!lastUpdate.current) setOnlineUsers(online);
+        setDebouncedOnlineUsers(online);
       })
       .subscribe(status => {
         if (status !== 'SUBSCRIBED') return;
@@ -103,7 +101,7 @@ export default function DashUsers() {
       <h1 className="text-red-700 text-4xl underline underline-offset-8 [text-shadow:_5px_3px_2px_rgb(225_225_225_/_50%)] font-miltonian">
         &nbsp;&nbsp;Participants&nbsp;&nbsp;&nbsp;
       </h1>
-      <div className="grid md:grid-cols-[repeat(auto-fill,400px)] grid-cols-[repeat(auto-fill,100%)] gap-4 w-wide">
+      <div className="grid lg:grid-cols-[repeat(auto-fill,420px)] grid-cols-[repeat(auto-fill,100%)] justify-center gap-4 w-wide">
         {userProfiles?.map(profile => {
           const online = onlineUsers.find(user => user.user_id === profile?.id);
           return (
