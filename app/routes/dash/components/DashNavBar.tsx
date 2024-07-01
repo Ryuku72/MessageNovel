@@ -1,7 +1,5 @@
 import { Form, NavLink, useNavigation } from '@remix-run/react';
 
-import { Fragment } from 'react/jsx-runtime';
-
 import LOCALES from '~/locales/language_en.json';
 import { UserDataEntry } from '~/types';
 
@@ -18,7 +16,9 @@ export type DashNavBarProps = {
 
 export default function DashNavBar({ user }: DashNavBarProps) {
   const navigationState = useNavigation();
-  const isLoading = ['submitting'].includes(navigationState.state);
+  const isAuthLoading = ['submitting'].includes(navigationState.state) && navigationState.formAction === '/auth';
+  const isDashLoading = navigationState.state ==='loading' && navigationState.location.pathname === '/dash';
+  const isNetworkLoading = navigationState.state ==='loading' && navigationState.location.pathname === '/dash/users';
   const LocalStrings = LOCALES.dash;
 
   return (
@@ -53,7 +53,11 @@ export default function DashNavBar({ user }: DashNavBarProps) {
               }
               type="button"
               to="/dash">
-              <DashIcon uniqueId="dash_icon" svgColor="#fff" className="w-5 h-auto" />
+              {isDashLoading ? (
+                <LoadingSpinner className="w-8 h-8" svgColor="#fff" uniqueId="index-spinner" />
+              ) : (
+                <DashIcon uniqueId="dash_icon" svgColor="#fff" className="w-5 h-auto" />
+              )}
             </NavLink>
             <div
               role="tooltip"
@@ -83,7 +87,11 @@ export default function DashNavBar({ user }: DashNavBarProps) {
               }
               type="button"
               to="/dash/users">
-              <NetworkIcon uniqueId="dash_plus" svgColor="#fff" className="w-7 h-auto" />
+                 {isNetworkLoading ? (
+                <LoadingSpinner className="w-8 h-8" svgColor="#fff" uniqueId="index-spinner" />
+              ) : (
+                <NetworkIcon uniqueId="dash_plus" svgColor="#fff" className="w-7 h-auto" />
+              )}
             </NavLink>
             <div
               role="tooltip"
@@ -93,17 +101,11 @@ export default function DashNavBar({ user }: DashNavBarProps) {
           </div>
         </div>
         <Form method="get" action="/auth" className="has-tooltip cursor-pointer relative">
-          <button
-            className={`logOutButton ${isLoading ? 'py-0.5' : 'py-2.5'} !w-navicon !h-button flex-shrink-0 !p-0`}
-            type="submit"
-            name="intent"
-            value="signout">
-            {isLoading ? (
+          <button className="logOutButton" type="submit" name="intent" value="signout">
+            {isAuthLoading ? (
               <LoadingSpinner className="w-8 h-8" svgColor="#fff" uniqueId="index-spinner" />
             ) : (
-              <Fragment>
-                <LogOutIcon svgColor="#fff" uniqueId="dash-logout" className="w-auto h-8 translate-x-0.5" />
-              </Fragment>
+              <LogOutIcon svgColor="#fff" uniqueId="dash-logout" className="w-auto h-8 translate-x-0.5" />
             )}
           </button>
           <div
