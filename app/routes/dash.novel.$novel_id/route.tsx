@@ -271,23 +271,40 @@ export default function DashNovelId() {
                   )}
                 </button>
               </Form>
-              <Form method="post" className={!page.members.some(member => member.id === user.id) ? 'flex' : 'hidden'}>
+              <Form method="POST" className={!page.members.some(member => member.id === user.id) ? 'flex' : 'hidden'}>
                 <button
                   value={page.id}
                   name="selected_page"
                   disabled={isLoadingUpdate}
-                  className="confirmButton font-semibold md:w-wide-button w-icon md:after:content-['Participate?']">
-                  <PenIcon uniqueId="public-novel-icon" className="w-5 h-auto" />
+                  data-string={
+                    navigationState.state === 'loading' && navigationState.formMethod === 'POST' ? '' : 'Participate?'
+                  }
+                  className="confirmButton font-semibold md:w-wide-button w-icon md:after:content-[attr(data-string)]">
+                  {navigationState.state === 'loading' && navigationState.formMethod === 'POST' ? (
+                    <LoadingSpinner className="w-full h-10" svgColor="#fff" uniqueId="page-spinner" />
+                  ) : (
+                    <PenIcon uniqueId="public-novel-icon" className="w-5 h-auto" />
+                  )}
                 </button>
               </Form>
               <Link
                 to={`/dash/page/${page.id}`}
+                data-string={
+                  navigationState.state === 'loading' && navigationState.location.pathname === `/dash/page/${page.id}`
+                    ? ''
+                    : 'Continue'
+                }
                 className={
                   page.members.some(member => member.id === user.id)
-                    ? 'confirmButton font-semibold md:w-button w-icon md:after:content-["Continue"]'
+                    ? 'confirmButton font-semibold md:w-button w-icon md:after:content-[attr(data-string)]'
                     : 'hidden'
                 }>
-                <PenIcon uniqueId="public-novel-icon" className="w-5 h-auto" />
+                {navigationState.state === 'loading' &&
+                navigationState.location.pathname === `/dash/page/${page.id}` ? (
+                  <LoadingSpinner className="w-full h-10" svgColor="#fff" uniqueId="page-spinner" />
+                ) : (
+                  <PenIcon uniqueId="public-novel-icon" className="w-5 h-auto" />
+                )}
               </Link>
             </div>
           </div>
