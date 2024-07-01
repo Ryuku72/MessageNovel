@@ -94,11 +94,11 @@ export default function DashNew() {
               clearCondition={resetState}
             />
             <div className="w-full flex gap-3 flex-wrap mt-2 justify-end">
-              <NavLink to="/dash" className="cancelButton md:after:content-['Back'] md:w-[165px] w-[80px]">
+              <NavLink to="/dash" className="cancelButton md:after:content-['Back'] md:w-wide-button w-icon">
                 <ArrowIcon uniqueId="dash-new-back" className="w-6 h-auto rotate-180" />
               </NavLink>
               <button
-                className="confirmButton md:after:content-[attr(data-string)] md:w-[165px] w-[80px]"
+                className="confirmButton md:after:content-[attr(data-string)] md:w-wide-button w-icon"
                 data-string={isLoading ? '' : searchNovelId ? 'Update Novel' : LocalStrings.primary_button}>
                 {isLoading ? (
                   <LoadingSpinner className="w-full h-10" svgColor="#fff" uniqueId="index-spinner" />

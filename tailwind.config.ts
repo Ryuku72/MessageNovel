@@ -35,15 +35,17 @@ export default {
         'c-600': '600px',
         'c-800': '800px',
         access: '40px',
-        icon: '60px',
-        button: '105px',
+        navicon: '60px',
+        icon: '80px',
+        button: '125px',
+        'wide-button': '165px',
         wide: 'min(100%, 1850px)'
       },
       maxWidth: {
         'card-l': '480px',
         'c-600': '600px',
         'c-800': '800px',
-        button: '105px',
+        button: '125px',
         wide: 'min(100%, 1850px)'
       },
       height: {

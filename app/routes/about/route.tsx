@@ -98,7 +98,7 @@ export default function About() {
         </div>
         <Link
           to="/"
-          className="cancelButton after:content-[attr(data-string)] w-[105px]"
+          className="cancelButton after:content-[attr(data-string)] w-button"
           data-string={LocalStrings.primary_button}>
           <ArrowIcon uniqueId="about-back" className="w-6 h-auto rotate-180" />
         </Link>

@@ -246,7 +246,7 @@ export default function DashNovelId() {
                 onClick={() => setSelectedPage(page)}
                 className={
                   novel.owner.id === user.id
-                    ? 'deleteButton md:w-[105px] w-[80px] md:after:content-["Delete"]'
+                    ? 'deleteButton md:w-button w-icon md:after:content-["Delete"]'
                     : 'hidden'
                 }>
                 <TrashIcon uniqueId="delete-page" svgColor="#fff" className="w-5 h-auto" />
@@ -264,7 +264,7 @@ export default function DashNovelId() {
                   value={page.enable_collab ? 'Collab' : 'Solo'}
                   disabled={page.owner.id !== user.id}
                   title={`Owner has ${page.enable_collab ? 'enabled collabaration' : 'disabled collabaration'} `}
-                  className="altButton md:w-[105px] w-[80px] font-semibold md:after:content-[attr(value)]">
+                  className="altButton md:w-button w-icon font-semibold md:after:content-[attr(value)]">
                   {page.enable_collab ? (
                     <PublicNovelIcon uniqueId="public-novel-icon" className="w-5 h-auto -scale-x-100" />
                   ) : (
@@ -277,7 +277,7 @@ export default function DashNovelId() {
                   value={page.id}
                   name="selected_page"
                   disabled={isLoadingUpdate}
-                  className="confirmButton font-semibold md:w-[145px] w-[80px] md:after:content-['Participate?']">
+                  className="confirmButton font-semibold md:w-wide-button w-icon md:after:content-['Participate?']">
                   <PenIcon uniqueId="public-novel-icon" className="w-5 h-auto" />
                 </button>
               </Form>
@@ -285,7 +285,7 @@ export default function DashNovelId() {
                 to={`/dash/page/${page.id}`}
                 className={
                   page.members.some(member => member.id === user.id)
-                    ? 'confirmButton font-semibold md:w-[125px] w-[80px] md:after:content-["Continue"]'
+                    ? 'confirmButton font-semibold md:w-button w-icon md:after:content-["Continue"]'
                     : 'hidden'
                 }>
                 <PenIcon uniqueId="public-novel-icon" className="w-5 h-auto" />
@@ -318,7 +318,7 @@ export default function DashNovelId() {
         </Form>
       </div>
       <div className="flex w-full max-w-wide justify-center sticky md:bottom-4 bottom-[100px]">
-        <Link to="/dash" className="cancelButton after:content-['Back'] md:w-[125px] w-[80px]" type="button">
+        <Link to="/dash" className="cancelButton after:content-['Back'] w-button" type="button">
           <ArrowIcon uniqueId="settings-back" className="w-6 h-auto rotate-180" />
         </Link>
       </div>
@@ -346,7 +346,7 @@ export default function DashNovelId() {
                 value={selectedPage?.id}
                 name="page_id_delete"
                 data-string={isLoadingUpdate ? '' : 'Delete'}
-                className="cancelButton md:after:content-[attr(data-string)] md:w-[125px] w-[80px]">
+                className="deleteButton md:after:content-[attr(data-string)] md:w-button w-icon">
                 {isLoadingUpdate ? (
                   <LoadingSpinner className="w-full h-10" svgColor="#fff" uniqueId="index-spinner" />
                 ) : (
@@ -357,7 +357,7 @@ export default function DashNovelId() {
             <button
               type="button"
               onClick={() => setSelectedPage(null)}
-              className="confirmButton md:after:content-['Back'] md:w-[125px] w-[80px]">
+              className="confirmButton md:after:content-['Back'] md:w-button w-icon">
                <ArrowIcon uniqueId="settings-delete-back" className="w-6 h-auto rotate-180" />
             </button>
           </div>

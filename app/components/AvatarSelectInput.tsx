@@ -217,7 +217,7 @@ export default function AvatarInput({ title, id, imageSrc = null, setImage }: Av
           <div className="w-full flex gap-3 flex-wrap px-6 py-2 rounded-b-md bg-white bg-opacity-75">
             <button
               type="button"
-              className="confirmButton after:content-['Submit'] w-[105px]"
+              className="confirmButton after:content-['Submit'] w-button"
               onClick={() => onSave()}>
              <SubmitIcon uniqueId="submit-picture" className="w-6 h-auto" />
             </button>

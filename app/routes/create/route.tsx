@@ -108,12 +108,12 @@ export default function Create() {
               <div className="w-full flex items-center gap-3 justify-center pt-3">
               <Link
                 to="/"
-                className="cancelButton after:content-[attr(data-string)] w-[105px]"
+                className="cancelButton after:content-[attr(data-string)] w-button"
                 data-string={LocalStrings.primary_button}>
                 <ArrowIcon uniqueId="create-back" className="w-6 h-auto rotate-180" />
               </Link>
               <button
-                className="confirmButton after:content-[attr(data-string)] w-[105px]"
+                className="confirmButton after:content-[attr(data-string)] w-button"
                 type="submit"
                 disabled={false}
                 data-string={isLoading ? '' : LocalStrings.secondary_button}>

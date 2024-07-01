@@ -36,7 +36,7 @@ export default function Login() {
   const [signInValue, setSignInValue] = useState('');
   const [passwordValue, setPasswordValue] = useState('');
 
-  const isLoading = ['submitting', 'loading'].includes(navigationState.state);
+  const isLoading = ['submitting', 'loading'].includes(navigationState.state) && navigationState.formMethod === 'POST';
 
   useEffect(() => {
     if (!sceneReady) return;
@@ -67,7 +67,7 @@ export default function Login() {
         </h1>
         <Form
           aria-label="login"
-          method="post"
+          method="POST"
           className="flex w-full flex-col gap-3 bg-white bg-opacity-25 backdrop-blur-sm rounded-lg shadow-xl px-8 py-6">
           <fieldset className="w-full flex flex-col justify-center items-center gap-3" disabled={isLoading}>
             <TitleInput
@@ -88,12 +88,12 @@ export default function Login() {
             <div className="w-full flex items-center gap-3 justify-center pt-3">
               <Link
                 to="/"
-                className="cancelButton after:content-[attr(data-string)] w-[105px]"
+                className="cancelButton after:content-[attr(data-string)] w-button"
                 data-string={LocalStrings.primary_button}>
                 <ArrowIcon uniqueId="login-back" className="w-6 h-auto rotate-180" />
               </Link>
               <button
-                className="confirmButton after:content-[attr(data-string)] w-[105px]"
+                className="confirmButton after:content-[attr(data-string)] w-button"
                 type="submit"
                 disabled={false}
                 data-string={isLoading ? '' : LocalStrings.secondary_button}>

@@ -124,12 +124,12 @@ export default function DashPageId() {
               />
             </LiveBlocksRoom>
             <div className="w-full flex items-center gap-3 justify-end pt-3">
-              <NavLink to={`/dash/novel/${pageData?.novel_id}`} className="cancelButton w-[105px] after:content-[attr(data-string)]" data-string={LocalStrings.secondary_button}>
+              <NavLink to={`/dash/novel/${pageData?.novel_id}`} className="cancelButton w-button after:content-[attr(data-string)]" data-string={LocalStrings.secondary_button}>
                 <ArrowIcon uniqueId="settings-back" className="w-6 h-auto rotate-180" />
               </NavLink>
               <button
                 className={
-                  pageData?.owner === user.id ? 'confirmButton after:content-[attr(data-string)] w-[105px]' : 'hidden'
+                  pageData?.owner === user.id ? 'confirmButton after:content-[attr(data-string)] w-button' : 'hidden'
                 }
                 type="submit"
                 data-string={isLoading ? '' : 'Publish'}

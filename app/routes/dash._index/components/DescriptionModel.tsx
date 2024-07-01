@@ -95,7 +95,7 @@ export function DescriptionModel({ selectedNovel, close, userId, ownerId, member
           </div>
           <div className="flex w-full justify-end bg-white rounded-b-md p-2 gap-3 sticky bottom-0">
             <button
-              className="rounded-lg text-gray-100 font-semibold flex items-center justify-center h-button bg-orange-700 hover:bg-orange-500 md:w-[105px] w-[80px] gap-2 md:after:content-['Back']"
+              className="rounded-lg text-gray-100 font-semibold flex items-center justify-center h-button bg-orange-700 hover:bg-orange-500 md:w-button w-icon gap-2 md:after:content-['Back']"
               type="button"
               onClick={close}>
               <ArrowIcon uniqueId="description-back" className="w-6 h-auto rotate-180" />
@@ -107,7 +107,7 @@ export function DescriptionModel({ selectedNovel, close, userId, ownerId, member
               title="selected_novel"
               className={
                 isOwner
-                  ? 'deleteButton md:w-[105px] w-[80px] md:after:content-["Delete"]'
+                  ? 'deleteButton md:w-button w-icon md:after:content-["Delete"]'
                   : 'hidden'
               }>
               <TrashIcon className="w-5 h-auto" uniqueId="descript-delete" />
@@ -116,7 +116,7 @@ export function DescriptionModel({ selectedNovel, close, userId, ownerId, member
               to={`/dash/new?novel_id=${selectedNovel?.id}`}
               className={
                 isOwner
-                  ? 'rounded-lg text-gray-100 font-semibold flex items-center justify-center h-button bg-slate-700 hover:bg-slate-500 md:w-[105px] w-[80px] gap-2 md:after:content-["Edit"]'
+                  ? 'rounded-lg text-gray-100 font-semibold flex items-center justify-center h-button bg-slate-700 hover:bg-slate-500 md:w-button w-icon gap-2 md:after:content-["Edit"]'
                   : 'hidden'
               }>
               <PenIcon uniqueId="description-edit" className="w-6 h-auto" />
@@ -125,7 +125,7 @@ export function DescriptionModel({ selectedNovel, close, userId, ownerId, member
               to={`/dash/novel/${selectedNovel?.id}`}
               className={
                 member
-                  ? 'confirmButton md:w-[105px] w-[80px] gap-2 md:before:content-["Next"]'
+                  ? 'confirmButton md:w-button w-icon gap-2 md:before:content-["Next"]'
                   : 'hidden'
               }>
               <ArrowIcon uniqueId="description-next" className="w-6 h-auto" />
@@ -137,7 +137,7 @@ export function DescriptionModel({ selectedNovel, close, userId, ownerId, member
                   value={selectedNovel?.id}
                   className={
                     !member
-                      ? 'confirmButton md:w-[165px] w-[80px] md:before:content-["Participate"]'
+                      ? 'confirmButton md:w-wide-button w-icon md:before:content-["Participate"]'
                       : 'hidden'
                   }>
                   <ArrowIcon uniqueId="description-back" className="w-6 h-auto" />
@@ -171,7 +171,7 @@ export function DescriptionModel({ selectedNovel, close, userId, ownerId, member
                 value={selectedNovel?.id}
                 name="selected_novel"
                 data-string={isLoading ? '' : 'Delete'}
-                className="deleteButton md:after:content-[attr(data-string)] md:w-[105px] w-[80px]">
+                className="deleteButton md:after:content-[attr(data-string)] md:w-button w-icon">
                 {isLoading ? (
                   <LoadingSpinner className="w-full h-10" svgColor="#fff" uniqueId="index-spinner" />
                 ) : (
@@ -182,7 +182,7 @@ export function DescriptionModel({ selectedNovel, close, userId, ownerId, member
             <button
               type="button"
               onClick={() => setOpenConfirm(false)}
-              className="confirmButton md:after:content-['Cancel'] md:w-[105px] w-[80px]">
+              className="confirmButton md:after:content-['Cancel'] md:w-button w-icon">
               <ArrowIcon uniqueId="description-back" className="w-6 h-auto rotate-180" />
             </button>
           </div>

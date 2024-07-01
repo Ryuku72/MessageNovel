@@ -26,7 +26,7 @@ export default function DashNavBar({ user }: DashNavBarProps) {
       <div className="flex-shrink-0 md:w-auto w-full flex md:flex-col flex-row gap-3 px-3 md:py-6 py-3 items-center bg-slate-50 bg-opacity-35 backdrop-blur-sm z-10 fixed md:h-full bottom-0">
         <div className="flex md:flex-col flex-row flex-auto gap-3">
           <div className="has-tooltip cursor-pointer relative">
-            <NavLink to="/dash/settings" className="flex w-icon h-icon flex-shrink-0">
+            <NavLink to="/dash/settings" className="flex w-navicon h-icon flex-shrink-0">
               <img
                 alt="create-img"
                 className="w-full h-full rounded object-cover bg-gradient-to-b from-slate-500 to-fuchsia-600"
@@ -49,7 +49,7 @@ export default function DashNavBar({ user }: DashNavBarProps) {
             <NavLink
               end={true}
               className={({ isActive, isPending, isTransitioning }) =>
-                `w-icon ${isActive || isPending || isTransitioning ? 'confirmButton' : 'altButton'}`
+                `w-navicon ${isActive || isPending || isTransitioning ? 'confirmButton' : 'altButton'}`
               }
               type="button"
               to="/dash">
@@ -64,7 +64,7 @@ export default function DashNavBar({ user }: DashNavBarProps) {
           <div className="has-tooltip cursor-pointer relative">
             <NavLink
               className={({ isActive, isPending, isTransitioning }) =>
-                `w-icon ${isActive || isPending || isTransitioning ? 'confirmButton' : 'altButton'}`
+                `w-navicon ${isActive || isPending || isTransitioning ? 'confirmButton' : 'altButton'}`
               }
               type="button"
               to="/dash/new">
@@ -79,7 +79,7 @@ export default function DashNavBar({ user }: DashNavBarProps) {
           <div className="has-tooltip cursor-pointer relative">
             <NavLink
               className={({ isActive, isPending, isTransitioning }) =>
-                `w-icon ${isActive || isPending || isTransitioning ? 'confirmButton' : 'altButton'}`
+                `w-navicon ${isActive || isPending || isTransitioning ? 'confirmButton' : 'altButton'}`
               }
               type="button"
               to="/dash/users">
@@ -94,7 +94,7 @@ export default function DashNavBar({ user }: DashNavBarProps) {
         </div>
         <Form method="get" action="/auth" className="has-tooltip cursor-pointer relative">
           <button
-            className={`logOutButton ${isLoading ? 'py-0.5' : 'py-2.5'} !w-icon !h-button flex-shrink-0 !p-0`}
+            className={`logOutButton ${isLoading ? 'py-0.5' : 'py-2.5'} !w-navicon !h-button flex-shrink-0 !p-0`}
             type="submit"
             name="intent"
             value="signout">

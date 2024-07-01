@@ -93,11 +93,11 @@ export default function DashSettings() {
             </div>
           </div>
           <div className="flex flex-wrap gap-3 w-full justify-center">
-            <Link to="/dash" className="cancelButton w-[165px] after:content-['Back']" type="button">
+            <Link to="/dash" className="cancelButton md:w-wide-button md:after:content-['Back'] w-icon" type="button">
               <ArrowIcon uniqueId="settings-back" className="w-6 h-auto rotate-180" />
             </Link>
             <button
-              className="confirmButton disabled:bg-gray-300 after:content-[attr(data-string)] w-[165px]"
+              className="confirmButton disabled:bg-gray-300 md:after:content-[attr(data-string)] md:w-wide-button w-icon"
               type="submit"
               data-string={isLoading ? '' : 'Update'}
               disabled={disabled}>
@@ -113,7 +113,7 @@ export default function DashSettings() {
       <button
         type="button"
         onClick={() => setShowDelModal(true)}
-        className="absolute top-3 right-3 text-sm text-red-700 hover:text-red-500 text-right h-access px-5 border-red-700 hover:border-red-500 border rounded bg-white bg-opacity-10 backdrop-blur-sm font-bold">
+        className="absolute top-3 right-3 floatingDeleteButton">
         <TrashIcon uniqueId="deleteaccount" svgColor="currentColor" className="w-4 h-auto" />
       </button>
       <DialogWrapper open={showDelModal}>
@@ -140,12 +140,12 @@ export default function DashSettings() {
                   }
                 </p>
                 <div className="flex w-full justify-end bg-white rounded-b-md gap-3">
-                  <button className="cancelButton md:after:content-['Delete'] md:w-[105px] w-[80px]">
+                  <button className="deleteButton md:after:content-['Delete'] md:w-button w-icon">
                     <TrashIcon uniqueId="delete-page" svgColor="#fff" className="w-5 h-auto" />
                   </button>
                   <button
                     type="button"
-                    className="confirmButton py-2.5 md:after:content-['Back'] md:w-[105px] w-[80px]"
+                    className="confirmButton py-2.5 md:after:content-['Back'] md:w-button w-icon"
                     onClick={() => setShowDelModal(false)}>
                     <ArrowIcon uniqueId="settings-delete-back" className="w-6 h-auto rotate-180" />
                   </button>
