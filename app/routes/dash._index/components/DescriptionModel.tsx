@@ -32,6 +32,7 @@ export function DescriptionModel({ selectedNovel, close, userId, ownerId, member
   const finishedPost = 'loading' === navigationState.state && navigationState.formMethod === 'POST';
   const isLoading = 'submitting' === navigationState.state && navigationState.formMethod === 'DELETE';
   const isLoadingUpdate = 'submitting' === navigationState.state && navigationState.formMethod === 'POST';
+  const isLoadingPage = 'loading' === navigationState.state && navigationState.location.pathname === `/dash/novel/${selectedNovel?.id}`;
   const member = members.some(user => user.user_id === userId);
   const isOwner = userId === ownerId;
 
@@ -69,10 +70,7 @@ export function DescriptionModel({ selectedNovel, close, userId, ownerId, member
             <h3 className="font-medium text-xl text-gray-600 underline underline-offset-4 capitalize flex items-center gap-2">
               &nbsp;{selectedNovel?.title}&nbsp;&nbsp;&nbsp;
             </h3>
-            <button
-              className="crossButton"
-              type="button"
-              onClick={close}>
+            <button className="crossButton" type="button" onClick={close}>
               <CloseIcon className="w-3 h-3" uniqueId="dash-close" svgColor="currentColor" />
             </button>
           </div>
@@ -105,11 +103,7 @@ export function DescriptionModel({ selectedNovel, close, userId, ownerId, member
               onClick={() => setOpenConfirm(true)}
               value={selectedNovel?.id}
               title="selected_novel"
-              className={
-                isOwner
-                  ? 'deleteButton md:w-button w-icon md:after:content-["Delete"]'
-                  : 'hidden'
-              }>
+              className={isOwner ? 'deleteButton md:w-button w-icon md:after:content-["Delete"]' : 'hidden'}>
               <TrashIcon className="w-5 h-auto" uniqueId="descript-delete" />
             </button>
             <Link
@@ -123,12 +117,13 @@ export function DescriptionModel({ selectedNovel, close, userId, ownerId, member
             </Link>
             <Link
               to={`/dash/novel/${selectedNovel?.id}`}
-              className={
-                member
-                  ? 'confirmButton md:w-button w-icon gap-2 md:before:content-["Next"]'
-                  : 'hidden'
-              }>
-              <ArrowIcon uniqueId="description-next" className="w-6 h-auto" />
+              data-string={isLoadingPage ? '' : 'Next'}
+              className={member ? 'confirmButton md:w-button w-icon gap-2 md:before:content-[attr(data-string)]' : 'hidden'}>
+              {isLoadingPage ? (
+                <LoadingSpinner className="w-full h-10" svgColor="#fff" uniqueId="index-page-spinner" />
+              ) : (
+                <ArrowIcon uniqueId="description-next" className="w-6 h-auto" />
+              )}
             </Link>
             <Form method="post">
               <fieldset disabled={isLoadingUpdate}>
@@ -136,9 +131,7 @@ export function DescriptionModel({ selectedNovel, close, userId, ownerId, member
                   name="selected_novel"
                   value={selectedNovel?.id}
                   className={
-                    !member
-                      ? 'confirmButton md:w-wide-button w-icon md:before:content-["Participate"]'
-                      : 'hidden'
+                    !member ? 'confirmButton md:w-wide-button w-icon md:before:content-["Participate"]' : 'hidden'
                   }>
                   <ArrowIcon uniqueId="description-back" className="w-6 h-auto" />
                 </button>
@@ -153,10 +146,7 @@ export function DescriptionModel({ selectedNovel, close, userId, ownerId, member
             <h3 className="font-medium text-xl text-gray-600 underline underline-offset-4 capitalize">
               &#8197;Confirm Delete&nbsp;&nbsp;&nbsp;
             </h3>
-            <button
-              className="crossButton"
-              type="button"
-              onClick={() => setOpenConfirm(false)}>
+            <button className="crossButton" type="button" onClick={() => setOpenConfirm(false)}>
               <CloseIcon className="w-3 h-3" uniqueId="dash-close" svgColor="currentColor" />
             </button>
           </div>

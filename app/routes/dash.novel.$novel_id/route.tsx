@@ -44,6 +44,7 @@ export default function DashNovelId() {
   const navigationState = useNavigation();
   const isLoadingUpdate = 'submitting' === navigationState.state;
   const finishedDelete = 'loading' === navigationState.state && navigationState.formMethod === 'DELETE';
+  const isLoadingDash = 'loading' === navigationState.state && navigationState.location.pathname === '/dash';
   const submit = useSubmit();
 
   const [novelPages, setNovelPages] = useState(pages);
@@ -245,9 +246,7 @@ export default function DashNovelId() {
                 disabled={isLoadingUpdate}
                 onClick={() => setSelectedPage(page)}
                 className={
-                  novel.owner.id === user.id
-                    ? 'deleteButton md:w-button w-icon md:after:content-["Delete"]'
-                    : 'hidden'
+                  novel.owner.id === user.id ? 'deleteButton md:w-button w-icon md:after:content-["Delete"]' : 'hidden'
                 }>
                 <TrashIcon uniqueId="delete-page" svgColor="#fff" className="w-5 h-auto" />
               </button>
@@ -318,8 +317,16 @@ export default function DashNovelId() {
         </Form>
       </div>
       <div className="flex w-full max-w-wide justify-center sticky md:bottom-4 bottom-[100px]">
-        <Link to="/dash" className="cancelButton after:content-['Back'] w-button" type="button">
-          <ArrowIcon uniqueId="settings-back" className="w-6 h-auto rotate-180" />
+        <Link
+          to="/dash"
+          data-string={isLoadingDash ? '' : 'Back'}
+          className="cancelButton after:content-[attr(data-string)] w-button"
+          type="button">
+          {isLoadingDash ? (
+            <LoadingSpinner className="w-full h-10" svgColor="#fff" uniqueId="back-dash-spinner" />
+          ) : (
+            <ArrowIcon uniqueId="settings-back" className="w-6 h-auto rotate-180" />
+          )}
         </Link>
       </div>
       <DialogWrapper open={Boolean(selectedPage)}>
@@ -328,10 +335,7 @@ export default function DashNovelId() {
             <h3 className="font-medium text-xl text-gray-600 underline underline-offset-4 capitalize">
               &#8197;Confirm Delete&nbsp;&nbsp;&nbsp;
             </h3>
-            <button
-              className="crossButton"
-              type="button"
-              onClick={() => setSelectedPage(null)}>
+            <button className="crossButton" type="button" onClick={() => setSelectedPage(null)}>
               <CloseIcon className="w-3 h-3" uniqueId="dash-close" svgColor="currentColor" />
             </button>
           </div>
@@ -357,8 +361,9 @@ export default function DashNovelId() {
             <button
               type="button"
               onClick={() => setSelectedPage(null)}
-              className="confirmButton md:after:content-['Back'] md:w-button w-icon">
-               <ArrowIcon uniqueId="settings-delete-back" className="w-6 h-auto rotate-180" />
+              data-string="Back"
+              className="confirmButton md:after:content-[attr(data-string)] md:w-button w-icon">
+              <ArrowIcon uniqueId="settings-delete-back" className="w-6 h-auto rotate-180" />
             </button>
           </div>
         </div>
