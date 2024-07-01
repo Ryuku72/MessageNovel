@@ -218,7 +218,7 @@ export default function DashNovelId() {
             </div>
             <div className="flex flex-wrap gap-2 items-center">
               <p className="text-current text-sm text-left">Participants:</p>
-              <div className="flex gap-2 text-blue-800 items-center text-sm max-w-[80%] flex-wrap">
+              <div className="flex gap-2 text-blue-800 items-center text-sm w-full flex-wrap">
                 {page.members.map(user => (
                   <div
                     key={user.id}
