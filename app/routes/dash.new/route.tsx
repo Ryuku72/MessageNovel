@@ -9,7 +9,7 @@ import { Novel } from '~/types';
 import { emptyContent } from '~/components/Lexical/helpers';
 import TitleInput from '~/components/TitleInput';
 
-import { ArrowIcon, SaveIcon } from '~/svg';
+import { ArrowIcon, TypeWriterIcon } from '~/svg';
 import LoadingSpinner from '~/svg/LoadingSpinner/LoadingSpinner';
 
 import { DashOutletContext } from '../dash/route';
@@ -103,7 +103,7 @@ export default function DashNew() {
                 {isLoading ? (
                   <LoadingSpinner className="w-full h-10" svgColor="#fff" uniqueId="index-spinner" />
                 ) : (
-                  <SaveIcon uniqueId="new-dash-save" className="w-6 h-auto rotate-180" />
+                  <TypeWriterIcon uniqueId="new-dash-save" className="w-6 h-auto" />
                 )}
               </button>
             </div>
