@@ -218,11 +218,11 @@ export default function DashNovelId() {
             </div>
             <div className="flex flex-wrap gap-2 items-center">
               <p className="text-current text-sm text-left">Participants:</p>
-              <div className="flex gap-2 text-blue-800 items-center text-sm max-w-[80%]">
+              <div className="flex gap-2 text-blue-800 items-center text-sm max-w-[80%] flex-wrap">
                 {page.members.map(user => (
                   <div
                     key={user.id}
-                    className={`text-grey-700 text-sm ${user.color} pl-1 pr-2 py-1 rounded flex gap-1 flex-wrap items-center text-gray-700`}>
+                    className={`text-grey-700 text-sm ${user.color} pl-1 pr-2 py-1 rounded flex gap-1 items-center text-gray-700`}>
                     <img
                       src={user.avatar ? img_url + user.avatar : Default_Avatar}
                       className="rounded-full w-4 h-4"
