@@ -1,5 +1,5 @@
 import { ActionFunctionArgs, MetaFunction } from '@remix-run/node';
-import { Form, Link, useNavigation, useOutletContext, useSubmit } from '@remix-run/react';
+import { Form, Link, useActionData, useNavigation, useOutletContext, useSubmit } from '@remix-run/react';
 
 import { useEffect, useState } from 'react';
 
@@ -16,6 +16,7 @@ import LoadingSpinner from '~/svg/LoadingSpinner/LoadingSpinner';
 
 import { DashOutletContext } from '../dash/route';
 import { SettingsAction } from './services';
+import { UserDataEntry } from '~/types';
 
 export const meta: MetaFunction = () => {
   return [{ title: LOCALES.meta.title }, { name: 'description', content: LOCALES.meta.description }];
@@ -27,6 +28,7 @@ export function action({ request }: ActionFunctionArgs) {
 
 export default function DashSettings() {
   const { user, supabase } = useOutletContext<DashOutletContext>();
+  const actionData = useActionData() as ({ data: UserDataEntry; error: Error });
   const navigationState = useNavigation();
   const isLoading = 'submitting' === navigationState.state;
   const submit = useSubmit();
@@ -53,6 +55,16 @@ export default function DashSettings() {
       channel.unsubscribe();
     };
   }, [supabase, user.id]);
+
+  useEffect(() => {
+    if (!actionData) return;
+    if (actionData?.error) {
+      const sceneEvent = new CustomEvent('alertFromError', {
+        detail: actionData.error?.message || 'Error Updating Profile'
+      });
+      window.dispatchEvent(sceneEvent);
+    } else if (imageFile) setImage(null);
+  }, [actionData, imageFile]);
 
   return (
     <div className="w-full h-full flex flex-col justify-center items-center relative m-auto md:mb-0 md:pb-10 py-10 pb-[100px]">
