@@ -2,11 +2,12 @@ export type ColorInputProps = {
   title: string;
   id: string;
   textAlign?: string;
+  textSize?: string;
   value: string;
   onChange: (value: string) => void;
 };
 
-export default function ColorInput({ title, id, value, textAlign = 'text-center', onChange }: ColorInputProps) {
+export default function ColorInput({ title, id, value, textAlign = 'text-center', textSize = 'text-sm', onChange }: ColorInputProps) {
   const colors = [
     'bg-pastel-black',
     'bg-pastel-red',
@@ -22,7 +23,7 @@ export default function ColorInput({ title, id, value, textAlign = 'text-center'
 
   return (
     <div className="w-full flex flex-col gap-3 font-mono">
-      <label htmlFor={id} className={`text-gray-600 font-medium w-full ${textAlign}`}>
+      <label htmlFor={id} className={`text-gray-600 font-medium w-full ${textSize} ${textAlign}`}>
         {title}
       </label>
       <div className="w-full grid grid-cols-[repeat(auto-fill,32px)] gap-3">

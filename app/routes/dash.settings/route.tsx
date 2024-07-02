@@ -86,6 +86,7 @@ export default function DashSettings() {
               />
               <ColorInput
                 textAlign="text-left"
+                textSize="font-medium"
                 title={LocalStrings.color}
                 id="color"
                 value={colorSelect}

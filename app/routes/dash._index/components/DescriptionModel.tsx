@@ -32,7 +32,8 @@ export function DescriptionModel({ selectedNovel, close, userId, ownerId, member
   const finishedPost = 'loading' === navigationState.state && navigationState.formMethod === 'POST';
   const isLoading = 'submitting' === navigationState.state && navigationState.formMethod === 'DELETE';
   const isLoadingUpdate = 'submitting' === navigationState.state && navigationState.formMethod === 'POST';
-  const isLoadingPage = 'loading' === navigationState.state && navigationState.location.pathname === `/dash/novel/${selectedNovel?.id}`;
+  const isLoadingPage =
+    'loading' === navigationState.state && navigationState.location.pathname === `/dash/novel/${selectedNovel?.id}`;
   const member = members.some(user => user.user_id === userId);
   const isOwner = userId === ownerId;
 
@@ -93,46 +94,50 @@ export function DescriptionModel({ selectedNovel, close, userId, ownerId, member
           </div>
           <div className="flex w-full justify-end bg-white rounded-b-md p-2 gap-3 sticky bottom-0">
             <button
-              className="rounded-lg text-gray-100 font-semibold flex items-center justify-center h-button bg-orange-700 hover:bg-orange-500 md:w-button w-icon gap-2 md:after:content-['Back']"
-              type="button"
-              onClick={close}>
-              <ArrowIcon uniqueId="description-back" className="w-6 h-auto rotate-180" />
-            </button>
-            <button
               type="button"
               onClick={() => setOpenConfirm(true)}
               value={selectedNovel?.id}
               title="selected_novel"
-              className={isOwner ? 'deleteButton md:w-button w-icon md:after:content-["Delete"]' : 'hidden'}>
+              data-string="Delete"
+              className={isOwner ? 'deleteButton md:w-button w-icon md:after:content-[attr(data-string)]' : 'hidden'}>
               <TrashIcon className="w-5 h-auto" uniqueId="descript-delete" />
             </button>
             <Link
               to={`/dash/new?novel_id=${selectedNovel?.id}`}
+              data-string="Edit"
               className={
                 isOwner
-                  ? 'rounded-lg text-gray-100 font-semibold flex items-center justify-center h-button bg-slate-700 hover:bg-slate-500 md:w-button w-icon gap-2 md:after:content-["Edit"]'
+                  ? 'rounded-lg text-gray-100 font-semibold flex items-center justify-center h-button bg-slate-700 hover:bg-slate-500 md:w-button w-icon gap-2 md:after:content-[attr(data-string)]'
                   : 'hidden'
               }>
               <PenIcon uniqueId="description-edit" className="w-6 h-auto" />
             </Link>
+            <button
+              className="rounded-lg text-gray-100 font-semibold flex items-center justify-center h-button bg-orange-700 hover:bg-orange-500 md:w-button w-icon gap-2 md:after:content-[attr(data-string)]"
+              data-string="Back"
+              type="button"
+              onClick={close}>
+              <ArrowIcon uniqueId="description-back" className="w-6 h-auto rotate-180" />
+            </button>
             <Link
               to={`/dash/novel/${selectedNovel?.id}`}
               data-string={isLoadingPage ? '' : 'Next'}
-              className={member ? 'confirmButton md:w-button w-icon gap-2 md:before:content-[attr(data-string)]' : 'hidden'}>
+              className={
+                member ? 'confirmButton md:w-button w-icon gap-2 md:before:content-[attr(data-string)]' : 'hidden'
+              }>
               {isLoadingPage ? (
                 <LoadingSpinner className="w-full h-10" svgColor="#fff" uniqueId="index-page-spinner" />
               ) : (
                 <ArrowIcon uniqueId="description-next" className="w-6 h-auto" />
               )}
             </Link>
-            <Form method="post">
+            <Form method="post" className={!member ? 'flex' : 'hidden'}>
               <fieldset disabled={isLoadingUpdate}>
                 <button
                   name="selected_novel"
                   value={selectedNovel?.id}
-                  className={
-                    !member ? 'confirmButton md:w-wide-button w-icon md:before:content-["Participate"]' : 'hidden'
-                  }>
+                  data-string="Participate"
+                  className="confirmButton md:w-wide-button w-icon md:before:content-[attr(data-string)]">
                   <ArrowIcon uniqueId="description-back" className="w-6 h-auto" />
                 </button>
               </fieldset>
@@ -172,7 +177,8 @@ export function DescriptionModel({ selectedNovel, close, userId, ownerId, member
             <button
               type="button"
               onClick={() => setOpenConfirm(false)}
-              className="confirmButton md:after:content-['Cancel'] md:w-button w-icon">
+              data-string="Cancel"
+              className="confirmButton md:after:content-[attr(data-string)] md:w-button w-icon">
               <ArrowIcon uniqueId="description-back" className="w-6 h-auto rotate-180" />
             </button>
           </div>
